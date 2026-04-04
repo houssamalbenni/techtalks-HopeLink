@@ -1,5 +1,4 @@
-# techtalks-HopeLink
-
+# HopeLink
 A full-stack **MERN** project designed to support displaced communities by connecting **refugees, NGOs, donors, shelters, aid centers, and volunteers** in one centralized platform.
 
 This project combines multiple humanitarian-focused systems into one scalable application, including:
