@@ -1,32 +1,609 @@
+:root {
+  --brand-blue: #3b82f6;
+  --brand-dark: #0f172a;
+  --brand-darker: #090a0f;
+  --brand-surface: #1e293b;
+  --brand-light: #f8fafc;
+  --brand-accent: #8b5cf6;
+  --alert-red: #dc2626;
+  --emerald: #10b981;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --white: #ffffff;
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--brand-darker);
+  color: var(--brand-light);
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  color: #1f2937;
+  padding: 48px 16px;
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
 }
 
 #root {
-  min-height: 100vh;
+  width: 100%;
 }
 
-.app {
-  min-height: 100vh;
+a {
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+}
+
+.landing-page {
+  width: 100%;
+  position: relative;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.background-map {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.2;
+  pointer-events: none;
+  background-image: url('https://storage.googleapis.com/uxpilot-auth.appspot.com/default-placeholder.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.grid-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.1;
+  background-image: linear-gradient(to right, #1e293b 1px, transparent 1px),
+    linear-gradient(to bottom, #1e293b 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.top-bar {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--brand-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgb(59 130 246 / 50%);
+}
+
+.logo-box i {
+  color: var(--white);
+  font-size: 20px;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -0.02em;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.lang-btn,
+.role-card,
+.privacy-card {
+  background: rgb(30 41 59 / 70%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgb(255 255 255 / 5%);
+}
+
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  color: var(--brand-light);
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.lang-btn:hover {
+  background: var(--brand-surface);
+}
+
+.lang-btn .fa-globe {
+  color: var(--brand-blue);
+}
+
+.chevron {
+  color: var(--gray-400);
+  font-size: 12px;
+}
+
+.emergency-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--alert-red);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 0 15px rgb(220 38 38 / 50%);
+  transition: 0.3s;
+}
+
+.emergency-btn:hover {
+  background: #b91c1c;
+}
+
+.mobile-only {
+  display: none;
+}
+
+.main-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  margin-top: 64px;
+}
+
+.hero-section {
+  max-width: 768px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgb(30 41 59 / 70%);
+  border: 1px solid rgb(59 130 246 / 30%);
+  color: var(--brand-blue);
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--brand-blue);
+}
+
+.hero-section h1 {
+  margin: 0;
+  font-size: 60px;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--white);
+}
+
+.gradient-text {
+  background: linear-gradient(to right, var(--brand-blue), var(--brand-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-section p {
+  font-size: 18px;
+  color: var(--gray-400);
+  line-height: 1.7;
+  max-width: 720px;
+  margin: 24px auto 0;
+}
+
+.roles-section {
+  width: 100%;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.section-header h2 {
+  font-size: 32px;
+  color: var(--white);
+  margin: 0;
+  font-weight: 600;
+}
+
+.section-header p {
+  font-size: 14px;
+  color: var(--gray-500);
+  margin-top: 8px;
+}
+
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.role-card {
+  border-radius: 24px;
+  padding: 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.role-card:hover {
+  box-shadow: 0 10px 30px -5px rgb(0 0 0 / 30%);
+}
+
+.card-top-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.refugee-card:hover {
+  border-color: rgb(59 130 246 / 50%);
+}
+
+.refugee-card .card-top-line {
+  background: linear-gradient(to right, transparent, var(--brand-blue), transparent);
+}
+
+.refugee-card:hover .card-top-line {
+  opacity: 1;
+}
+
+.ngo-card:hover {
+  border-color: rgb(139 92 246 / 50%);
+}
+
+.ngo-card .card-top-line {
+  background: linear-gradient(to right, transparent, var(--brand-accent), transparent);
+}
+
+.ngo-card:hover .card-top-line {
+  opacity: 1;
+}
+
+.donor-card:hover {
+  border-color: rgb(16 185 129 / 50%);
+}
+
+.donor-card .card-top-line {
+  background: linear-gradient(to right, transparent, var(--emerald), transparent);
+}
+
+.donor-card:hover .card-top-line {
+  opacity: 1;
+}
+
+.icon-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--brand-dark);
+  display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: inset 0 0 0 1px var(--gray-800);
+  transition: 0.3s;
 }
 
-h1 {
-  margin: 0;
+.icon-circle i {
+  font-size: 30px;
+  color: var(--brand-blue);
 }
 
-p {
+.accent-circle i {
+  color: var(--brand-accent);
+}
+
+.green-circle i {
+  color: var(--emerald);
+}
+
+.refugee-card:hover .icon-circle {
+  background: rgb(59 130 246 / 10%);
+}
+
+.ngo-card:hover .icon-circle {
+  background: rgb(139 92 246 / 10%);
+}
+
+.donor-card:hover .icon-circle {
+  background: rgb(16 185 129 / 10%);
+}
+
+.role-card h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--white);
+  margin: 0 0 12px;
+}
+
+.role-card p {
+  font-size: 14px;
+  color: var(--gray-400);
+  margin: 0 0 32px;
+  line-height: 1.7;
+  flex-grow: 1;
+}
+
+.card-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.primary-btn,
+.secondary-btn {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.primary-btn {
+  color: var(--white);
+  font-weight: 600;
+}
+
+.blue-btn {
+  background: var(--brand-blue);
+  box-shadow: 0 0 20px rgb(59 130 246 / 50%);
+}
+
+.blue-btn:hover {
+  background: #2563eb;
+}
+
+.accent-btn {
+  background: var(--brand-accent);
+  box-shadow: 0 0 15px rgb(139 92 246 / 40%);
+}
+
+.accent-btn:hover {
+  background: #7c3aed;
+}
+
+.green-btn {
+  background: #059669;
+  box-shadow: 0 0 15px rgb(16 185 129 / 40%);
+}
+
+.green-btn:hover {
+  background: #10b981;
+}
+
+.secondary-btn {
+  background: transparent;
+  border: 1px solid var(--gray-700);
+  color: var(--gray-300);
+  font-weight: 500;
+}
+
+.secondary-btn:hover {
+  border-color: var(--gray-500);
+}
+
+.privacy-section {
+  width: 100%;
+  max-width: 900px;
+  margin: 32px auto 0;
+}
+
+.privacy-card {
+  border-radius: 24px;
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  border-left: 4px solid var(--brand-blue);
+}
+
+.privacy-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--brand-dark);
+  border: 1px solid var(--gray-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.privacy-icon i {
+  font-size: 24px;
+  color: var(--gray-300);
+}
+
+.privacy-text {
+  flex: 1;
+}
+
+.privacy-text h4 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--white);
+}
+
+.privacy-text p {
   margin: 0;
+  font-size: 14px;
+  color: var(--gray-400);
+  line-height: 1.7;
+}
+
+.privacy-link-wrap {
+  flex-shrink: 0;
+}
+
+.privacy-link-wrap a {
+  color: var(--brand-blue);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.privacy-link-wrap a:hover {
+  color: #60a5fa;
+}
+
+.footer-section {
+  width: 100%;
+  text-align: center;
+  padding: 16px 0 32px;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  font-size: 14px;
+}
+
+.footer-links a {
+  color: var(--gray-500);
+  transition: 0.3s;
+}
+
+.footer-links a:hover {
+  color: var(--white);
+}
+
+.copyright {
+  font-size: 12px;
+  color: var(--gray-600);
+  margin-top: 24px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--brand-darker);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--brand-surface);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-blue);
+}
+
+@media (max-width: 991px) {
+  .roles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-section h1 {
+    font-size: 44px;
+  }
+
+  .privacy-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 48px 12px;
+  }
+
+  .top-bar {
+    padding: 16px;
+  }
+
+  .logo-text {
+    display: none;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: inline;
+  }
+
+  .main-content {
+    margin-top: 80px;
+  }
+
+  .hero-section h1 {
+    font-size: 36px;
+  }
+
+  .hero-section p {
+    font-size: 16px;
+  }
+
+  .section-header h2 {
+    font-size: 26px;
+  }
 }
