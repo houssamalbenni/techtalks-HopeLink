@@ -1,13 +1,13 @@
 import { Router } from 'express';
+import { loginRefugeeController, registerRefugeeController } from '../controller/auth.controller.js';
 import { loginRules, registerRefugeeRules } from '../middleware/auth.validation.js';
-import { loginRefugeeController, registerRefugeeController } from './controller/auth.controller.js';
 
 const router = Router();
 
-// POST /api/auth/register/refugee
-router.post('/register/refugee', registerRefugeeRules, registerRefugeeController);
+// ─── Register Route ───────────────────────────────────────────────────────────
+router.post('/register', registerRefugeeRules, registerRefugeeController);
 
-// POST /api/auth/login/refugee
-router.post('/login/refugee', loginRules, loginRefugeeController);
+// ─── Login Route ──────────────────────────────────────────────────────────────
+router.post('/login', loginRules, loginRefugeeController);
 
 export default router;
