@@ -2,13 +2,12 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./src/config/db");
-const routes = require("./src/routes");
+const userRoutes = require("./src/routes/auth.routes");
 const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(routes);
-
+app.use("/auth",userRoutes);
 const startServer = async () => {
   try {
     await connectDB();

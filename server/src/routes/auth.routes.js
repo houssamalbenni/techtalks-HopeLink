@@ -1,13 +1,12 @@
-import { Router } from 'express';
-import { loginRefugeeController, registerRefugeeController } from '../controller/auth.controller.js';
-import { loginRules, registerRefugeeRules } from '../middleware/auth.validation.js';
-
-const router = Router();
-
+const express = require("express");
+const router = express.Router();
+const { loginRefugeeController, registerRefugeeController }= require('../controller/auth.controller.js');
+const { loginRules, registerRefugeeRules } =require('../middleware/auth.validation.js');
+const userController = require('../controller/auth.controller.js');
 // ─── Register Route ───────────────────────────────────────────────────────────
-router.post('/register', registerRefugeeRules, registerRefugeeController);
+router.post('/register', registerRefugeeRules, userController.registerRefugeeController);
 
 // ─── Login Route ──────────────────────────────────────────────────────────────
-router.post('/login', loginRules, loginRefugeeController);
+// router.post('/login', loginRules, loginRefugeeController);
 
-export default router;
+module.exports = router;
