@@ -1,6 +1,43 @@
+import { useEffect, useRef, useState } from 'react';
+
 const FamilyStatus = ({ familyStatus, onChange }) => {
+  const [activeField, setActiveField] = useState('');
+  const activeFieldTimer = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (activeFieldTimer.current) {
+        clearTimeout(activeFieldTimer.current);
+      }
+    };
+  }, []);
+
+  const normalizeValue = (value) => {
+    const parsed = Number.parseInt(value, 10);
+    if (Number.isNaN(parsed) || parsed < 0) {
+      return 0;
+    }
+    return parsed;
+  };
+
+  const triggerFieldBump = (key) => {
+    setActiveField(key);
+    if (activeFieldTimer.current) {
+      clearTimeout(activeFieldTimer.current);
+    }
+    activeFieldTimer.current = setTimeout(() => setActiveField(''), 260);
+  };
+
   const handleInput = (key, value) => {
-    onChange((prev) => ({ ...prev, [key]: value }));
+    onChange((prev) => ({ ...prev, [key]: normalizeValue(value) }));
+    triggerFieldBump(key);
+  };
+
+  const handleStep = (key, delta) => {
+    const current = Number.parseInt(familyStatus[key], 10) || 0;
+    const next = Math.max(0, current + delta);
+    onChange((prev) => ({ ...prev, [key]: next }));
+    triggerFieldBump(key);
   };
 
   return (
@@ -15,15 +52,38 @@ const FamilyStatus = ({ familyStatus, onChange }) => {
             <label className="family-status__field-label" htmlFor="familyMembers">
               Family Members
             </label>
-            <input
-              id="familyMembers"
-              className="family-status__input"
-              type="number"
-              min="0"
-              value={familyStatus.familyMembers}
-              onChange={(e) => handleInput('familyMembers', e.target.value)}
-              placeholder="0"
-            />
+            <div
+              className={`family-status__counter ${
+                activeField === 'familyMembers' ? 'family-status__counter--bump' : ''
+              }`}
+            >
+              <button
+                type="button"
+                className="family-status__step-btn"
+                onClick={() => handleStep('familyMembers', -1)}
+                disabled={(Number.parseInt(familyStatus.familyMembers, 10) || 0) <= 0}
+                aria-label="Decrease family members"
+              >
+                -
+              </button>
+              <input
+                id="familyMembers"
+                className="family-status__input family-status__input--counter"
+                type="number"
+                min="0"
+                value={familyStatus.familyMembers}
+                onChange={(e) => handleInput('familyMembers', e.target.value)}
+                placeholder="0"
+              />
+              <button
+                type="button"
+                className="family-status__step-btn"
+                onClick={() => handleStep('familyMembers', 1)}
+                aria-label="Increase family members"
+              >
+                +
+              </button>
+            </div>
           </div>
         </div>
         <div className="family-status__card">
@@ -34,15 +94,36 @@ const FamilyStatus = ({ familyStatus, onChange }) => {
             <label className="family-status__field-label" htmlFor="children">
               Children (Under 18)
             </label>
-            <input
-              id="children"
-              className="family-status__input"
-              type="number"
-              min="0"
-              value={familyStatus.children}
-              onChange={(e) => handleInput('children', e.target.value)}
-              placeholder="0"
-            />
+            <div
+              className={`family-status__counter ${activeField === 'children' ? 'family-status__counter--bump' : ''}`}
+            >
+              <button
+                type="button"
+                className="family-status__step-btn"
+                onClick={() => handleStep('children', -1)}
+                disabled={(Number.parseInt(familyStatus.children, 10) || 0) <= 0}
+                aria-label="Decrease children count"
+              >
+                -
+              </button>
+              <input
+                id="children"
+                className="family-status__input family-status__input--counter"
+                type="number"
+                min="0"
+                value={familyStatus.children}
+                onChange={(e) => handleInput('children', e.target.value)}
+                placeholder="0"
+              />
+              <button
+                type="button"
+                className="family-status__step-btn"
+                onClick={() => handleStep('children', 1)}
+                aria-label="Increase children count"
+              >
+                +
+              </button>
+            </div>
           </div>
         </div>
       </div>
