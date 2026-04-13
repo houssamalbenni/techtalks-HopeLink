@@ -3,7 +3,7 @@ const UserService = require("../service/auth.service.js");
 const asyncHandler = require("../middleware/asyncHandler");
 // ─── Register ─────────────────────────────────────────────────────────────────
 exports.registerRefugeeController = asyncHandler(async (req, res) => {
-  const { user, token } = await UserService.registerRefugee(req.body);
+  const { user, token } = await UserService.register(req.body);
   return res.status(201).json({
     success: true,
     message: "Refugee registered successfully",
