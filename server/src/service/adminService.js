@@ -12,23 +12,23 @@ class AdminService {
     }
   }
 
-  static async createService(data) {
+  static async createService(body) {
     try {
       const service = await Service.create({
-        title: data.title, // MUST match enum ResourceTitles
+        title: body.title, // MUST match enum ResourceTitles
         location: {
-          type: "Point",
-          coordinates: data.coordinates, // [lng, lat]
+          type: body.location.type || 'Point',
+          coordinates: body.location.coordinates, // [lng, lat]
         },
-        capacity: data.capacity,
-        availability: data.availability ?? data.capacity, // default full
-        images: data.images || [],
-        phone_number: data.phone_number,
-        address: data.address,
-        requirements: data.requirements,
-        intake_hours: data.intake_hours,
-        facilities: data.facilities || [],
-        owner_ngo: data.owner_ngo,
+        capacity: body.capacity,
+        availability: body.availability ?? body.capacity, // default full
+        images: body.images || [],
+        phone_number: body.phone_number,
+        address: body.address,
+        requirements: body.requirements,
+        intake_hours: body.intake_hours,
+        facilities: body.facilities || [],
+        owner_ngo: body.owner_ngo,
       });
 
       return service;
@@ -50,6 +50,15 @@ class AdminService {
           },
         },
       });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async deleteService(serviceId) {
+    try {
+      await Service.findByIdAndDelete(serviceId);
+      return { message: "Service deleted successfully" };
     } catch (error) {
       throw error;
     }

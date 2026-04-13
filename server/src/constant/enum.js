@@ -1,5 +1,5 @@
 module.exports = {
-  ResourceTitles: ['food', 'shelter', 'medcine'],
+  ResourceTitles: ['food', 'shelter', 'medcine','hospital'],
   RoleTypes: ['refugee', 'ngo', 'donor', 'admin'],
   LanguageCodes: ['en', 'ar', 'fr'],
   Facilities: ['Wheelchair_Access', 'Family_Rooms', 'Hot_Meals', 'Free_WiFi'],
