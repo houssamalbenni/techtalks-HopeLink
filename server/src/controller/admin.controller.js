@@ -9,6 +9,16 @@ exports.createService = asyncHandler(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+
+exports.findServiceById = asyncHandler(async (req,res) => {
+  try {
+    const service = await AdminService.findServiceById(req.params.id);
+    res.status(200).json(service);
+  } catch (error){
+    res.status(404).json({ message: "Service not found"});
+  }
+});
 exports.getService = asyncHandler(async (req, res) => {
   try {
     const services = await AdminService.getAllServices();

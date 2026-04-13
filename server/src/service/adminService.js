@@ -3,6 +3,10 @@ const  Service  = require("../models/services").Service;
 
 class AdminService {
 
+ static async findServiceById(serviceId){
+  try { return await Service.findById(serviceId);}
+  catch (error) { throw error;}
+ }
 
   static async getAllServices() {
     try {
