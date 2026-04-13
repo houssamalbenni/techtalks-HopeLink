@@ -3,11 +3,14 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./src/config/db");
 const userRoutes = require("./src/routes/auth.routes");
+const adminRoute= require("./src/routes/adminRoute.js")
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 app.use("/auth",userRoutes);
+app.use("/admin", adminRoute);
+
 const startServer = async () => {
   try {
     await connectDB();

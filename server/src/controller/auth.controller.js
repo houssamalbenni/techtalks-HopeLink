@@ -1,6 +1,8 @@
 const { loginRefugee, registerRefugee } = require("../service/auth.service.js");
 const UserService = require("../service/auth.service.js");
 const asyncHandler = require("../middleware/asyncHandler");
+const registerRefugeeController = require("./auth.controller.js").registerRefugeeController;
+const loginRefugeeController = require("./auth.controller.js").loginRefugeeController; 
 // ─── Register ─────────────────────────────────────────────────────────────────
 exports.registerRefugeeController = asyncHandler(async (req, res) => {
   const { user, token } = await UserService.register(req.body);
@@ -28,7 +30,7 @@ exports.loginRefugeeController = async (req, res) => {
   }
 };
 
-// module.exports = {
-//   registerRefugeeController,
-//   loginRefugeeController,
-// };
+ module.exports = {
+   registerRefugeeController,
+   loginRefugeeController,
+ };
