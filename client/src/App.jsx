@@ -3,7 +3,7 @@ import LandingPage from "./components/landing/LandingPage";
 import CompleteProfile from "./components/complete-profile/CompleteProfile";
 import CreateAccountForm from "./components/create-account/CreateAccountForm";
 import Dashboard from "./components/ngo-dashboard/Dashboard";
- 
+import ShelterOverview from "./components/shelter-overview/ShelterOverview"; 
 import ProfileSettings from './components/profile-settings/ProfileSettings';
 
 import DigitalIdentityVault from "./components/digital-identity-profile/DigitalIdentityVault";
@@ -15,9 +15,10 @@ function App() {
         <Route path="/landing" element={<LandingPage />} />
         <Route path="/create-account" element={<CreateAccountForm />} />
         <Route path="/complete-profile" element={<CompleteProfile />} />
-        <Route path="/" element={<DigitalIdentityVault />} />
+        <Route path="/digital-identity-vault" element={<DigitalIdentityVault />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile-settings" element={<ProfileSettings />} />
+        <Route path="/" element={<ShelterOverview />} />
       </Routes>
     </BrowserRouter>
   );
