@@ -378,8 +378,8 @@ body {
   font-weight: 700;
   letter-spacing: -0.3px;
   background: linear-gradient(135deg, var(--text-primary), var(--accent-light));
-  background-clip: text;
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 .page-subtitle {

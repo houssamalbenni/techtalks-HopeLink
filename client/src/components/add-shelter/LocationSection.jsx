@@ -57,6 +57,10 @@ const US_STATES = [
 
 export default function LocationSection({ data, onChange }) {
   const [coords, setCoords] = useState(data.coordinates || null);
+  const latitude = coords ? Number(coords.latitude) : null;
+  const longitude = coords ? Number(coords.longitude) : null;
+  const latDirection = latitude !== null && latitude >= 0 ? "N" : "S";
+  const lngDirection = longitude !== null && longitude >= 0 ? "E" : "W";
 
   const handleCoordsChange = (newCoords) => {
     setCoords(newCoords);
@@ -148,7 +152,8 @@ export default function LocationSection({ data, onChange }) {
               color: "var(--text-secondary)",
             }}
           >
-            📍 Coordinates: {coords.latitude}° N, {coords.longitude}° W
+            📍 Coordinates: {Math.abs(latitude)}° {latDirection},{" "}
+            {Math.abs(longitude)}° {lngDirection}
           </div>
         )}
       </div>

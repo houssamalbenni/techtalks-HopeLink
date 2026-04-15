@@ -1,5 +1,5 @@
 // components/MapComponent.jsx
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -23,7 +23,7 @@ export default function MapComponent({ coords, onCoordsChange }) {
   const mapInstanceRef = useRef(null);
   const markerRef = useRef(null);
   // Lebanon coordinates: 33.8547° N, 35.8623° E
-  const [markerPos, setMarkerPos] = useState(coords || [33.8547, 35.8623]);
+  const markerPos = coords || [33.8547, 35.8623];
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -46,7 +46,6 @@ export default function MapComponent({ coords, onCoordsChange }) {
     // Map click handler to place marker
     const handleMapClick = (e) => {
       const { lat, lng } = e.latlng;
-      setMarkerPos([lat, lng]);
 
       // Update marker
       marker.setLatLng([lat, lng]);
