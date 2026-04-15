@@ -1,7 +1,7 @@
 // hooks/useEditShelterForm.js
 import { useState, useCallback } from "react";
 
-// Pre-populated with "Safe Haven Center" data matching the screenshots
+// Pre-populated with "Sunny Haven Shelter" data matching the screenshots
 const INITIAL_DATA = {
   // Basic Info
   name:            "Sunny Haven Shelter",
