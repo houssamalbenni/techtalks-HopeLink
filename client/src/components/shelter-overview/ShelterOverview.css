@@ -379,6 +379,7 @@ body {
   letter-spacing: -0.3px;
   background: linear-gradient(135deg, var(--text-primary), var(--accent-light));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 .page-subtitle {
@@ -1065,9 +1066,6 @@ tbody tr:hover .shelter-icon-wrap {
 
 /* ── Enhanced Component Animations ─────────────────────────── */
 
-.logo-icon {
-}
-
 .logo-icon:hover {
   animation: glowPulse 1.5s ease-in-out infinite;
 }
@@ -1094,9 +1092,6 @@ tbody tr:hover .shelter-icon-wrap {
 
 .btn-add:hover {
   box-shadow: 0 6px 24px var(--accent-glow);
-}
-
-.btn-add:active {
 }
 
 .tab {
@@ -1156,10 +1151,6 @@ tbody tr:hover .shelter-icon-wrap {
 .btn-filter:hover,
 .btn-action:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.btn-filter:active,
-.btn-action:active {
 }
 
 tbody tr {
@@ -1223,9 +1214,6 @@ tbody tr:hover .shelter-icon-wrap {
 
 .row-btn:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
-}
-
-.row-btn:active {
 }
 
 .row-btn::before {
@@ -1300,7 +1288,7 @@ tbody tr:hover .shelter-icon-wrap {
 }
 
 .sidebar-nav {
-  animation: slideDownBounce 0.5s ease-out (0.05s *);
+  animation: slideDownBounce 0.5s ease-out 0.05s;
 }
 
 .nav-item {
@@ -1324,9 +1312,6 @@ tbody tr:hover .shelter-icon-wrap {
 .nav-item.active::before {
   width: 3px;
   box-shadow: 0 0 12px var(--accent);
-}
-
-.nav-item:hover {
 }
 
 .user-chip {
