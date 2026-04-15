@@ -3,6 +3,8 @@ import StepHeader from './StepHeader';
 import RoleSelector from './RoleSelector';
 import FamilyStatus from './FamilyStatus';
 import PrimaryNeeds from './PrimaryNeeds';
+import NGOFields from './NGOFields';
+import DonorFields from './DonorFields';
 import FormActions from './FormActions';
 import GlobeVisual from './GlobeVisual';
 import './complete-profile.css';
@@ -19,6 +21,15 @@ const CompleteProfile = () => {
     familyMembers: '',
     children: '',
   });
+  const [ngoData, setNgoData] = useState({
+    organizationName: '',
+    registrationId: '',
+    serviceArea: '',
+  });
+  const [donorData, setDonorData] = useState({
+    donationPreference: '',
+    focusArea: '',
+  });
 
   const toggleNeed = (key) => {
     setNeeds((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -29,7 +40,14 @@ const CompleteProfile = () => {
   };
 
   const handleSubmit = () => {
-    console.log('Submit', { selectedRole, needs, familyStatus });
+    const formData = {
+      selectedRole,
+      needs,
+      familyStatus,
+      ...(selectedRole === 'ngo' && { ngoData }),
+      ...(selectedRole === 'donor' && { donorData }),
+    };
+    console.log('Submit', formData);
   };
 
   return (
@@ -49,8 +67,16 @@ const CompleteProfile = () => {
           </p>
 
           <RoleSelector selectedRole={selectedRole} onSelect={setSelectedRole} />
-          <FamilyStatus familyStatus={familyStatus} onChange={setFamilyStatus} />
-          <PrimaryNeeds needs={needs} onToggle={toggleNeed} />
+          
+          {selectedRole === 'ngo' && <NGOFields ngoData={ngoData} onChange={setNgoData} />}
+          {selectedRole === 'donor' && <DonorFields donorData={donorData} onChange={setDonorData} />}
+          {selectedRole === 'refugee' && (
+            <>
+              <FamilyStatus familyStatus={familyStatus} onChange={setFamilyStatus} />
+              <PrimaryNeeds needs={needs} onToggle={toggleNeed} />
+            </>
+          )}
+          
           <FormActions onBack={handleBack} onSubmit={handleSubmit} />
         </div>
       </div>
