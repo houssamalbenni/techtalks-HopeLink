@@ -12,9 +12,9 @@ exports.registerRefugeeController = asyncHandler(async (req, res) => {
 });
 
 // ─── Login ────────────────────────────────────────────────────────────────────
-exports.loginRefugeeController = async (req, res) => {
+exports.login = async (req, res) => {
   try {
-    const { user, token } = await loginRefugee(req.body);
+    const { user, token } = await UserService.login(req.body);
     return res.status(200).json({
       success: true,
       message: "Login successful",

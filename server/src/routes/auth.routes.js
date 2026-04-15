@@ -7,6 +7,6 @@ const userController = require('../controller/auth.controller.js');
 router.post('/register', userController.registerRefugeeController);
 
 // ─── Login Route ──────────────────────────────────────────────────────────────
- router.post('/login', loginRules, userController.loginRefugeeController);
+ router.post('/login', loginRules, userController.login);
 
 module.exports = router;
