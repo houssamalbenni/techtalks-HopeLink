@@ -8,6 +8,8 @@ import ProfileSettings from './components/profile-settings/ProfileSettings';
 
 import DigitalIdentityVault from "./components/digital-identity-profile/DigitalIdentityVault";
 
+import RefugeeDashboard from './components/refugee-dashboard/RefugeeDashboard';
+
 function App() {
   return (
     <BrowserRouter>
@@ -18,6 +20,7 @@ function App() {
         <Route path="/" element={<DigitalIdentityVault />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile-settings" element={<ProfileSettings />} />
+        <Route path="/refugee-dashboard" element={<RefugeeDashboard />} />
       </Routes>
     </BrowserRouter>
   );
