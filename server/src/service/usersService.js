@@ -50,6 +50,15 @@ class UsersService {
       throw error;
     }
   }
+
+  static async getUserRole(body){
+    try {
+      const user = await User.findById(body.userId);
+      return user.role;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = UsersService;

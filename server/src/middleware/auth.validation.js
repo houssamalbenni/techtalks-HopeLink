@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
+const { ResourceTitles, Facilities } = require('../constant/enum');
 
 // ─── Reusable error handler ───────────────────────────────────────────────────
 const validate = (req, res, next) => {
@@ -98,12 +99,65 @@ const validation_token = (req, res, next) => {
     return res.status(401).json({ status: "error", message: "Invalid or expired token" });
   }
 };
-
 //  to dynamic check if the req is authenticated (has a valid token in its header) or no
 
 
+
+
+const validateCreateService = (req, res, next) => {
+  const body = req.body;
+
+  if (!body.title) {
+    return res.status(400).json({ message: "title is required" });
+  }
+
+  if (!Object.values(ResourceTitles).includes(body.title)) {
+    return res.status(400).json({ message: "invalid title value" });
+  }
+
+  if (!body.capacity) {
+    return res.status(400).json({ message: "capacity is required" });
+  }
+
+  if (!body.location || !body.location.coordinates) {
+    return res.status(400).json({ message: "location.coordinates is required" });
+  }
+  if (body.intake_hours) {
+  const { startTime, endTime } = body.intake_hours;
+
+  if (!startTime || !endTime) {
+    return res.status(400).json({
+      message: "intake_hours must include startTime and endTime"
+    });
+  }
+}
+
+  if (
+    !Array.isArray(body.location.coordinates) ||
+    body.location.coordinates.length !== 2
+  ) {
+    return res.status(400).json({
+      message: "coordinates must be [longitude, latitude]",
+    });
+  }
+
+  if (body.facilities) {
+    const invalidFacilities = body.facilities.filter(
+      (f) => !Object.values(Facilities).includes(f)
+    );
+
+    if (invalidFacilities.length > 0) {
+      return res.status(400).json({
+        message: `invalid facilities: ${invalidFacilities.join(", ")}`,
+      });
+    }
+  }
+  next();
+};
+
 module.exports = {
   registerRefugeeRules,
+  validateCreateService,
   loginRules,
   validation_token
 };

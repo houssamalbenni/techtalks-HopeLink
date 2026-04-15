@@ -22,7 +22,7 @@ exports.findServiceById = asyncHandler(async (req,res) => {
 exports.getService = asyncHandler(async (req, res) => {
   try {
     const services = await AdminService.getAllServices();
-    res.status(200).json(services);
+    res.status(200).json({data:services});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -36,7 +36,7 @@ exports.getNearbyServices = asyncHandler(async (req, res) => {
       parseInt(distance) || 5000,
     );
 
-    res.status(200).json(services);
+    res.status(200).json({data:services});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -50,3 +50,13 @@ exports.deleteService = asyncHandler(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+exports.updateService = asyncHandler(async (req, res) => {
+  try {
+    const service = await AdminService.updateService(req.params.id, req.body);
+    res.status(200).json(service);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+

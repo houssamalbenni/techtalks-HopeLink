@@ -52,3 +52,19 @@ exports.deleteUser = asyncHandler(async (req, res) => {
     message: "User deleted successfully",
   });
 });
+
+exports.getUserRole = asyncHandler(async (req, res) => {
+  const role = await UsersService.getUserRole(req.body);
+  if (!role) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+  return res.status(200).json({
+    success: true,
+    message: "User role retrieved successfully",
+    data: { role },
+  });
+});
+

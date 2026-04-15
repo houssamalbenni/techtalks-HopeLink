@@ -67,6 +67,21 @@ class AdminService {
       throw error;
     }
   }
+
+  static async updateService(serviceId, updateData) {
+    try {
+      const service = await Service.findByIdAndUpdate(serviceId, updateData, { new: true });
+      if (!service) {
+        const err = new Error("Service not found");
+        err.statusCode = 404;
+        throw err;
+      }
+      return service;
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }
 
 module.exports = AdminService;
