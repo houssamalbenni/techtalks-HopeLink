@@ -286,7 +286,9 @@ body {
   font-family: var(--font-display);
   font-size: 24px; font-weight: 700; letter-spacing: -.4px;
   background: linear-gradient(135deg, var(--text-primary), var(--accent-light));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .page-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 

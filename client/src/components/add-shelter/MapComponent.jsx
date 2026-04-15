@@ -22,11 +22,16 @@ export default function MapComponent({ coords, onCoordsChange }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markerRef = useRef(null);
-  // Lebanon coordinates: 33.8547° N, 35.8623° E
-  const markerPos = coords || [33.8547, 35.8623];
+  const onCoordsChangeRef = useRef(onCoordsChange);
+  const initialMarkerPosRef = useRef(coords || [33.8547, 35.8623]);
+
+  useEffect(() => {
+    onCoordsChangeRef.current = onCoordsChange;
+  }, [onCoordsChange]);
 
   useEffect(() => {
     if (!mapRef.current) return;
+    const markerPos = initialMarkerPosRef.current;
 
     // Initialize map
     const map = L.map(mapRef.current).setView(markerPos, 13);
@@ -57,8 +62,8 @@ export default function MapComponent({ coords, onCoordsChange }) {
       );
 
       // Call callback with new coordinates
-      if (onCoordsChange) {
-        onCoordsChange({
+      if (onCoordsChangeRef.current) {
+        onCoordsChangeRef.current({
           latitude: lat.toFixed(4),
           longitude: lng.toFixed(4),
         });
