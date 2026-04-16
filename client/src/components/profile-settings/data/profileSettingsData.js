@@ -15,7 +15,7 @@ export const mainNavItems = [
   { id: 'ngo-operations', icon: 'fa-chart-pie', label: 'NGO Operations Dashboard' },
   { id: 'aid-distribution', icon: 'fa-box-open', label: 'Aid Distribution Monitoring' },
   { id: 'donor-dashboard', icon: 'fa-hand-holding-heart', label: 'Donor Dashboard' },
-  { id: 'interactive-map', icon: 'fa-map-location-dot', label: 'Interactive Map' },
+  { id: 'refugee-dashboard', icon: 'fa-map-location-dot', label: 'Interactive Map' },
   { id: 'profile-settings', icon: 'fa-gear', label: 'Profile & Settings', active: true },
 ];
 
