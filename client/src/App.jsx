@@ -9,6 +9,8 @@ import AddShelter from "./components/add-shelter/AddShelter";
 import DigitalIdentityVault from "./components/digital-identity-profile/DigitalIdentityVault";
 import EditShelter from "./components/edit-shelter/EditShelter";
 import FamilyReunification from './components/family-reunification/FamilyReunification';
+import RefugeeDashboard from './components/refugee-dashboard/RefugeeDashboard';
+
 function App() {
   return (
     <BrowserRouter>
@@ -26,6 +28,7 @@ function App() {
         <Route path="/add-shelter" element={<AddShelter />} />
         <Route path="/" element={<EditShelter />} />
         <Route path="/family-reunification" element={<FamilyReunification />} />
+        <Route path="/refugee-dashboard" element={<RefugeeDashboard />} />
       </Routes>
     </BrowserRouter>
   );
