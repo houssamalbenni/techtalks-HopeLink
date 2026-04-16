@@ -3,9 +3,12 @@ import LandingPage from "./components/landing/LandingPage";
 import CompleteProfile from "./components/complete-profile/CompleteProfile";
 import CreateAccountForm from "./components/create-account/CreateAccountForm";
 import Dashboard from "./components/ngo-dashboard/Dashboard";
+import ShelterOverview from "./components/shelter-overview/ShelterOverview";
 import ProfileSettings from "./components/profile-settings/ProfileSettings";
+import AddShelter from "./components/add-shelter/AddShelter";
 import DigitalIdentityVault from "./components/digital-identity-profile/DigitalIdentityVault";
-
+import EditShelter from "./components/edit-shelter/EditShelter";
+import FamilyReunification from './components/family-reunification/FamilyReunification';
 import RefugeeDashboard from './components/refugee-dashboard/RefugeeDashboard';
 
 function App() {
@@ -21,6 +24,10 @@ function App() {
         />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile-settings" element={<ProfileSettings />} />
+        <Route path="/shelter-overview" element={<ShelterOverview />} />
+        <Route path="/add-shelter" element={<AddShelter />} />
+        <Route path="/" element={<EditShelter />} />
+        <Route path="/family-reunification" element={<FamilyReunification />} />
         <Route path="/refugee-dashboard" element={<RefugeeDashboard />} />
       </Routes>
     </BrowserRouter>
