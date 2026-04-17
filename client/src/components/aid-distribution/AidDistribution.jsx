@@ -96,7 +96,7 @@ const AidDistribution = () => {
               onStatusFilterChange={setStatusFilter}
             />
           </div>
-          <div className="aid-ledger-slot">
+          <div className={`aid-ledger-slot ${statusFilter === 'all' ? 'aid-ledger-slot-all' : ''}`}>
             <InventoryLedger
               batches={aidBatches}
               statusFilter={statusFilter}

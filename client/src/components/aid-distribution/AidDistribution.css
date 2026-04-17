@@ -305,7 +305,11 @@
   width: 100%;
   min-height: 260px;
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 32px;
+}
+
+.aid-ledger-slot-all {
+  margin-bottom: 66px;
 }
 
 /* TODAY'S DISTRIBUTION CARD */
@@ -658,6 +662,10 @@
   display: block;
   width: 100%;
   min-height: 260px;
+  isolation: isolate;
+  position: relative;
+  margin-bottom: 0;
+  contain: layout paint;
 }
 
 .inv-ledger-header {
@@ -774,7 +782,9 @@
 .inv-table-wrapper {
   overflow-x: auto;
   overflow-y: auto;
-  max-height: 320px;
+  max-height: 360px;
+  position: relative;
+  padding-bottom: 10px;
 }
 
 .inv-table {
@@ -797,9 +807,6 @@
   letter-spacing: 0.05em;
   border-bottom: 1px solid #2a3050;
   white-space: nowrap;
-  position: sticky;
-  top: 0;
-  z-index: 2;
   background: #1a2235;
 }
 
@@ -812,6 +819,8 @@
 .inv-table tbody tr {
   transition: background 0.2s;
   cursor: pointer;
+  animation: none !important;
+  transform: none !important;
 }
 
 .inv-table tbody tr:hover {
@@ -1021,6 +1030,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+  margin-top: 20px;
 }
 
 /* SERVED COUNTS CHART */
