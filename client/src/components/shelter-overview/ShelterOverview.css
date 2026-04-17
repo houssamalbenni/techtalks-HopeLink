@@ -139,6 +139,7 @@ body {
   cursor: pointer;
   transition: all var(--transition);
   position: relative;
+  -webkit-user-select: none;
   user-select: none;
   animation: fadeInNav 0.4s both;
 }
@@ -285,6 +286,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 50;
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
 }
 .topbar-date {
@@ -596,6 +598,7 @@ thead th {
   text-transform: uppercase;
   letter-spacing: 0.8px;
   color: var(--text-muted);
+  -webkit-user-select: none;
   user-select: none;
   white-space: nowrap;
 }
