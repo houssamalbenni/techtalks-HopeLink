@@ -10,6 +10,9 @@ import DigitalIdentityVault from "./components/digital-identity-profile/DigitalI
 import EditShelter from "./components/edit-shelter/EditShelter";
 import FamilyReunification from './components/family-reunification/FamilyReunification';
 import RefugeeDashboard from './components/refugee-dashboard/RefugeeDashboard';
+import Hospitals from "./components/hospitals/Hospitals";
+import AddHospital from "./components/add-hospital/AddHospital";
+import EditHospital from "./components/edit-hospital/EditHospital";
 
 function App() {
   return (
@@ -26,6 +29,9 @@ function App() {
         <Route path="/profile-settings" element={<ProfileSettings />} />
         <Route path="/shelter-overview" element={<ShelterOverview />} />
         <Route path="/add-shelter" element={<AddShelter />} />
+        <Route path="/hospitals" element={<Hospitals />} />
+        <Route path="/add-hospital" element={<AddHospital />} />
+        <Route path="/edit-hospital" element={<EditHospital />} />
         <Route path="/" element={<EditShelter />} />
         <Route path="/family-reunification" element={<FamilyReunification />} />
         <Route path="/refugee-dashboard" element={<RefugeeDashboard />} />
