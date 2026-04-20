@@ -8,3 +8,6 @@ export const registerUser = (data) =>
  
 export const loginUser = (data) =>
   safeApiCall(api.post(ApiConst.LOGIN_USER,data));
+
+export const getAllUsers = () =>
+  safeApiCall(api.get(ApiConst.GET_ALL_USERS));
