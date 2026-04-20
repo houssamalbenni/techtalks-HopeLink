@@ -7,15 +7,15 @@ import Dashboard from "./components/ngo-dashboard/Dashboard";
 import ProfileSettings from './components/profile-settings/ProfileSettings';
 
 import DigitalIdentityVault from "./components/digital-identity-profile/DigitalIdentityVault";
+import SignupFlow from "./components/full-create-account/SignupFlow";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/landing" element={<LandingPage />} />
-        <Route path="/create-account" element={<CreateAccountForm />} />
-        <Route path="/complete-profile" element={<CompleteProfile />} />
-        <Route path="/" element={<DigitalIdentityVault />} />
+        <Route path="/" element={<SignupFlow />} />
+        <Route path="/digital-identity" element={<DigitalIdentityVault />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile-settings" element={<ProfileSettings />} />
       </Routes>

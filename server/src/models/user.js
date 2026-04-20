@@ -17,7 +17,7 @@ const UserSchema = new mongoose.Schema(
     family_number: { type: String },
     need: { type: [String], enum: ResourceTitles },
     location: {
-      type: { type: String, default: "Point" },
+      type: { type: String},
       coordinates: { type: [Number] }, // [longitude, latitude] (order is important for geospatial queries)
     },
 

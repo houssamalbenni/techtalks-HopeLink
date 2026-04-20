@@ -6,14 +6,21 @@ const userRoutes = require("./src/routes/auth.routes");
 const adminRoute= require("./src/routes/adminRoute.js")
 const usersRoute = require("./src/routes/usersRoute.js");
 const donorRoute = require("./src/routes/donorRoute.js");
+const refugeeRoute = require("./src/routes/refugeeRoutes.js");
+const errorHandler = require("./src/middleware/errorHandling.js");
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 app.use("/auth",userRoutes);
 app.use("/admin", adminRoute);
 app.use("/users", usersRoute);
 app.use("/donor", donorRoute);
+app.use("/refugee",refugeeRoute);
+app.use(errorHandler);
 
 const startServer = async () => {
   try {

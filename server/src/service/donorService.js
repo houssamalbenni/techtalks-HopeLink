@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Donation = require("../models/donation").Donation;
 
 class DonorService {
-  static async createDonation(donorId, amount) {
+  static async createDonation(donorId, amount) { // donorId from the token
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -46,7 +46,7 @@ class DonorService {
     }
   }
 
-  static async getAllUserDonations(userId) {
+  static async getAllUserDonations(userId) { // userId from the token
     try {
       const user = await User.findById(userId).populate("donations");
       if (!user) {
