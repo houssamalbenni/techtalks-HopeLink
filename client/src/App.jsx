@@ -11,6 +11,7 @@ import SignupFlow from "./components/full-create-account/SignupFlow";
 import EditShelter from "./components/edit-shelter/EditShelter";
 import FamilyReunification from './components/family-reunification/FamilyReunification';
 import RefugeeDashboard from './components/refugee-dashboard/RefugeeDashboard';
+import AidDistribution from './components/aid-distribution/AidDistribution';
 import Hospitals from "./components/hospitals/Hospitals";
 import AddHospital from "./components/add-hospital/AddHospital";
 import EditHospital from "./components/edit-hospital/EditHospital";
@@ -32,6 +33,7 @@ function App() {
         <Route path="/" element={<EditShelter />} />
         <Route path="/family-reunification" element={<FamilyReunification />} />
         <Route path="/refugee-dashboard" element={<RefugeeDashboard />} />
+        <Route path="/aid-distribution" element={<AidDistribution />} />
       </Routes>
     </BrowserRouter>
   );
