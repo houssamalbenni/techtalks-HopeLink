@@ -19,4 +19,11 @@ export const ApiConst = {
   GET_TOTAL_DONATIONS: "/donor/total",
 
   CREATE_REQUEST: "/requests",
+
+  // Refugee endpoints
+  GET_ALL_REFUGEE_REQUESTS: "/refugee",
+  GET_MY_REQUESTS: "/refugee/my-requests",
+  GET_REFUGEE_REQUEST_BY_ID: (id) => `/refugee/${id}`,
+  UPDATE_REFUGEE_REQUEST: (id) => `/refugee/${id}`,
+  REQUEST_SERVICE: "/refugee",
 };
