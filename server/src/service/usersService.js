@@ -3,7 +3,6 @@ const  User  = require("../models/user").User;
 
 class UsersService {
 
-
   static async getAllUsers() {
     try {
       return await User.find();
@@ -20,7 +19,7 @@ class UsersService {
     }
   }
 
-  static async updateUser(userId, updateData) {
+  static async updateUser(userId, updateData) { // userId from the token
     try {
       const user = await User.findByIdAndUpdate(userId, updateData, { new: true });
       if (!user) {
@@ -42,7 +41,7 @@ class UsersService {
     }
   }
 
-  static async deleteUser(userId) {
+  static async deleteUser(userId) { // userId from the token
     try {
       await User.findByIdAndDelete(userId);
       return { message: "User deleted successfully" };

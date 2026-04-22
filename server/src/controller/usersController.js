@@ -28,7 +28,7 @@ exports.getUserById = asyncHandler(async (req, res) => {
 });
 
 exports.updateUser = asyncHandler(async (req, res) => {
-  const user = await UsersService.updateUser(req.params.id, req.body);
+  const user = await UsersService.updateUser(req.user.id, req.body);
   return res.status(200).json({
     success: true,
     message: "User updated successfully",
@@ -46,7 +46,7 @@ exports.getUsersByRole = asyncHandler(async (req, res) => {
 });
 
 exports.deleteUser = asyncHandler(async (req, res) => {
-  await UsersService.deleteUser(req.params.id);
+  await UsersService.deleteUser(req.user.id);
   return res.status(200).json({
     success: true,
     message: "User deleted successfully",
