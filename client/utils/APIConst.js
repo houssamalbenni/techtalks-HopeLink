@@ -19,4 +19,9 @@ export const ApiConst = {
   GET_TOTAL_DONATIONS: "/donor/total",
 
   CREATE_REQUEST: "/requests",
+
+  // Aid Distribution endpoints
+  GET_ALL_DISTRIBUTIONS: "/admin/services",
+  GET_DISTRIBUTION_BY_ID: (id) => `/admin/services/${id}`,
+  GET_NEARBY_DISTRIBUTIONS: "/admin/services/nearby",
 };

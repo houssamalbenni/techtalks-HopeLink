@@ -1,10 +1,23 @@
-const tags = [
-  { label: 'Medical 450kg', color: '#3b82f6' },
-  { label: 'Food 1,200kg', color: '#f97316' },
-  { label: 'Shelter 800kg', color: '#10b981' },
-];
+const TodaysDistribution = ({ distributions = [] }) => {
+  // Calculate total weight from distributions
+  const totalWeight = distributions.reduce((sum, dist) => {
+    const weight = parseInt(dist.weight) || 0;
+    return sum + weight;
+  }, 0);
 
-const TodaysDistribution = () => {
+  // Daily goal (can be adjusted)
+  const dailyGoal = 3600;
+  const progressPercent = Math.min(Math.round((totalWeight / dailyGoal) * 100), 100);
+
+  // Generate tags from distributions
+  const tags = distributions.slice(0, 3).map((dist, index) => {
+    const colors = ['#3b82f6', '#f97316', '#10b981'];
+    return {
+      label: `${dist.category} ${dist.weight}`,
+      color: colors[index % colors.length],
+    };
+  });
+
   return (
     <div className="aid-dist-card">
       <div className="aid-dist-card-header">
@@ -13,12 +26,16 @@ const TodaysDistribution = () => {
       </div>
 
       <div className="aid-dist-tags">
-        {tags.map((tag) => (
-          <div key={tag.label} className="aid-dist-tag">
-            <div className="aid-dist-tag-dot" style={{ background: tag.color }} />
-            {tag.label}
-          </div>
-        ))}
+        {tags.length > 0 ? (
+          tags.map((tag) => (
+            <div key={tag.label} className="aid-dist-tag">
+              <div className="aid-dist-tag-dot" style={{ background: tag.color }} />
+              {tag.label}
+            </div>
+          ))
+        ) : (
+          <p style={{ fontSize: '12px', color: '#666' }}>No distributions today</p>
+        )}
       </div>
 
       <div className="aid-dist-chart-area">
@@ -39,13 +56,13 @@ const TodaysDistribution = () => {
 
       <div className="aid-dist-progress-section">
         <div className="aid-progress-bar-wrap">
-          <div className="aid-progress-bar-fill">
-            <span className="aid-progress-label">68%</span>
+          <div className="aid-progress-bar-fill" style={{ width: `${progressPercent}%` }}>
+            <span className="aid-progress-label">{progressPercent}%</span>
           </div>
         </div>
         <div className="aid-progress-meta">
           <span>0%</span>
-          <span>2,450 kg / 3,600 kg daily goal (68%)</span>
+          <span>{totalWeight} kg / {dailyGoal} kg daily goal ({progressPercent}%)</span>
           <span>100%</span>
         </div>
       </div>
