@@ -44,4 +44,6 @@ export const ApiConst = {
   ADD_NOTE_TO_CASE: (id) => `/missing-person/${id}/notes`,
   GET_ALL_MISSING_CASES: "/missing-person", // Admin
   GET_MISSING_CASES_BY_STATUS: (status) => `/missing-person/status/${status}`,
+  // NGO endpoints
+  NGO_GET_REQUESTS: "/ngo/requests",
 };
