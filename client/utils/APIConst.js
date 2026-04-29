@@ -19,7 +19,6 @@ export const ApiConst = {
   GET_TOTAL_DONATIONS: "/donor/total",
 
   CREATE_REQUEST: "/requests",
-  CREATE_REQUEST: "/requests",
 
   // Refugee endpoints
   GET_ALL_REFUGEE_REQUESTS: "/refugee",
