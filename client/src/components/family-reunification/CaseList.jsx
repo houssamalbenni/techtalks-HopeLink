@@ -1,36 +1,6 @@
 import { useState } from 'react';
 
-const cases = [
-  {
-    id: 1,
-    caseId: 'Case #FR-2023-892',
-    relation: 'Brother',
-    updated: 'Last update: 2h ago',
-    status: 'IN PROGRESS',
-    statusClass: 'fr-status-progress',
-    type: 'active',
-  },
-  {
-    id: 2,
-    caseId: 'Case #FR-2023-741',
-    relation: 'Daughter',
-    updated: 'Last update: 1d ago',
-    status: 'VERIFYING',
-    statusClass: 'fr-status-verifying',
-    type: 'active',
-  },
-  {
-    id: 3,
-    caseId: 'Case #FR-2023-605',
-    relation: 'Spouse',
-    updated: 'Last update: 3d ago',
-    status: 'MATCHED',
-    statusClass: 'fr-status-matched',
-    type: 'matched',
-  },
-];
-
-const CaseList = ({ selectedId, onSelect }) => {
+const CaseList = ({ cases = [], selectedId, onSelect }) => {
   const [activeTab, setActiveTab] = useState('active');
   const [searchQuery, setSearchQuery] = useState('');
 
