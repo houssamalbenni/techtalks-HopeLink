@@ -1,5 +1,6 @@
 // hooks/useAddShelterForm.js
 import { useState } from "react";
+import { createShelter, saveShelterDraft } from "./addShelterApi";
 
 const INITIAL_FORM = {
   // Basic Info
@@ -36,6 +37,9 @@ const INITIAL_STATUS = {
 export function useAddShelterForm() {
   const [form,   setForm]   = useState(INITIAL_FORM);
   const [status, setStatus] = useState(INITIAL_STATUS);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   /** Update any top-level field */
   const handleChange = (field, value) => {
@@ -59,19 +63,58 @@ export function useAddShelterForm() {
     return { valid: missing.length === 0, missing };
   };
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     const { valid, missing } = validate();
     if (!valid) {
-      alert(`Please fill in required fields: ${missing.join(", ")}`);
+      setError(`Please fill in required fields: ${missing.join(", ")}`);
       return;
     }
-    console.log("Publishing shelter:", { ...form, status });
-    alert("Shelter published successfully! 🎉");
+
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const shelterData = {
+        ...form,
+        ...status,
+      };
+      
+      const response = await createShelter(shelterData);
+      setSuccess(true);
+      setForm(INITIAL_FORM);
+      setStatus(INITIAL_STATUS);
+      
+      // Reset success after 3 seconds
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (err) {
+      setError(err.message || "Failed to publish shelter");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSaveDraft = () => {
-    console.log("Saving draft:", form);
-    alert("Draft saved!");
+  const handleSaveDraft = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const shelterData = {
+        ...form,
+        status: "draft",
+      };
+      
+      const response = await saveShelterDraft(shelterData);
+      setSuccess(true);
+      
+      // Reset success after 3 seconds
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (err) {
+      setError(err.message || "Failed to save draft");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -83,6 +126,9 @@ export function useAddShelterForm() {
   return {
     form,
     status,
+    loading,
+    error,
+    success,
     handleChange,
     handleStatusChange,
     handleFilesChange,

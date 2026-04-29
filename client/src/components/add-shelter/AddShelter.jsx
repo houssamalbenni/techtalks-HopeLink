@@ -19,6 +19,9 @@ export default function AddShelter() {
   const {
     form,
     status,
+    loading,
+    error,
+    success,
     handleChange,
     handleStatusChange,
     handleFilesChange,
@@ -38,6 +41,7 @@ export default function AddShelter() {
           onCancel={handleCancel}
           onDraft={handleSaveDraft}
           onPublish={handlePublish}
+          loading={loading}
         />
 
         <div className="page-body">
@@ -50,6 +54,54 @@ export default function AddShelter() {
               <span className="required-note">(*)</span>.
             </p>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div
+              style={{
+                padding: "12px",
+                marginBottom: "16px",
+                backgroundColor: "#fee",
+                border: "1px solid #fcc",
+                borderRadius: "8px",
+                color: "#c33",
+              }}
+            >
+              ⚠️ {error}
+            </div>
+          )}
+
+          {/* Success Message */}
+          {success && (
+            <div
+              style={{
+                padding: "12px",
+                marginBottom: "16px",
+                backgroundColor: "#efe",
+                border: "1px solid #cfc",
+                borderRadius: "8px",
+                color: "#3c3",
+              }}
+            >
+              ✅ Shelter saved successfully!
+            </div>
+          )}
+
+          {/* Loading Indicator */}
+          {loading && (
+            <div
+              style={{
+                padding: "12px",
+                marginBottom: "16px",
+                backgroundColor: "#eef",
+                border: "1px solid #ccf",
+                borderRadius: "8px",
+                color: "#33c",
+              }}
+            >
+              ⏳ Processing...
+            </div>
+          )}
 
           {/* Section 1: Basic Info */}
           <BasicInfoSection data={form} onChange={handleChange} />
