@@ -1,4 +1,5 @@
 import StatusBadge from "./StatusBadge";
+import { useNavigate } from "react-router-dom";
 
 function capacityColor(status) {
   if (status === "maintenance") return "var(--hospital-amber)";
@@ -7,7 +8,17 @@ function capacityColor(status) {
 }
 
 export default function HospitalRow({ hospital, isSelected, onToggleSelection }) {
-  const occupancyPercent = Math.round((hospital.occupiedBeds / hospital.totalBeds) * 100);
+  const navigate = useNavigate();
+  const occupancyPercent = hospital.totalBeds > 0
+    ? Math.round((hospital.occupiedBeds / hospital.totalBeds) * 100)
+    : 0;
+
+  function handleEditClick() {
+    const hospitalId = hospital._id || hospital.id;
+    const targetPath = `/edit-hospital/${hospitalId}`;
+
+    navigate(targetPath);
+  }
 
   return (
     <tr className={isSelected ? "is-selected-row" : ""}>
@@ -60,7 +71,7 @@ export default function HospitalRow({ hospital, isSelected, onToggleSelection })
             />
           </div>
           <span>
-            {hospital.occupiedBeds}/{hospital.totalBeds}
+            {hospital.occupiedBeds}/{hospital.totalBeds} occupied ({hospital.availability} available)
           </span>
         </div>
       </td>
@@ -70,7 +81,12 @@ export default function HospitalRow({ hospital, isSelected, onToggleSelection })
           <button type="button" title="View Details" aria-label="View details">
             <i className="fa-regular fa-eye" />
           </button>
-          <button type="button" title="Edit" aria-label="Edit hospital">
+          <button
+            type="button"
+            title="Edit"
+            aria-label="Edit hospital"
+            onClick={handleEditClick}
+          >
             <i className="fa-solid fa-pen" />
           </button>
         </div>

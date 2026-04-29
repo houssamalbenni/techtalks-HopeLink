@@ -18,9 +18,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      localStorage.clear(); 
       if (typeof window !== "undefined") {
-        window.location.href = "/login";
+        const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+        if (currentPath && currentPath !== "/login") {
+          localStorage.setItem("returnTo", currentPath);
+        }
+        window.location.assign("/login");
       }
     }
     return Promise.reject(error);

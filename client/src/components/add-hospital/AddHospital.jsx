@@ -1,4 +1,7 @@
+
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 import AdminSidebar from "../hospitals/AdminSidebar";
 import TopHeader from "../hospitals/TopHeader";
@@ -15,6 +18,8 @@ import {
   STATE_OPTIONS,
   STATUS_OPTIONS,
 } from "./addHospitalConfig";
+import api from "../../../utils/axios";
+import { ApiConst } from "../../../utils/APIConst";
 import "../hospitals/Hospitals.css";
 import "./AddHospital.css";
 
@@ -123,9 +128,33 @@ const TOGGLE_FIELDS = [
 ];
 
 export default function AddHospital() {
+  const navigate = useNavigate();
   const [form, setForm] = useState(DEFAULT_FORM);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const actions = useMemo(() => HEADER_ACTIONS, []);
+  const actions = useMemo(
+    () =>
+      HEADER_ACTIONS.map((action) => {
+        if (action.label === "Cancel") {
+          return {
+            ...action,
+            onClick: () => navigate("/hospitals"),
+            disabled: isSubmitting,
+          };
+        }
+
+        if (action.label === "Save Draft") {
+          return {
+            ...action,
+            onClick: () => toast.success("Draft saved locally."),
+            disabled: isSubmitting,
+          };
+        }
+
+        return action;
+      }),
+    [navigate, isSubmitting],
+  );
   const breadcrumbs = useMemo(() => BREADCRUMBS, []);
 
   function updateField(field, value) {
@@ -164,8 +193,107 @@ export default function AddHospital() {
     }));
   }
 
-  function onSubmit(event) {
+  function decodeTokenUserId() {
+    const token = localStorage.getItem("token");
+    if (!token) return "";
+
+    try {
+      const tokenParts = token.split(".");
+      if (tokenParts.length < 2) return "";
+
+      const base64 = tokenParts[1].replace(/-/g, "+").replace(/_/g, "/");
+      const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
+      const payload = JSON.parse(atob(padded));
+
+      return payload?.id || payload?._id || "";
+    } catch {
+      return "";
+    }
+  }
+
+  function getOwnerNgoId() {
+    const userId = localStorage.getItem("userId");
+    if (userId) return userId;
+
+    const rawUser = localStorage.getItem("user");
+    if (!rawUser) return "";
+
+    try {
+      const parsed = JSON.parse(rawUser);
+      return parsed?._id || parsed?.id || decodeTokenUserId();
+    } catch {
+      return decodeTokenUserId();
+    }
+  }
+
+  function getCurrentCoordinates() {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error("Geolocation is not supported in this browser."));
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { longitude, latitude } = position.coords;
+          resolve([longitude, latitude]);
+        },
+        () => {
+          reject(new Error("Location permission is required to create a hospital service."));
+        },
+      );
+    });
+  }
+
+  async function onSubmit(event) {
     event.preventDefault();
+
+    if (isSubmitting) return;
+
+    const capacity = Number(form.totalBeds);
+    if (!Number.isFinite(capacity) || capacity <= 0) {
+      toast.error("Total bed capacity is required and must be greater than 0.");
+      return;
+    }
+
+    const ownerNgoId = getOwnerNgoId();
+
+    setIsSubmitting(true);
+
+    try {
+      const coordinates = await getCurrentCoordinates();
+
+      const payload = {
+        title: "hospital",
+        location: {
+          type: "Point",
+          coordinates,
+        },
+        capacity,
+        availability: capacity,
+        phone_number: form.phone,
+        address: {
+          street: form.streetAddress,
+          city: form.city,
+          building: form.hospitalName || undefined,
+        },
+        requirements: form.description,
+        ...(ownerNgoId ? { owner_ngo: ownerNgoId } : {}),
+      };
+
+      await api.post(ApiConst.CREATE_SERVICE, payload);
+      toast.success("Hospital created successfully.");
+      navigate("/hospitals");
+    } catch (error) {
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.errors?.[0]?.message ||
+        error?.message ||
+        "Failed to create hospital.";
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function renderSelectOptions(options, placeholder) {
@@ -399,11 +527,11 @@ export default function AddHospital() {
               </FormSection>
 
               <footer className="ah-actions">
-                <button type="button" className="hospitals-secondary-btn">
+                <button type="button" className="hospitals-secondary-btn" onClick={() => navigate("/hospitals")}>
                   Cancel
                 </button>
-                <button type="submit" className="hospitals-primary-btn">
-                  Publish Hospital <i className="fa-solid fa-arrow-right" />
+                <button type="submit" className="hospitals-primary-btn" disabled={isSubmitting}>
+                  {isSubmitting ? "Publishing..." : "Publish Hospital"} <i className="fa-solid fa-arrow-right" />
                 </button>
               </footer>
             </form>

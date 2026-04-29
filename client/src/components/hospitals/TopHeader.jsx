@@ -41,6 +41,8 @@ export default function TopHeader({ breadcrumbStart, currentPage, actionLabel, b
             key={action.label}
             type="button"
             className={action.variant === "secondary" ? "hospitals-secondary-btn" : "hospitals-primary-btn"}
+            onClick={action.onClick}
+            disabled={action.disabled}
           >
             {action.icon && <i className={action.icon} />} {action.label}
           </button>

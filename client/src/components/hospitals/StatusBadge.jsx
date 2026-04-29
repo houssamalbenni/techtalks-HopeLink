@@ -1,7 +1,7 @@
 const STATUS_META = {
-  active: { label: "Active", tone: "active" },
-  maintenance: { label: "Maintenance", tone: "maintenance" },
-  capacity: { label: "At Capacity", tone: "capacity" },
+  active: { label: "Available", tone: "active" },
+  maintenance: { label: "Limited", tone: "maintenance" },
+  capacity: { label: "Closed", tone: "capacity" },
 };
 
 export default function StatusBadge({ status }) {

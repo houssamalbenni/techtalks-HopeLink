@@ -1,16 +1,40 @@
 const  Service  = require("../models/services").Service;
 
+const mapServiceWithOccupancy = (serviceDoc) => {
+  if (!serviceDoc) return serviceDoc;
+
+  const service = typeof serviceDoc.toObject === "function" ? serviceDoc.toObject() : serviceDoc;
+  const capacity = Number(service?.capacity);
+  const availability = Number(service?.availability);
+
+  const safeCapacity = Number.isFinite(capacity) && capacity > 0 ? capacity : 0;
+  const safeAvailability = Number.isFinite(availability)
+    ? Math.min(Math.max(availability, 0), safeCapacity)
+    : 0;
+
+  return {
+    ...service,
+    capacity: safeCapacity,
+    availability: safeAvailability,
+    occupied_beds: Math.max(safeCapacity - safeAvailability, 0),
+  };
+};
+
 
 class AdminService {
 
  static async findServiceById(serviceId){
-  try { return await Service.findById(serviceId);}
+  try {
+    const service = await Service.findById(serviceId);
+    return mapServiceWithOccupancy(service);
+  }
   catch (error) { throw error;}
  }
 
   static async getAllServices() {
     try {
-      return await Service.find();
+      const services = await Service.find();
+      return services.map(mapServiceWithOccupancy);
     } catch (error) {
       throw error;
     }

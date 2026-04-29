@@ -1,7 +1,7 @@
 export const EDIT_BREADCRUMBS = [
-  { label: "Admin Dashboard", href: "#" },
-  { label: "Hospitals", href: "#" },
-  { label: "Mercy General Hospital", href: "#" },
+  { label: "Admin Dashboard", href: "/dashboard" },
+  { label: "Hospitals", href: "/hospitals" },
+  { label: "Mercy General Hospital", href: "/hospitals" },
   { label: "Edit Details", current: true },
 ];
 

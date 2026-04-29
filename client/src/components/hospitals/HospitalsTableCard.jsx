@@ -11,6 +11,9 @@ export default function HospitalsTableCard({
   selectedRows,
   onToggleRow,
   pagination,
+  onPreviousPage,
+  onNextPage,
+  onSelectPage,
 }) {
   return (
     <section className="hospitals-table-card">
@@ -68,6 +71,9 @@ export default function HospitalsTableCard({
           currentPage={pagination.currentPage}
           pages={pagination.pages}
           totalPages={pagination.totalPages}
+          onPrevious={onPreviousPage}
+          onNext={onNextPage}
+          onSelectPage={onSelectPage}
         />
       </footer>
     </section>

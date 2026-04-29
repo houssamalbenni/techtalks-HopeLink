@@ -1,7 +1,7 @@
-export default function FilterSelect({ placeholder, options }) {
+export default function FilterSelect({ placeholder, options, value, onChange }) {
   return (
-    <select defaultValue="">
-      <option value="" disabled>
+    <select value={value} onChange={onChange}>
+      <option value="">
         {placeholder}
       </option>
       {options.map((option) => (

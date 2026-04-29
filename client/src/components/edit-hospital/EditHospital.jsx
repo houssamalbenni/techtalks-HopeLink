@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 import AdminSidebar from "../hospitals/AdminSidebar";
 import TopHeader from "../hospitals/TopHeader";
@@ -18,6 +20,8 @@ import {
   OVERALL_STATUS_OPTIONS,
   SPECIALTY_OPTIONS,
 } from "./editHospitalConfig";
+import api from "../../../utils/axios";
+import { ApiConst } from "../../../utils/APIConst";
 import "../hospitals/Hospitals.css";
 import "./EditHospital.css";
 
@@ -44,10 +48,137 @@ const CONTACT_FIELD_GROUP = [
 ];
 
 export default function EditHospital() {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const formRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const initialOccupiedBedsRef = useRef(0);
   const [form, setForm] = useState(EDIT_INITIAL_FORM);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [logoPreview, setLogoPreview] = useState(
+    "https://storage.googleapis.com/uxpilot-auth.appspot.com/8a63a1214d-61dda6d03bd05096ba47.png",
+  );
 
   const breadcrumbs = useMemo(() => EDIT_BREADCRUMBS, []);
-  const headerActions = useMemo(() => EDIT_HEADER_ACTIONS, []);
+  const headerActions = useMemo(
+    () =>
+      EDIT_HEADER_ACTIONS.map((action) => {
+        if (action.label === "Cancel") {
+          return {
+            ...action,
+            onClick: () => navigate("/hospitals"),
+            disabled: isSubmitting,
+          };
+        }
+
+        if (action.label === "Save Changes") {
+          return {
+            ...action,
+            onClick: () => formRef.current?.requestSubmit(),
+            disabled: isLoading || isSubmitting,
+          };
+        }
+
+        return action;
+      }),
+    [navigate, isLoading, isSubmitting],
+  );
+
+  function decodeTokenUserId() {
+    const token = localStorage.getItem("token");
+    if (!token) return "";
+
+    try {
+      const tokenParts = token.split(".");
+      if (tokenParts.length < 2) return "";
+
+      const base64 = tokenParts[1].replace(/-/g, "+").replace(/_/g, "/");
+      const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
+      const payload = JSON.parse(atob(padded));
+
+      return payload?.id || payload?._id || "";
+    } catch {
+      return "";
+    }
+  }
+
+  function getOwnerNgoId(fallbackValue = "") {
+    if (fallbackValue) return fallbackValue;
+
+    const userId = localStorage.getItem("userId");
+    if (userId) return userId;
+
+    const rawUser = localStorage.getItem("user");
+    if (!rawUser) return decodeTokenUserId();
+
+    try {
+      const parsed = JSON.parse(rawUser);
+      return parsed?._id || parsed?.id || decodeTokenUserId();
+    } catch {
+      return decodeTokenUserId();
+    }
+  }
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchHospital() {
+      if (!id) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const res = await api.get(ApiConst.GET_SERVICE_BY_ID(id));
+        const hospital = res?.data?.data || res?.data || {};
+        const coordinates = Array.isArray(hospital?.location?.coordinates)
+          ? hospital.location.coordinates
+          : [];
+        const [lng, lat] = coordinates;
+        const ownerNgoId = hospital?.owner_ngo?._id || hospital?.owner_ngo || "";
+        const fetchedCapacity = Number(hospital?.capacity);
+        const safeCapacity = Number.isFinite(fetchedCapacity) && fetchedCapacity > 0 ? fetchedCapacity : 0;
+        const fetchedAvailability = Number(hospital?.availability);
+        const safeAvailability = Number.isFinite(fetchedAvailability)
+          ? Math.min(Math.max(fetchedAvailability, 0), safeCapacity)
+          : 0;
+        initialOccupiedBedsRef.current = Math.max(safeCapacity - safeAvailability, 0);
+
+        if (!isMounted) return;
+
+        setForm((prev) => {
+          const nextCapacity = hospital?.capacity ?? prev.totalBeds;
+          return {
+            ...prev,
+            hospitalName: hospital?.address?.building || prev.hospitalName,
+            description: hospital?.requirements || "",
+            totalBeds: nextCapacity,
+            phone: hospital?.phone_number || "",
+            address1: hospital?.address?.street || "",
+            city: hospital?.address?.city || "",
+            state: hospital?.address?.state || prev.state,
+            zip: hospital?.address?.zip || prev.zip,
+            availability: safeAvailability,
+            ownerNgo: getOwnerNgoId(ownerNgoId),
+            lng: lng != null ? String(lng) : "",
+            lat: lat != null ? String(lat) : "",
+          };
+        });
+      } catch (error) {
+        console.error("Failed to fetch hospital:", error);
+        toast.error("Failed to load hospital data.");
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    }
+
+    fetchHospital();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
 
   function updateField(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -76,8 +207,84 @@ export default function EditHospital() {
     }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+
+    if (isSubmitting) return;
+    if (!id) {
+      console.error("Missing hospital id in route params.");
+      toast.error("Please open this page from a specific hospital record.");
+      return;
+    }
+
+    const lng = parseFloat(form.lng);
+    const lat = parseFloat(form.lat);
+    if (Number.isNaN(lng) || Number.isNaN(lat)) {
+      console.error("Invalid coordinates in edit form", { lng: form.lng, lat: form.lat });
+      toast.error("Valid location coordinates are required before saving.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const capacity = Number(form.totalBeds);
+      const preservedOccupied = initialOccupiedBedsRef.current;
+      const ownerNgo = getOwnerNgoId(form.ownerNgo);
+
+      if (!Number.isFinite(capacity) || capacity <= 0) {
+        toast.error("Total bed capacity must be greater than 0.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const availability = Math.max(capacity - preservedOccupied, 0);
+
+      if (capacity < preservedOccupied) {
+        toast("Capacity is now lower than current occupancy, so availability was set to 0.");
+      }
+
+      const payload = {
+        title: "hospital",
+        capacity,
+        availability,
+        phone_number: form.phone?.trim(),
+        requirements: form.description?.trim(),
+        ...(ownerNgo ? { owner_ngo: ownerNgo } : {}),
+        location: {
+          type: "Point",
+          coordinates: [lng, lat],
+        },
+        address: {
+          building: form.hospitalName?.trim(),
+          street: form.address1?.trim(),
+          city: form.city?.trim(),
+        },
+      };
+
+      await api.put(ApiConst.UPDATE_SERVICE(id), payload);
+      toast.success("Hospital updated successfully.");
+      navigate("/hospitals");
+    } catch (error) {
+      console.error("Failed to update hospital:", error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.errors?.[0]?.message ||
+        error?.message ||
+        "Failed to update hospital.";
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  function handleLogoChange(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const objectUrl = URL.createObjectURL(file);
+    setLogoPreview(objectUrl);
+    toast.success("Logo selected.");
   }
 
   function renderOptionList(options) {
@@ -117,12 +324,13 @@ export default function EditHospital() {
 
   return (
     <div className="hospitals-page">
-      <AdminSidebar logoText="CareAdmin" navItems={SIDEBAR_LINKS} activeItem="Hospitals" user={USER_PROFILE} />
+      <AdminSidebar logoText="CareAdmin" navItems={SIDEBAR_LINKS} activeItem="Edit Hospital" user={USER_PROFILE} />
 
       <div className="hospitals-main-wrap">
         <TopHeader breadcrumbs={breadcrumbs} actions={headerActions} />
 
         <main className="hospitals-content">
+          {isLoading ? <p>Loading hospital details...</p> : null}
           <div className="eh-page">
             <header className="eh-page-title">
               <h1>Edit Hospital Details</h1>
@@ -131,7 +339,7 @@ export default function EditHospital() {
               </p>
             </header>
 
-            <form className="eh-form" onSubmit={handleSubmit}>
+            <form ref={formRef} className="eh-form" onSubmit={handleSubmit}>
               <SectionCard title="Basic Information">
                 <div className="eh-grid two-col">{BASIC_FIELD_GROUP.map(renderFieldControl)}</div>
 
@@ -147,12 +355,23 @@ export default function EditHospital() {
                 <div className="eh-logo-row">
                   <div className="eh-logo-frame">
                     <img
-                      src="https://storage.googleapis.com/uxpilot-auth.appspot.com/8a63a1214d-61dda6d03bd05096ba47.png"
+                      src={logoPreview}
                       alt="Hospital logo"
                     />
                   </div>
                   <div>
-                    <button type="button" className="hospitals-secondary-btn">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".png,.jpg,.jpeg,.svg"
+                      onChange={handleLogoChange}
+                      style={{ display: "none" }}
+                    />
+                    <button
+                      type="button"
+                      className="hospitals-secondary-btn"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
                       Change Logo
                     </button>
                     <p>JPG, PNG or SVG. Max size of 2MB.</p>
@@ -225,11 +444,11 @@ export default function EditHospital() {
               </SectionCard>
 
               <footer className="eh-footer-actions">
-                <button type="button" className="hospitals-secondary-btn">
+                <button type="button" className="hospitals-secondary-btn" onClick={() => navigate("/hospitals")}> 
                   Cancel
                 </button>
-                <button type="submit" className="hospitals-primary-btn">
-                  Save Changes
+                <button type="submit" className="hospitals-primary-btn" disabled={isSubmitting || isLoading}>
+                  {isSubmitting ? "Saving..." : "Save Changes"}
                 </button>
               </footer>
             </form>

@@ -15,12 +15,18 @@ import AidDistribution from './components/aid-distribution/AidDistribution';
 import Hospitals from "./components/hospitals/Hospitals";
 import AddHospital from "./components/add-hospital/AddHospital";
 import EditHospital from "./components/edit-hospital/EditHospital";
+import LoginPage from "./components/login/LoginPage";
+import InteractiveExercises from "./components/InteractiveExercises/InteractiveExercises";
+import Chatting from "./components/chatting/Chatting";
+import CounselorPortal from "./components/counselor-portal/CounselorPortal";
+import SupportHome from "./components/support-home/SupportHome";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/landing" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<SignupFlow />} />
         <Route path="/digital-identity" element={<DigitalIdentityVault />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -29,11 +35,15 @@ function App() {
         <Route path="/add-shelter" element={<AddShelter />} />
         <Route path="/hospitals" element={<Hospitals />} />
         <Route path="/add-hospital" element={<AddHospital />} />
-        <Route path="/edit-hospital" element={<EditHospital />} />
-        <Route path="/" element={<EditShelter />} />
+        <Route path="/edit-hospital/:id" element={<EditHospital />} />
+        <Route path="/EditShelter" element={<EditShelter />} />
         <Route path="/family-reunification" element={<FamilyReunification />} />
         <Route path="/refugee-dashboard" element={<RefugeeDashboard />} />
         <Route path="/aid-distribution" element={<AidDistribution />} />
+         <Route path="/InteractiveExercises" element={<InteractiveExercises />} />
+         <Route path="/chatting" element={<Chatting />} />
+         <Route path="/counselor-portal" element={<CounselorPortal />} />
+         <Route path="/support-home" element={<SupportHome />} />
       </Routes>
     </BrowserRouter>
   );
