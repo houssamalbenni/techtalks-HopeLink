@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from './LanguageContext';
 import { t } from './translations';
+import { buildServiceStatus, formatServiceAddress } from '../../services/serviceService';
 
 const LocationList = ({ selectedId, onSelect, requests = [] }) => {
   const { language } = useLanguage();
@@ -8,19 +9,40 @@ const LocationList = ({ selectedId, onSelect, requests = [] }) => {
   const [sortBy, setSortBy] = useState('distance');
   const [activeFilter, setActiveFilter] = useState('all');
 
-  // Transform requests into location data
-  const locations = requests.map((request) => ({
-    id: request._id,
-    name: request.service?.name || 'Unknown Service',
-    type: request.service?.type || 'Service',
-    distance: request.service?.location?.distance || 'N/A',
-    status: request.status === 'approved' ? 'APPROVED' : request.status === 'pending' ? 'PENDING' : 'COMPLETED',
-    statusClass: request.status === 'approved' ? 'status-open' : request.status === 'pending' ? 'status-limited' : 'status-full',
-    iconBg: '#8b5cf6',
-    tags: [],
-    priority: request.priority,
-    description: request.description,
-  }));
+  const locations = requests.map((entry) => {
+    const service = entry.service || entry;
+    const request = entry.request || null;
+    const serviceStatus = buildServiceStatus(service);
+    const requestStatus = request?.status === 'approved'
+      ? 'APPROVED'
+      : request?.status === 'pending'
+        ? 'PENDING'
+        : request?.status === 'completed'
+          ? 'COMPLETED'
+          : serviceStatus.label;
+
+    return {
+      id: service._id,
+      name: service.title || service.name || 'Unknown Service',
+      type: service.title || service.type || 'Service',
+      distance: service.location?.distance || 'N/A',
+      status: requestStatus,
+      statusClass: request?.status === 'approved'
+        ? 'status-open'
+        : request?.status === 'pending'
+          ? 'status-limited'
+          : serviceStatus.className,
+      iconBg: '#8b5cf6',
+      tags: (service.facilities || []).map((facility) => ({ label: facility })),
+      priority: request?.priority || serviceStatus.label,
+      description: request?.description || service.requirements,
+      address: formatServiceAddress(service.address),
+      availability: service.availability,
+      capacity: service.capacity,
+      request,
+      service,
+    };
+  });
 
   return (
     <div className="map-left-panel">
@@ -55,7 +77,7 @@ const LocationList = ({ selectedId, onSelect, requests = [] }) => {
 
       {locations.length === 0 ? (
         <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-          <p>No requests yet</p>
+          <p>No matching services found</p>
         </div>
       ) : (
         locations.map((loc) => (
@@ -83,7 +105,7 @@ const LocationList = ({ selectedId, onSelect, requests = [] }) => {
               <svg viewBox="0 0 24 24">
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
               </svg>
-              Priority: {loc.priority}
+              Availability: {loc.availability}/{loc.capacity}
             </div>
 
             {loc.description && (

@@ -2,6 +2,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useLanguage } from './LanguageContext';
+import { buildServiceStatus, formatServiceAddress } from '../../services/serviceService';
 
 // Lebanon coordinates
 const LEBANON_CENTER = [33.8547, 35.8623];
@@ -24,15 +25,31 @@ const createCustomMarker = (color) => {
 const MapView = ({ selectedId, onSelect, requests = [] }) => {
   const { language } = useLanguage();
 
-  // Generate markers from requests data
-  const markers = requests.map((request, index) => ({
-    id: request._id,
-    name: request.service?.name || 'Service Request',
-    type: request.service?.type || 'Service',
-    coords: request.service?.coordinates || [33.8742 + index * 0.01, 35.4906 + index * 0.01], // Default to Beirut area
-    color: request.status === 'approved' ? '#22c55e' : request.status === 'pending' ? '#f97316' : '#3b82f6',
-    status: request.status,
-  }));
+  const markers = requests.map((entry, index) => {
+    const service = entry.service || entry;
+    const request = entry.request || null;
+    const status = buildServiceStatus(service);
+    const coordinates = service.location?.coordinates;
+    const position = Array.isArray(coordinates) && coordinates.length === 2
+      ? [coordinates[1], coordinates[0]]
+      : [33.8742 + index * 0.01, 35.4906 + index * 0.01];
+
+    return {
+      id: service._id,
+      name: service.title || service.name || 'Service',
+      type: service.title || service.type || 'Service',
+      coords: position,
+      color: request?.status === 'approved'
+        ? '#22c55e'
+        : request?.status === 'pending'
+          ? '#f97316'
+          : status.className === 'status-full'
+            ? '#ef4444'
+            : '#3b82f6',
+      status: request?.status || status.label.toLowerCase(),
+      address: formatServiceAddress(service.address),
+    };
+  });
 
   return (
     <div className="map-area">
@@ -67,7 +84,8 @@ const MapView = ({ selectedId, onSelect, requests = [] }) => {
               <div>
                 <p style={{ margin: '0 0 5px 0', fontWeight: 'bold' }}>{marker.name}</p>
                 <p style={{ margin: '0 0 5px 0', fontSize: '12px' }}>{marker.type}</p>
-                <p style={{ margin: '0', fontSize: '11px', color: '#666' }}>Status: {marker.status?.toUpperCase()}</p>
+                  <p style={{ margin: '0', fontSize: '11px', color: '#666' }}>Status: {marker.status?.toUpperCase()}</p>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '11px', color: '#666' }}>{marker.address}</p>
               </div>
             </Popup>
           </Marker>

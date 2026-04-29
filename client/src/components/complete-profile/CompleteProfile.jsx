@@ -8,6 +8,7 @@ import ServiceAreaInput from "./ServiceAreaInput";
 import "./complete-profile.css";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../../services/userService";
+import { saveAuthSession } from "../../../utils/authStorage";
 import toast from "react-hot-toast";
 import { useState } from "react";
 const CompleteProfile = ({
@@ -53,9 +54,7 @@ const CompleteProfile = ({
     try {
       const res = await registerUser(payload);
       if (res) {
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("userId", res.data.user._id);
-        localStorage.setItem("role", res.data.user.role);
+        saveAuthSession({ token: res.data.token, user: res.data.user });
         toast.success("Registration successful! Redirecting to dashboard...");
         navigate("/dashboard");
       }

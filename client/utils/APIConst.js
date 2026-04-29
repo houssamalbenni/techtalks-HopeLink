@@ -4,8 +4,12 @@ export const ApiConst = {
   LOGIN_USER: "/auth/login",
   GET_ALL_USERS: "/users", // Admin
   GET_USER_BY_ID: (id) => `/users/${id}`,
+  GET_USERS_BY_ROLE: (role) => `/users/roles/${role}`,
+  GET_USER_ROLE: "/users/role",
   UPDATE_USER: (id) => `/users/${id}`,
   DELETE_USER: (id) => `/users/${id}`,
+  UPDATE_CURRENT_USER: "/users",
+  DELETE_CURRENT_USER: "/users",
 
   CREATE_SERVICE: "/admin/services",
   GET_ALL_SERVICES: "/admin/services",

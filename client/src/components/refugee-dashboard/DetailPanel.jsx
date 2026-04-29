@@ -1,27 +1,36 @@
 import { useLanguage } from './LanguageContext';
+import { buildServiceStatus, formatServiceAddress } from '../../services/serviceService';
 
 const DetailPanel = ({ selectedId, requests = [] }) => {
   const { language } = useLanguage();
 
-  // Find the request by ID
-  const request = requests.find(req => req._id === selectedId);
+  const selectedItem = requests.find((entry) => (entry.service || entry)._id === selectedId);
+  const service = selectedItem?.service || selectedItem;
+  const request = selectedItem?.request || selectedItem?.serviceRequest || null;
 
-  if (!request || !request.service) {
+  if (!service) {
     return (
       <div className="map-detail-panel">
         <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-          <p>Select a request to view details</p>
+          <p>Select a service to view details</p>
         </div>
       </div>
     );
   }
 
-  const service = request.service;
+  const status = request?.status || buildServiceStatus(service).label.toLowerCase();
   const statusColors = {
     pending: '#f97316',
     approved: '#22c55e',
-    completed: '#3b82f6'
+    completed: '#3b82f6',
+    full: '#ef4444',
+    limited: '#f97316',
+    open: '#22c55e',
   };
+  const serviceAddress = formatServiceAddress(service.address);
+  const intakeHours = service.intake_hours
+    ? `${service.intake_hours.startTime || 'N/A'} - ${service.intake_hours.endTime || 'N/A'}`
+    : 'Not specified';
 
   return (
     <div className="map-detail-panel">
@@ -42,7 +51,7 @@ const DetailPanel = ({ selectedId, requests = [] }) => {
       </div>
 
       <div className="detail-body">
-        <h2 className="detail-name">{service.name}</h2>
+        <h2 className="detail-name">{service.title || service.name}</h2>
 
         <div className="detail-action-btns">
           <button className="detail-reserve-btn">
@@ -71,7 +80,19 @@ const DetailPanel = ({ selectedId, requests = [] }) => {
           </div>
           <div>
             <p className="detail-info-label">Type</p>
-            <p className="detail-info-value">{service.type || 'Service Request'}</p>
+            <p className="detail-info-value">{service.title || service.type || 'Service'}</p>
+          </div>
+        </div>
+
+        <div className="detail-info-item">
+          <div className="detail-info-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+            </svg>
+          </div>
+          <div>
+            <p className="detail-info-label">Availability</p>
+            <p className="detail-info-value">{service.availability}/{service.capacity}</p>
           </div>
         </div>
 
@@ -95,13 +116,27 @@ const DetailPanel = ({ selectedId, requests = [] }) => {
           </div>
           <div>
             <p className="detail-info-label">Status</p>
-            <p className="detail-info-value" style={{ color: statusColors[request.status] }}>
-              {request.status?.toUpperCase() || 'PENDING'}
+            <p className="detail-info-value" style={{ color: statusColors[status] || '#8b5cf6' }}>
+              {(status || 'pending').toUpperCase()}
             </p>
           </div>
         </div>
 
-        {request.description && (
+        {serviceAddress && (
+          <div className="detail-info-item">
+            <div className="detail-info-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+              </svg>
+            </div>
+            <div>
+              <p className="detail-info-label">Address</p>
+              <p className="detail-info-value">{serviceAddress}</p>
+            </div>
+          </div>
+        )}
+
+        {request?.description && (
           <>
             <div className="detail-divider" />
             <p className="detail-section-label">Description</p>
@@ -111,9 +146,27 @@ const DetailPanel = ({ selectedId, requests = [] }) => {
           </>
         )}
 
+        {service.requirements && (
+          <>
+            <div className="detail-divider" />
+            <p className="detail-section-label">Requirements</p>
+            <p className="detail-info-value" style={{ lineHeight: '1.5' }}>
+              {service.requirements}
+            </p>
+          </>
+        )}
+
+        {service.intake_hours && (
+          <>
+            <div className="detail-divider" />
+            <p className="detail-section-label">Intake Hours</p>
+            <p className="detail-info-value">{intakeHours}</p>
+          </>
+        )}
+
         <div className="detail-divider" />
         <p style={{ fontSize: '12px', color: '#999', marginTop: '10px' }}>
-          Created: {new Date(request.createdAt).toLocaleDateString()}
+          Updated: {new Date(service.updatedAt || service.createdAt || Date.now()).toLocaleDateString()}
         </p>
       </div>
     </div>
