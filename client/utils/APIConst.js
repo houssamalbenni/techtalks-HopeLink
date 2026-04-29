@@ -19,9 +19,26 @@ export const ApiConst = {
   GET_TOTAL_DONATIONS: "/donor/total",
 
   CREATE_REQUEST: "/requests",
+  CREATE_REQUEST: "/requests",
+
+  // Refugee endpoints
+  GET_ALL_REFUGEE_REQUESTS: "/refugee",
+  GET_MY_REQUESTS: "/refugee/my-requests",
+  GET_REFUGEE_REQUEST_BY_ID: (id) => `/refugee/${id}`,
+  UPDATE_REFUGEE_REQUEST: (id) => `/refugee/${id}`,
+  REQUEST_SERVICE: "/refugee",
 
   // Aid Distribution endpoints
   GET_ALL_DISTRIBUTIONS: "/admin/services",
   GET_DISTRIBUTION_BY_ID: (id) => `/admin/services/${id}`,
   GET_NEARBY_DISTRIBUTIONS: "/admin/services/nearby",
+
+  // Family Reunification / Missing Person endpoints
+  CREATE_MISSING_CASE: "/missing-person",
+  GET_MY_MISSING_CASES: "/missing-person/my-cases",
+  GET_MISSING_CASE_BY_ID: (id) => `/missing-person/${id}`,
+  UPDATE_MISSING_CASE: (id) => `/missing-person/${id}`,
+  ADD_NOTE_TO_CASE: (id) => `/missing-person/${id}/notes`,
+  GET_ALL_MISSING_CASES: "/missing-person", // Admin
+  GET_MISSING_CASES_BY_STATUS: (status) => `/missing-person/status/${status}`,
 };
