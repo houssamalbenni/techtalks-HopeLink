@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-export default function VaultStatus() {
-  const [locked, setLocked] = useState(true);
+export default function VaultStatus({ locked = true, onToggle = () => {}, disabled = false }) {
 
   return (
     <div className="digital-vault-status-row">
@@ -99,8 +98,12 @@ export default function VaultStatus() {
           <div className="digital-vault-status-label">Vault Status</div>
           <div
             className="digital-vault-status-toggle"
-            style={{ background: locked ? "#4f8ef7" : "#2a3352" }}
-            onClick={() => setLocked(!locked)}
+            style={{ 
+              background: locked ? "#4f8ef7" : "#2a3352",
+              cursor: disabled ? "not-allowed" : "pointer",
+              opacity: disabled ? 0.6 : 1,
+            }}
+            onClick={() => !disabled && onToggle()}
           >
             <div
               className="digital-vault-status-toggle-thumb"

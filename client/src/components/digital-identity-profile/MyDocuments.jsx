@@ -34,7 +34,7 @@ const docs = [
   },
 ];
 
-export default function MyDocuments() {
+export default function MyDocuments({ documents = docs, onDelete = () => {}, disabled = false }) {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
@@ -124,11 +124,15 @@ export default function MyDocuments() {
           </div>
         </div>
 
-        {docs.map((doc, i) => (
+        {documents.map((doc, i) => (
           <div
             key={i}
             className="digital-vault-docs-doc-card"
-            style={{ animation: `slideUp 0.6s ease-out ${i * 0.1}s both` }}
+            style={{ 
+              animation: `slideUp 0.6s ease-out ${i * 0.1}s both`,
+              opacity: disabled ? 0.6 : 1,
+              pointerEvents: disabled ? "none" : "auto",
+            }}
           >
             <div className="digital-vault-docs-doc-top">
               <div
@@ -137,7 +141,13 @@ export default function MyDocuments() {
               >
                 {doc.icon}
               </div>
-              <button className="digital-vault-docs-doc-more-btn">⋮</button>
+              <button 
+                className="digital-vault-docs-doc-more-btn"
+                onClick={() => onDelete(doc.id)}
+                disabled={disabled}
+              >
+                ⋮
+              </button>
             </div>
             <div className="digital-vault-docs-doc-name">{doc.name}</div>
             <div className="digital-vault-docs-doc-date">{doc.date}</div>
