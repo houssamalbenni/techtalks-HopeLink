@@ -19,6 +19,9 @@ export default function EditShelter() {
   const {
     data,
     isDirty,
+    loading,
+    error,
+    success,
     handleChange,
     handleSave,
     handleUpdate,
@@ -49,6 +52,54 @@ export default function EditShelter() {
             </p>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div
+              style={{
+                padding: "12px",
+                marginBottom: "16px",
+                backgroundColor: "#fee",
+                border: "1px solid #fcc",
+                borderRadius: "8px",
+                color: "#c33",
+              }}
+            >
+              ⚠️ {error}
+            </div>
+          )}
+
+          {/* Success Message */}
+          {success && (
+            <div
+              style={{
+                padding: "12px",
+                marginBottom: "16px",
+                backgroundColor: "#efe",
+                border: "1px solid #cfc",
+                borderRadius: "8px",
+                color: "#3c3",
+              }}
+            >
+              ✅ Shelter updated successfully!
+            </div>
+          )}
+
+          {/* Loading Indicator */}
+          {loading && (
+            <div
+              style={{
+                padding: "12px",
+                marginBottom: "16px",
+                backgroundColor: "#eef",
+                border: "1px solid #ccf",
+                borderRadius: "8px",
+                color: "#33c",
+              }}
+            >
+              ⏳ Loading shelter data...
+            </div>
+          )}
+
           {/* Section 1 – Basic Information */}
           <BasicInfoSection data={data} onChange={handleChange} />
 
@@ -64,6 +115,7 @@ export default function EditShelter() {
           {/* Sticky footer actions */}
           <FormFooter
             isDirty={isDirty}
+            loading={loading}
             onCancel={handleCancel}
             onSave={handleSave}
           />
