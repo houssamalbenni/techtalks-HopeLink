@@ -11,6 +11,7 @@ import ToggleCard from './ToggleCard';
 import PasswordField from './PasswordField';
 import SessionList from './SessionList';
 import ActionPanel from './ActionPanel';
+import { useProfileSettingsForm } from './useProfileSettingsForm';
 import {
   sidebarConfig,
   mainNavItems,
@@ -25,30 +26,20 @@ import {
 } from './data/profileSettingsData';
 
 function ProfileSettings() {
-  const [preferences, setPreferences] = useState({
-    activeRole: 'donor',
-    language: 'en',
-  });
-  const [securityToggles, setSecurityToggles] = useState({
-    authenticatorEnabled: true,
-    loginAlertsEnabled: true,
-  });
-  const [passwordVisibility, setPasswordVisibility] = useState({
-    newPassword: false,
-    confirmPassword: false,
-  });
-
-  const handlePreferenceChange = (key, value) => {
-    setPreferences((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleToggleChange = (key, value) => {
-    setSecurityToggles((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const togglePasswordVisibility = (key) => {
-    setPasswordVisibility((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
+  const {
+    preferences,
+    securityToggles,
+    passwordVisibility,
+    isDirty,
+    loading,
+    error,
+    success,
+    handlePreferenceChange,
+    handleToggleChange,
+    togglePasswordVisibility,
+    handleSave,
+    handleCancel,
+  } = useProfileSettingsForm();
 
   return (
     <div className="ps-page">
@@ -64,6 +55,63 @@ function ProfileSettings() {
         <div className="ps-glow ps-glow-violet" />
 
         <TopHeader title={headerConfig.title} />
+
+        {/* Error Message */}
+        {error && (
+          <div
+            style={{
+              padding: "12px",
+              marginBottom: "16px",
+              backgroundColor: "#fee",
+              border: "1px solid #fcc",
+              borderRadius: "8px",
+              color: "#c33",
+              marginLeft: "20px",
+              marginRight: "20px",
+              marginTop: "20px",
+            }}
+          >
+            ⚠️ {error}
+          </div>
+        )}
+
+        {/* Success Message */}
+        {success && (
+          <div
+            style={{
+              padding: "12px",
+              marginBottom: "16px",
+              backgroundColor: "#efe",
+              border: "1px solid #cfc",
+              borderRadius: "8px",
+              color: "#3c3",
+              marginLeft: "20px",
+              marginRight: "20px",
+              marginTop: "20px",
+            }}
+          >
+            ✅ Profile settings updated successfully!
+          </div>
+        )}
+
+        {/* Loading Indicator */}
+        {loading && (
+          <div
+            style={{
+              padding: "12px",
+              marginBottom: "16px",
+              backgroundColor: "#eef",
+              border: "1px solid #ccf",
+              borderRadius: "8px",
+              color: "#33c",
+              marginLeft: "20px",
+              marginRight: "20px",
+              marginTop: "20px",
+            }}
+          >
+            ⏳ Loading profile settings...
+          </div>
+        )}
 
         <div className="ps-content-scroll">
           <div className="ps-workspace">
@@ -178,6 +226,70 @@ function ProfileSettings() {
                   ))}
                 </div>
               </section>
+
+              {/* Settings Footer */}
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "20px",
+                backgroundColor: "#f5f5f5",
+                borderRadius: "8px",
+                marginTop: "20px",
+              }}>
+                {isDirty && !loading && (
+                  <div style={{
+                    color: "#666",
+                    fontSize: "14px",
+                  }}>
+                    • Unsaved changes
+                  </div>
+                )}
+                {loading && (
+                  <div style={{
+                    color: "#33c",
+                    fontSize: "14px",
+                  }}>
+                    ⏳ Saving...
+                  </div>
+                )}
+                {!isDirty && !loading && (
+                  <div />
+                )}
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    disabled={loading}
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "6px",
+                      border: "1px solid #ddd",
+                      backgroundColor: "#fff",
+                      cursor: loading ? "not-allowed" : "pointer",
+                      opacity: loading ? 0.6 : 1,
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSave}
+                    disabled={loading || !isDirty}
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "6px",
+                      border: "none",
+                      backgroundColor: (loading || !isDirty) ? "#ccc" : "#33c",
+                      color: "#fff",
+                      cursor: (loading || !isDirty) ? "not-allowed" : "pointer",
+                      opacity: (loading || !isDirty) ? 0.6 : 1,
+                    }}
+                  >
+                    {loading ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+              </div>
             </section>
           </div>
         </div>
