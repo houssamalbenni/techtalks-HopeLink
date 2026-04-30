@@ -2,8 +2,8 @@ const DonorService = require("../service/donorService");
 const asyncHandler = require("../middleware/asyncHandler");
 
 exports.createDonation = asyncHandler(async (req, res) => {
-    const { donorId, amount} = req.body;
-    const donation = await DonorService.createDonation(donorId, amount);
+    const { amount } = req.body;
+    const donation = await DonorService.createDonation(req.user.id, amount);
     return res.status(201).json({
         success: true,
         donation: donation
@@ -11,8 +11,7 @@ exports.createDonation = asyncHandler(async (req, res) => {
 });
 
 exports.getAllUserDonations = asyncHandler(async (req, res) => {
-    const userId = req.params.userId;
-    const donations = await DonorService.getAllUserDonations(userId);
+    const donations = await DonorService.getAllUserDonations(req.user.id);
     return res.status(200).json({
         success: true,
         donations: donations

@@ -1,12 +1,20 @@
-const FormActions = ({ onBack, onSubmit }) => {
+const FormActions = ({ onBack, onSubmit, isSubmitting = false }) => {
   return (
     <div className="form-actions">
       <div className="form-actions__buttons">
-        <button onClick={onBack} className="form-actions__button form-actions__button--secondary">
+        <button
+          onClick={onBack}
+          disabled={isSubmitting}
+          className="form-actions__button form-actions__button--secondary"
+        >
           Back
         </button>
-        <button onClick={onSubmit} className="form-actions__button form-actions__button--primary">
-          Complete Registration ✓
+        <button
+          onClick={onSubmit}
+          disabled={isSubmitting}
+          className="form-actions__button form-actions__button--primary"
+        >
+          {isSubmitting ? "Creating account..." : "Complete Registration ✓"}
         </button>
       </div>
       <p className="form-actions__note">
