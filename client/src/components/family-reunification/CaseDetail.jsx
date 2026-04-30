@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-const CaseDetail = () => {
+const CaseDetail = ({ selectedCase }) => {
   const fileInputRef = useRef(null);
 
   const handleUploadClick = () => {
@@ -13,6 +13,22 @@ const CaseDetail = () => {
       console.log('Files selected:', files);
       // Handle file upload here
     }
+  };
+
+  if (!selectedCase) {
+    return (
+      <div className="fr-right-panel" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: '#6b7db3' }}>Select a case to view details</p>
+      </div>
+    );
+  }
+
+  const statusColors = {
+    'IN PROGRESS': '#f97316',
+    'VERIFYING': '#3b82f6',
+    'MATCHED': '#10b981',
+    'REUNITED': '#8b5cf6',
+    'CLOSED': '#6b7db3',
   };
 
   return (
@@ -35,11 +51,11 @@ const CaseDetail = () => {
             </svg>
           </div>
           <div>
-            <h2 className="fr-case-title">Case #FR-2023-892</h2>
+            <h2 className="fr-case-title">{selectedCase.caseId}</h2>
             <div className="fr-case-meta">
-              <span>Initiated on Oct 12, 2023</span>
+              <span>Initiated on {selectedCase.lastKnownDate}</span>
               <div className="fr-case-meta-dot" />
-              <span className="fr-active-search">● Active Search</span>
+              <span className="fr-active-search">● {selectedCase.status === 'MATCHED' || selectedCase.status === 'REUNITED' ? 'Match Found' : 'Active Search'}</span>
             </div>
           </div>
         </div>
@@ -52,8 +68,8 @@ const CaseDetail = () => {
           <p className="fr-info-card-label">Target Individual</p>
           <div className="fr-info-card-value-row">
             <div>
-              <p className="fr-info-card-value">Tariq K. <span style={{ color: '#6b7db3', fontSize: '11px', fontWeight: 400 }}>(Alias/Masked)</span></p>
-              <p className="fr-info-card-sub">Relation: Brother</p>
+              <p className="fr-info-card-value">{selectedCase.name} <span style={{ color: '#6b7db3', fontSize: '11px', fontWeight: 400 }}>(Alias/Masked)</span></p>
+              <p className="fr-info-card-sub">Relation: {selectedCase.relation}</p>
             </div>
             <div className="fr-info-card-icon">
               <svg viewBox="0 0 24 24" style={{ fill: '#4a5580' }}>
@@ -67,8 +83,8 @@ const CaseDetail = () => {
           <p className="fr-info-card-label">Last Known Location</p>
           <div className="fr-info-card-value-row">
             <div>
-              <p className="fr-info-card-value">Aleppo Region <span style={{ color: '#6b7db3', fontSize: '11px', fontWeight: 400 }}>(Approx)</span></p>
-              <p className="fr-info-card-sub">Date: Sep 2023</p>
+              <p className="fr-info-card-value">{selectedCase.lastKnownLocation} <span style={{ color: '#6b7db3', fontSize: '11px', fontWeight: 400 }}>(Approx)</span></p>
+              <p className="fr-info-card-sub">Date: {selectedCase.lastKnownDate}</p>
             </div>
             <div className="fr-info-card-icon">
               <svg viewBox="0 0 24 24" style={{ fill: '#3b82f6' }}>
@@ -79,11 +95,11 @@ const CaseDetail = () => {
         </div>
 
         <div className="fr-info-card">
-          <p className="fr-info-card-label">Data Clearance</p>
+          <p className="fr-info-card-label">Status</p>
           <div className="fr-info-card-value-row">
             <div>
-              <p className="fr-info-card-value" style={{ color: '#10b981' }}>Level 2 Verified</p>
-              <p className="fr-info-card-sub">Via Digital Identity Vault</p>
+              <p className="fr-info-card-value" style={{ color: statusColors[selectedCase.status] }}>{selectedCase.status}</p>
+              <p className="fr-info-card-sub">{selectedCase.updated}</p>
             </div>
             <div className="fr-info-card-icon">
               <svg viewBox="0 0 24 24" style={{ fill: '#6b7db3' }}>
@@ -107,16 +123,18 @@ const CaseDetail = () => {
         </div>
 
         <div className="fr-docs-grid">
-          <div className="fr-doc-card fr-doc-interactive">
-            <span className="fr-doc-verified">Verified</span>
-            <div className="fr-doc-icon" style={{ background: '#1e3a6e' }}>
-              <svg viewBox="0 0 24 24">
-                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
-              </svg>
+          {selectedCase.photo && (
+            <div className="fr-doc-card fr-doc-interactive">
+              <span className="fr-doc-verified">Verified</span>
+              <div className="fr-doc-icon" style={{ background: '#1e3a6e' }}>
+                <svg viewBox="0 0 24 24">
+                  <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+                </svg>
+              </div>
+              <p className="fr-doc-name">Profile Photo.enc</p>
+              <p className="fr-doc-meta">Uploaded {selectedCase.lastKnownDate}</p>
             </div>
-            <p className="fr-doc-name">Family Photo.enc</p>
-            <p className="fr-doc-meta">2.4 MB • Uploaded Oct 12</p>
-          </div>
+          )}
 
           <div className="fr-doc-card fr-doc-interactive">
             <span className="fr-doc-verified">Verified</span>
@@ -125,8 +143,8 @@ const CaseDetail = () => {
                 <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
               </svg>
             </div>
-            <p className="fr-doc-name">Marriage_Cert.enc</p>
-            <p className="fr-doc-meta">1.1 MB • Linked from Vault</p>
+            <p className="fr-doc-name">Case Document.enc</p>
+            <p className="fr-doc-meta">From Digital Identity Vault</p>
           </div>
         </div>
 
@@ -162,31 +180,25 @@ const CaseDetail = () => {
         </div>
 
         <div className="fr-chat-messages">
-          <div className="fr-msg-row">
-            <div className="fr-msg-avatar">CW</div>
-            <div className="fr-msg-content">
-              <div className="fr-msg-meta">
-                <span className="fr-msg-name">Case Worker Sarah</span>
-                <span>Yesterday, 14:30</span>
+          {selectedCase.notes && selectedCase.notes.length > 0 ? (
+            selectedCase.notes.map((note, idx) => (
+              <div key={idx} className={`fr-msg-row ${note.senderRole === 'user' ? 'right' : ''}`}>
+                <div className="fr-msg-avatar">{note.senderName ? note.senderName.slice(0, 2).toUpperCase() : 'CW'}</div>
+                <div className="fr-msg-content">
+                  <div className={`fr-msg-meta ${note.senderRole === 'user' ? 'right' : ''}`}>
+                    {note.senderRole !== 'user' && <span className="fr-msg-name">{note.senderName || 'Case Worker'}</span>}
+                    <span>{new Date(note.createdAt).toLocaleString()}</span>
+                    {note.senderRole === 'user' && <span className="fr-msg-name">{note.senderName || 'You'}</span>}
+                  </div>
+                  <div className="fr-msg-bubble">
+                    {note.message || note.text}
+                  </div>
+                </div>
               </div>
-              <div className="fr-msg-bubble">
-                I've forwarded the physical description to the Berlin Transit Hub. They have someone matching the profile who arrived last week. We are waiting for their local admin to confirm the visual match with the uploaded photo.
-              </div>
-            </div>
-          </div>
-
-          <div className="fr-msg-row right">
-            <div className="fr-msg-avatar">AK</div>
-            <div className="fr-msg-content">
-              <div className="fr-msg-meta right">
-                <span>Yesterday, 16:45</span>
-                <span className="fr-msg-name">You</span>
-              </div>
-              <div className="fr-msg-bubble">
-                Thank you Sarah. Please let me know as soon as you hear back. He also has a small scar on his left cheek which might help them identify him.
-              </div>
-            </div>
-          </div>
+            ))
+          ) : (
+            <p style={{ color: '#6b7db3', textAlign: 'center', padding: '20px' }}>No notes yet. Add a note to this case.</p>
+          )}
         </div>
 
         <div className="fr-chat-input-row">

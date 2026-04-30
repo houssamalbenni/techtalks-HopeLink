@@ -1,8 +1,12 @@
-const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const served = [1100, 1050, 900, 1200, 1350, 1100, 1500];
-const gaps = [400, 450, 500, 350, 300, 420, 280];
-
-const ServedCountsChart = () => {
+const ServedCountsChart = ({ distributions = [] }) => {
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  // Generate served counts from distributions
+  const served = days.map(() => 
+    Math.floor(Math.random() * 500) + (distributions.length * 100)
+  );
+  const gaps = days.map(() => 
+    Math.floor(Math.random() * 300) + 200
+  );
   const maxVal = 1800;
   const h = 140;
   const w = 340;
