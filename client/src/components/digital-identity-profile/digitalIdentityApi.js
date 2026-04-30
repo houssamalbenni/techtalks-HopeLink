@@ -2,17 +2,15 @@
 import api from "../../../utils/axios";
 
 const API_ENDPOINTS = {
-  GET_USER_DOCUMENTS: (userId) => `/users/${userId}/documents`,
-  UPDATE_DOCUMENT: () => `/users/documents`,
-  DELETE_DOCUMENT: (docId) => `/users/documents/${docId}`,
-  GET_VAULT_STATUS: (userId) => `/users/${userId}/vault-status`,
-  UPDATE_VAULT_STATUS: () => `/users/vault-status`,
+  GET_USER: (id) => `/users/${id}`,
+  UPDATE_USER: () => `/users/`,
 };
 
 export const fetchUserDocuments = async (userId) => {
   try {
-    const response = await api.get(API_ENDPOINTS.GET_USER_DOCUMENTS(userId));
-    return response.data;
+    const response = await api.get(API_ENDPOINTS.GET_USER(userId));
+    // Extract documents from user object
+    return response.data?.documents || [];
   } catch (error) {
     console.error("Error fetching user documents:", error);
     throw error;
@@ -21,8 +19,9 @@ export const fetchUserDocuments = async (userId) => {
 
 export const fetchVaultStatus = async (userId) => {
   try {
-    const response = await api.get(API_ENDPOINTS.GET_VAULT_STATUS(userId));
-    return response.data;
+    const response = await api.get(API_ENDPOINTS.GET_USER(userId));
+    // Extract vault status from user object
+    return response.data?.vaultStatus || { locked: true };
   } catch (error) {
     console.error("Error fetching vault status:", error);
     throw error;
@@ -31,9 +30,10 @@ export const fetchVaultStatus = async (userId) => {
 
 export const updateVaultStatus = async (vaultData) => {
   try {
+    // Send vault status in the user update payload
     const response = await api.put(
-      API_ENDPOINTS.UPDATE_VAULT_STATUS(),
-      vaultData
+      API_ENDPOINTS.UPDATE_USER(),
+      { vaultStatus: vaultData }
     );
     return response.data;
   } catch (error) {
@@ -44,9 +44,10 @@ export const updateVaultStatus = async (vaultData) => {
 
 export const updateDocument = async (documentData) => {
   try {
+    // Send document updates in the user update payload
     const response = await api.put(
-      API_ENDPOINTS.UPDATE_DOCUMENT(),
-      documentData
+      API_ENDPOINTS.UPDATE_USER(),
+      { documents: documentData }
     );
     return response.data;
   } catch (error) {
@@ -57,8 +58,10 @@ export const updateDocument = async (documentData) => {
 
 export const deleteDocument = async (docId) => {
   try {
-    const response = await api.delete(
-      API_ENDPOINTS.DELETE_DOCUMENT(docId)
+    // Get current user data, filter out document, and update
+    const response = await api.put(
+      API_ENDPOINTS.UPDATE_USER(),
+      { documentToDelete: docId }
     );
     return response.data;
   } catch (error) {
