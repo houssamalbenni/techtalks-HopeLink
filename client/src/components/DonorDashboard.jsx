@@ -1,117 +1,110 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-    Area,
-    AreaChart,
-    CartesianGrid,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
+import donorService from "../services/Donorservice";
 import "../styles/DonorDashboard.css";
-
-const donationHistoryData = [
-  { month: "Jan", amount: 0 },
-  { month: "Feb", amount: 200 },
-  { month: "Mar", amount: 600 },
-  { month: "Apr", amount: 400 },
-  { month: "May", amount: 700 },
-  { month: "Jun", amount: 1100 },
-  { month: "Jul", amount: 500 },
-  { month: "Aug", amount: 300 },
-  { month: "Sep", amount: 750 },
-  { month: "Oct", amount: 850 },
-];
-
-const transactions = [
-  {
-    id: 1,
-    date: "Oct 24, 2023",
-    time: "14:30 PM",
-    amount: "$500.00",
-    batch: "Batch #AD8842",
-    category: "Medical Supplies",
-    categoryColor: "#4ade80",
-    icon: "$",
-    iconBg: "#3b5bdb",
-  },
-  {
-    id: 2,
-    date: "Sep 15, 2023",
-    time: "09:15 AM",
-    amount: "$150.00",
-    batch: "Batch #BC9921",
-    category: "Food Rations",
-    categoryColor: "#60a5fa",
-    icon: "↻",
-    iconBg: "#6d28d9",
-  },
-  {
-    id: 3,
-    date: "Aug 15, 2023",
-    time: "08:12 AM",
-    amount: "$150.00",
-    batch: "Batch #EF4412",
-    category: "Winter Gear",
-    categoryColor: "#fb923c",
-    icon: "↻",
-    iconBg: "#6d28d9",
-  },
-];
 
 const navItems = [
   {
     label: "NGO Operations Dashboard",
-    icon: (
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-        <rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor" opacity="0.7" />
-        <rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor" opacity="0.7" />
-        <rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor" opacity="0.7" />
-        <rect x="14" y="14" width="7" height="7" rx="1" fill="currentColor" opacity="0.7" />
-      </svg>
-    ),
+    icon: (<svg width="16" height="16" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor" opacity="0.7" /><rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor" opacity="0.7" /><rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor" opacity="0.7" /><rect x="14" y="14" width="7" height="7" rx="1" fill="currentColor" opacity="0.7" /></svg>),
   },
   {
     label: "Aid Distribution Monitoring",
-    icon: (
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-        <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-    ),
+    icon: (<svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>),
   },
   {
-    label: "Donor Dashboard",
-    icon: (
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-        <circle cx="12" cy="8" r="4" fill="currentColor" />
-        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-    ),
-    active: true,
+    label: "Donor Dashboard", active: true,
+    icon: (<svg width="16" height="16" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="currentColor" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>),
   },
   {
     label: "Interactive Map",
-    icon: (
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="currentColor" opacity="0.7" />
-        <circle cx="12" cy="9" r="2.5" fill="white" />
-      </svg>
-    ),
+    icon: (<svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="currentColor" opacity="0.7" /><circle cx="12" cy="9" r="2.5" fill="white" /></svg>),
   },
   {
     label: "Profile & Settings",
-    icon: (
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" />
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" strokeWidth="2" />
-      </svg>
-    ),
+    icon: (<svg width="16" height="16" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" strokeWidth="2" /></svg>),
   },
 ];
+
+// Build chart data from real donations grouped by month
+function buildChartData(donations) {
+  const monthMap = {};
+  donations.forEach((d) => {
+    const date = new Date(d.createdAt || d.date);
+    const month = date.toLocaleString("en-US", { month: "short" });
+    monthMap[month] = (monthMap[month] || 0) + (d.amount || 0);
+  });
+  return Object.entries(monthMap).map(([month, amount]) => ({ month, amount }));
+}
+
+// Transform a raw donation into UI-friendly transaction format
+function transformDonation(donation, index) {
+  const date = donation.createdAt ? new Date(donation.createdAt) : null;
+  return {
+    id: donation._id || index + 1,
+    date: date ? date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "Unknown",
+    time: date ? date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : "N/A",
+    amount: `$${(donation.amount || 0).toLocaleString()}`,
+    batch: `Batch #${String(donation._id || index + 1).slice(-6).toUpperCase()}`,
+    category: donation.category || "General Donation",
+    categoryColor: "#4ade80",
+    icon: "$",
+    iconBg: "#3b5bdb",
+  };
+}
 
 export default function DonorDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [transactions, setTransactions] = useState([]);
+  const [chartData, setChartData] = useState([]);
+  const [totalDonated, setTotalDonated] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchDonorData();
+  }, []);
+
+  const fetchDonorData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const [donations, total] = await Promise.all([
+        donorService.getUserDonations(),
+        donorService.getTotalDonations(),
+      ]);
+
+      if (Array.isArray(donations)) {
+        setTransactions(donations.map(transformDonation));
+        setChartData(buildChartData(donations));
+      }
+
+      if (total !== undefined && total !== null) {
+        setTotalDonated(`$${Number(total).toLocaleString()}`);
+      }
+    } catch (err) {
+      console.error("Failed to fetch donor data:", err);
+      setError("Failed to load donation data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredTransactions = transactions.filter(
+    (t) =>
+      t.batch.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.date.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="dd-root">
@@ -155,14 +148,10 @@ export default function DonorDashboard() {
         </div>
       </aside>
 
-      {/* Overlay for mobile */}
-      {sidebarOpen && (
-        <div className="dd-overlay" onClick={() => setSidebarOpen(false)} />
-      )}
+      {sidebarOpen && <div className="dd-overlay" onClick={() => setSidebarOpen(false)} />}
 
       {/* Main */}
       <main className="dd-main">
-        {/* Topbar */}
         <header className="dd-topbar">
           <button className="dd-hamburger" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <span /><span /><span />
@@ -185,8 +174,15 @@ export default function DonorDashboard() {
           </div>
         </header>
 
-        {/* Content */}
         <div className="dd-content">
+          {/* Error Banner */}
+          {error && (
+            <div style={{ backgroundColor: "#fee2e2", border: "1px solid #fecaca", color: "#dc2626", padding: "12px 16px", borderRadius: "8px", marginBottom: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span>{error}</span>
+              <button onClick={fetchDonorData} style={{ background: "none", border: "none", cursor: "pointer", color: "#dc2626" }}>↺ Retry</button>
+            </div>
+          )}
+
           {/* Top Cards Row */}
           <div className="dd-top-row">
             {/* Total Donated Card */}
@@ -198,7 +194,9 @@ export default function DonorDashboard() {
                 </svg>
               </div>
               <div className="dd-total-label">Total Donated</div>
-              <div className="dd-total-amount">$24,500</div>
+              <div className="dd-total-amount">
+                {loading ? "Loading..." : totalDonated ?? "$0"}
+              </div>
               <div className="dd-total-sub">Lifetime contribution</div>
             </div>
 
@@ -210,7 +208,7 @@ export default function DonorDashboard() {
               </div>
               <div className="dd-chart-wrap">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={donationHistoryData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <AreaChart data={chartData.length > 0 ? chartData : [{ month: "-", amount: 0 }]} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#818cf8" stopOpacity={0.5} />
@@ -218,32 +216,10 @@ export default function DonorDashboard() {
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#1e2a4a" vertical={false} />
-                    <XAxis
-                      dataKey="month"
-                      tick={{ fill: "#6b7280", fontSize: 11 }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      tick={{ fill: "#6b7280", fontSize: 11 }}
-                      axisLine={false}
-                      tickLine={false}
-                      tickFormatter={(v) => v}
-                    />
-                    <Tooltip
-                      contentStyle={{ background: "#1e2a4a", border: "none", borderRadius: 8, color: "#e5e7eb" }}
-                      labelStyle={{ color: "#818cf8" }}
-                      formatter={(v) => [`$${v}`, "Donated"]}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="amount"
-                      stroke="#818cf8"
-                      strokeWidth={2.5}
-                      fill="url(#colorAmount)"
-                      dot={false}
-                      activeDot={{ r: 5, fill: "#818cf8" }}
-                    />
+                    <XAxis dataKey="month" tick={{ fill: "#6b7280", fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fill: "#6b7280", fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <Tooltip contentStyle={{ background: "#1e2a4a", border: "none", borderRadius: 8, color: "#e5e7eb" }} labelStyle={{ color: "#818cf8" }} formatter={(v) => [`$${v}`, "Donated"]} />
+                    <Area type="monotone" dataKey="amount" stroke="#818cf8" strokeWidth={2.5} fill="url(#colorAmount)" dot={false} activeDot={{ r: 5, fill: "#818cf8" }} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -279,32 +255,28 @@ export default function DonorDashboard() {
                 <span>ALLOCATED TO</span>
               </div>
 
-              {transactions
-                .filter(
-                  (t) =>
-                    t.batch.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    t.date.toLowerCase().includes(searchQuery.toLowerCase())
-                )
-                .map((t) => (
+              {loading ? (
+                <div style={{ textAlign: "center", padding: "20px", color: "#9ca3af" }}>Loading donations...</div>
+              ) : filteredTransactions.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "20px", color: "#9ca3af" }}>No donations found</div>
+              ) : (
+                filteredTransactions.map((t) => (
                   <div className="dd-table-row" key={t.id}>
                     <div className="dd-table-date">
                       <span className="dd-date">{t.date}</span>
                       <span className="dd-time">{t.time}</span>
                     </div>
                     <div className="dd-table-amount">
-                      <div className="dd-amount-icon" style={{ background: t.iconBg }}>
-                        {t.icon}
-                      </div>
+                      <div className="dd-amount-icon" style={{ background: t.iconBg }}>{t.icon}</div>
                       <span className="dd-amount">{t.amount}</span>
                     </div>
                     <div className="dd-table-batch">
                       <span className="dd-batch-id">{t.batch}</span>
-                      <span className="dd-batch-cat" style={{ color: t.categoryColor }}>
-                        {t.category}
-                      </span>
+                      <span className="dd-batch-cat" style={{ color: t.categoryColor }}>{t.category}</span>
                     </div>
                   </div>
-                ))}
+                ))
+              )}
             </div>
           </div>
         </div>
