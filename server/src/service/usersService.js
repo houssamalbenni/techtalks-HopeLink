@@ -1,7 +1,27 @@
-const  User  = require("../models/user").User;
-
+const User = require("../models/user").User;
 
 class UsersService {
+  // توزيع الأعمار
+  static async getDemographics() {
+    const users = await User.find();
+    let adults = 0, children = 0, elderly = 0, unspecified = 0;
+    const now = new Date();
+    users.forEach(u => {
+      if (!u.dob) { unspecified++; return; }
+      const age = Math.floor((now - new Date(u.dob)) / (365.25 * 24 * 60 * 60 * 1000));
+      if (age >= 0 && age <= 17) children++;
+      else if (age >= 18 && age <= 65) adults++;
+      else if (age > 65) elderly++;
+      else unspecified++;
+    });
+    const total = adults + children + elderly + unspecified;
+    return [
+      { name: "Adults (18-65)", value: total ? Math.round((adults / total) * 100) : 0 },
+      { name: "Children (0-17)", value: total ? Math.round((children / total) * 100) : 0 },
+      { name: "Elderly (65+)", value: total ? Math.round((elderly / total) * 100) : 0 },
+      { name: "Unspecified", value: total ? Math.round((unspecified / total) * 100) : 0 },
+    ];
+  }
 
   static async getAllUsers() {
     try {

@@ -14,29 +14,7 @@ import {
 import adminService from "../services/Adminservice";
 import "../styles/AdminDashboard.css";
 
-const refugeePopulationData = [
-  { month: "Week 1", registrations: 1200, relocations: 800 },
-  { month: "Week 2", registrations: 1500, relocations: 1200 },
-  { month: "Week 3", registrations: 1800, relocations: 1400 },
-  { month: "Week 4", registrations: 2100, relocations: 1800 },
-  { month: "Week 5", registrations: 2400, relocations: 2000 },
-  { month: "Week 6", registrations: 2700, relocations: 2300 },
-];
-
-const demographicsData = [
-  { name: "Adults (18-65)", value: 45 },
-  { name: "Children (0-17)", value: 28 },
-  { name: "Elderly (65+)", value: 18 },
-  { name: "Unspecified", value: 9 },
-];
-
 const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#6b7280"];
-
-const recentActivityData = [
-  { id: 1, title: "New registration", description: "Family of 4 registered at Hope Center", time: "2 hours ago", icon: "👥" },
-  { id: 2, title: "Medical support", description: "12 individuals received medical aid", time: "4 hours ago", icon: "⚕️" },
-  { id: 3, title: "Capacity alert", description: "Safe Haven Beta reaching 90% capacity", time: "6 hours ago", icon: "🚨" },
-];
 
 const navItems = [
   { label: "Dashboard", active: true, icon: (<svg width="16" height="16" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor" opacity="0.7" /><rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor" opacity="0.7" /><rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor" opacity="0.7" /><rect x="14" y="14" width="7" height="7" rx="1" fill="currentColor" opacity="0.7" /></svg>) },
@@ -74,7 +52,39 @@ function transformService(service, index) {
   };
 }
 
-// ── Modal styles ──────────────────────────────────────────────────────────────
+// Transform notification to activity format
+function transformActivity(notification, index) {
+  const typeIconMap = {
+    alert: "🚨",
+    info: "ℹ️",
+    medical: "⚕️",
+    registration: "👥",
+    announcement: "📢",
+  };
+
+  const icon = typeIconMap[notification.type] || "🔔";
+
+  const createdAt = new Date(notification.createdAt);
+  const now = new Date();
+  const diffMs = now - createdAt;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  let timeAgo;
+  if (diffMins < 60) timeAgo = `${diffMins} minutes ago`;
+  else if (diffHours < 24) timeAgo = `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+  else timeAgo = `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+
+  return {
+    id: notification._id || index,
+    title: notification.title,
+    description: notification.message,
+    time: timeAgo,
+    icon,
+  };
+}
+
 const ms = {
   overlay: { position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.65)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 },
   modal: { backgroundColor: "#1f2937", borderRadius: 12, width: "100%", maxWidth: 520, border: "1px solid #374151", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" },
@@ -95,7 +105,6 @@ const ms = {
   saveBtn: { backgroundColor: "#6366f1", color: "white", border: "none", borderRadius: 8, padding: "9px 20px", cursor: "pointer", fontSize: 14, fontWeight: 600 },
 };
 
-// ── View Modal ────────────────────────────────────────────────────────────────
 function ViewModal({ shelter, onClose }) {
   return (
     <div style={ms.overlay} onClick={onClose}>
@@ -103,10 +112,7 @@ function ViewModal({ shelter, onClose }) {
         <div style={ms.header}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ ...ms.iconBox, backgroundColor: shelter.iconBg }}>{shelter.icon}</div>
-            <div>
-              <h2 style={ms.title}>{shelter.name}</h2>
-              <p style={ms.sub}>{shelter.location}</p>
-            </div>
+            <div><h2 style={ms.title}>{shelter.name}</h2><p style={ms.sub}>{shelter.location}</p></div>
           </div>
           <button style={ms.closeBtn} onClick={onClose}>✕</button>
         </div>
@@ -120,18 +126,10 @@ function ViewModal({ shelter, onClose }) {
               ["Occupied", shelter.capacity],
               ["Occupancy Rate", `${shelter.capacityPercent}%`],
             ].map(([label, val]) => (
-              <div key={label}>
-                <div style={ms.label}>{label}</div>
-                <div style={ms.value}>{val}</div>
-              </div>
+              <div key={label}><div style={ms.label}>{label}</div><div style={ms.value}>{val}</div></div>
             ))}
           </div>
-          {shelter.requirements && (
-            <div style={{ marginTop: 16 }}>
-              <div style={ms.label}>Requirements</div>
-              <div style={ms.value}>{shelter.requirements}</div>
-            </div>
-          )}
+          {shelter.requirements && <div style={{ marginTop: 16 }}><div style={ms.label}>Requirements</div><div style={ms.value}>{shelter.requirements}</div></div>}
           {shelter.facilities?.length > 0 && (
             <div style={{ marginTop: 16 }}>
               <div style={ms.label}>Facilities</div>
@@ -152,7 +150,6 @@ function ViewModal({ shelter, onClose }) {
   );
 }
 
-// ── Edit Modal ────────────────────────────────────────────────────────────────
 function EditModal({ shelter, onClose, onSave }) {
   const [form, setForm] = useState({
     capacity: shelter.rawCapacity,
@@ -190,10 +187,7 @@ function EditModal({ shelter, onClose, onSave }) {
         <div style={ms.header}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ ...ms.iconBox, backgroundColor: shelter.iconBg }}>{shelter.icon}</div>
-            <div>
-              <h2 style={ms.title}>Edit — {shelter.name}</h2>
-              <p style={ms.sub}>{shelter.location}</p>
-            </div>
+            <div><h2 style={ms.title}>Edit — {shelter.name}</h2><p style={ms.sub}>{shelter.location}</p></div>
           </div>
           <button style={ms.closeBtn} onClick={onClose}>✕</button>
         </div>
@@ -221,16 +215,23 @@ function EditModal({ shelter, onClose, onSave }) {
   );
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
 export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [shelterData, setShelterData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [demographicsData, setDemographicsData] = useState([]);
+  const [weeklyData, setWeeklyData] = useState([]);
+  const [recentActivity, setRecentActivity] = useState([]);
   const [error, setError] = useState(null);
   const [viewShelter, setViewShelter] = useState(null);
   const [editShelter, setEditShelter] = useState(null);
 
-  useEffect(() => { fetchServices(); }, []);
+  useEffect(() => {
+    fetchServices();
+    fetchDemographics();
+    fetchWeeklyRegistrations();
+    fetchRecentActivity();
+  }, []);
 
   const fetchServices = async () => {
     try {
@@ -243,6 +244,33 @@ export default function AdminDashboard() {
       setError("Failed to load services. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchDemographics = async () => {
+    try {
+      const data = await adminService.getUserDemographics();
+      if (Array.isArray(data)) setDemographicsData(data);
+    } catch (err) {
+      console.error("Failed to fetch demographics:", err);
+    }
+  };
+
+  const fetchWeeklyRegistrations = async () => {
+    try {
+      const data = await adminService.getWeeklyRegistrations();
+      if (Array.isArray(data)) setWeeklyData(data);
+    } catch (err) {
+      console.error("Failed to fetch weekly registrations:", err);
+    }
+  };
+
+  const fetchRecentActivity = async () => {
+    try {
+      const data = await adminService.getRecentActivity();
+      if (Array.isArray(data)) setRecentActivity(data.map(transformActivity));
+    } catch (err) {
+      console.error("Failed to fetch recent activity:", err);
     }
   };
 
@@ -360,30 +388,24 @@ export default function AdminDashboard() {
           <div className="ad-card">
             <div className="ad-card-header">
               <h2>Refugee Population Trend</h2>
-              <p>Monthly registration vs relocations</p>
+              <p>Weekly registrations from database</p>
               <div className="ad-legend">
                 <button className="ad-legend-item"><span className="ad-legend-color" style={{ backgroundColor: "#3b82f6" }}></span>Registrations</button>
-                <button className="ad-legend-item"><span className="ad-legend-color" style={{ backgroundColor: "#10b981" }}></span>Relocations</button>
               </div>
             </div>
             <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={refugeePopulationData}>
+              <AreaChart data={weeklyData.length > 0 ? weeklyData : [{ month: "-", registrations: 0 }]}>
                 <defs>
                   <linearGradient id="colorRegistrations" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                   </linearGradient>
-                  <linearGradient id="colorRelocations" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                  </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" vertical={false} />
                 <XAxis dataKey="month" stroke="#9ca3af" />
-                <YAxis stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" allowDecimals={false} />
                 <Tooltip contentStyle={{ backgroundColor: "#1f2937", border: "1px solid #374151", borderRadius: "8px", color: "#f3f4f6" }} />
                 <Area type="monotone" dataKey="registrations" stroke="#3b82f6" fillOpacity={1} fill="url(#colorRegistrations)" />
-                <Area type="monotone" dataKey="relocations" stroke="#10b981" fillOpacity={1} fill="url(#colorRelocations)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -420,16 +442,20 @@ export default function AdminDashboard() {
               <button className="ad-more-btn">⋯</button>
             </div>
             <div className="ad-activity-list">
-              {recentActivityData.map((activity) => (
-                <div key={activity.id} className="ad-activity-item">
-                  <div className="ad-activity-icon">{activity.icon}</div>
-                  <div className="ad-activity-content">
-                    <div className="ad-activity-title">{activity.title}</div>
-                    <div className="ad-activity-desc">{activity.description}</div>
+              {recentActivity.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "20px", color: "#9ca3af" }}>No recent activity</div>
+              ) : (
+                recentActivity.map((activity) => (
+                  <div key={activity.id} className="ad-activity-item">
+                    <div className="ad-activity-icon">{activity.icon}</div>
+                    <div className="ad-activity-content">
+                      <div className="ad-activity-title">{activity.title}</div>
+                      <div className="ad-activity-desc">{activity.description}</div>
+                    </div>
+                    <div className="ad-activity-time">{activity.time}</div>
                   </div>
-                  <div className="ad-activity-time">{activity.time}</div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
 
