@@ -1,37 +1,39 @@
-const requests = [
-  {
-    id: 1,
-    title: 'Emergency Medical Supply',
-    badge: 'Urgent',
-    badgeClass: 'badge-urgent',
-    dotClass: '',
-    desc: 'Camp Alpha needs insulin and basic first aid kits immediately.',
-    location: 'Camp Alpha, Sector 4',
-    time: '2 mins ago',
-  },
-  {
-    id: 2,
-    title: 'Blankets & Winter Gear',
-    badge: 'High Priority',
-    badgeClass: 'badge-high',
-    dotClass: 'high',
-    desc: 'Requesting 200 blankets for new arrivals at the registration center.',
-    location: 'Main Registration Hub',
-    time: '15 mins ago',
-  },
-  {
-    id: 3,
-    title: 'Food Rations',
-    badge: 'Standard',
-    badgeClass: 'badge-standard',
-    dotClass: 'standard',
-    desc: 'Weekly food ration replenishment required for Sector 2.',
-    location: 'Camp Beta, Sector 2',
-    time: '1 hour ago',
-  },
-];
+import { useState, useEffect } from 'react';
+import { getNgoRequests } from '../../services/ngoService';
 
 const AidRequestQueue = () => {
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        setLoading(true);
+        const res = await getNgoRequests();
+        const payload = res?.data || res;
+        const items = Array.isArray(payload) ? payload : payload?.requests || payload?.request || [];
+        // normalize to a simple shape
+        const normalized = items.map((it) => ({
+          id: it._id || it.id,
+          title: it.service?.title || 'Request',
+          desc: it.description || '',
+          location: it.service?.address?.display || it.service?.address?.city || 'Unknown',
+          time: it.createdAt ? new Date(it.createdAt).toLocaleString() : '',
+          raw: it,
+        }));
+        setRequests(normalized);
+      } catch (err) {
+        console.error('Failed to load NGO requests', err);
+        setError(err.message || 'Failed to load');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetch();
+  }, []);
+
   return (
     <div className="section-card">
       <div className="section-header">
@@ -44,13 +46,15 @@ const AidRequestQueue = () => {
         </button>
       </div>
       <div className="request-list">
+        {loading && <p>Loading...</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {!loading && requests.length === 0 && <p>No requests found.</p>}
         {requests.map((req) => (
           <div key={req.id} className="request-item">
             <div className="request-item-header">
               <div className="request-item-title">
-                <div className={`request-dot ${req.dotClass}`} />
+                <div className="request-dot" />
                 {req.title}
-                <span className={`badge ${req.badgeClass}`}>{req.badge}</span>
               </div>
               <span className="request-time">{req.time}</span>
             </div>

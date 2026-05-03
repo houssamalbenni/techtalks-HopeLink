@@ -8,6 +8,7 @@ import ServiceAreaInput from "./ServiceAreaInput";
 import "./complete-profile.css";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../../services/userService";
+import { saveAuthSession } from "../../../utils/authStorage";
 import toast from "react-hot-toast";
 import { useNotifications } from "../../../context/NotificationContext";
 import { useState } from "react";
@@ -56,9 +57,7 @@ const CompleteProfile = ({
       if (res) {
         console.log("Registration successful:", res);
         console.log("Received token:", res.data.token);
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("userId", res.data.user._id);
-        localStorage.setItem("role", res.data.user.role);
+        saveAuthSession({ token: res.data.token, user: res.data.user });
         console.log(
           "Token stored in localStorage:",
           localStorage.getItem("token"),
