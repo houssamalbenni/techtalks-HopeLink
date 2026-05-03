@@ -19,4 +19,10 @@ export const ApiConst = {
   GET_TOTAL_DONATIONS: "/donor/total",
 
   CREATE_REQUEST: "/requests",
+
+  GET_ALL_NOTIFICATIONS: "/notifications",
+  GET_NOTIFICATION_BY_ID: (id) => `/notifications/${id}`,
+  GET_USER_NOTIFICATIONS: "/notifications/user",
+  DELETE_ALL_NOTIFICATIONS: "/notifications",
+  
 };
