@@ -6,9 +6,9 @@ import MapTopBar from './MapTopBar';
 import LocationList from './LocationList';
 import MapView from './MapView';
 import DetailPanel from './DetailPanel';
-import { getMyRequests } from '../../services/refugeeService';
-import { getAllServices, filterServicesByNeed } from '../../services/serviceService';
-import { getStoredUserNeed } from '../../utils/authStorage';
+import { getMyRequests } from '../../../services/refugeeService';
+import { getAllServices, filterServicesByNeed } from '../../../services/serviceService';
+import { getStoredUserNeed } from '../../../utils/authStorage';
 
 const RefugeeDashboardContent = () => {
   const { language } = useLanguage();

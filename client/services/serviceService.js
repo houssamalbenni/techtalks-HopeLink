@@ -18,7 +18,7 @@ export const getNearbyServices = (lng, lat, distance = 5000) =>
 const NEED_TO_SERVICE_TITLES = {
   shelter: ["shelter"],
   food: ["food"],
-  medcine: ["medcine", "hospital"],
+  medicine: ["medicine", "hospital"],
 };
 
 const normalizeValue = (value) => String(value || "").trim().toLowerCase();

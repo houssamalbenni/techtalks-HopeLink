@@ -1,24 +1,42 @@
 const ComplianceFlags = ({ distributions = [] }) => {
+  const lowAvailabilityBatches = distributions.filter((batch) => Number(batch.availability || 0) <= Number(batch.capacity || 0) * 0.2);
+
   const flags = [
-    {
-      id: 1,
-      title: 'Duplicate QR Token Scan',
-      desc: 'Token #TK-8892 was scanned twice within 5 minutes at different distribution points (Sector 2 & Sector 4).',
-      iconBg: '#ef4444',
-      primaryAction: 'Investigate',
-      secondaryAction: 'Dismiss',
-      icon: <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />,
-    },
-    {
-      id: 2,
-      title: 'Inventory Discrepancy',
-      desc: `${distributions.length > 0 ? distributions[0].to : 'Distribution point'} has pending inventory audits.`,
-      iconBg: '#f97316',
-      primaryAction: 'Audit Batch',
-      secondaryAction: null,
-      icon: <path d="M20 6h-2.18c.07-.44.18-.88.18-1.33C18 2.53 15.48 1 13 1c-1.36 0-2.5.93-3 2.28C9.5 1.93 8.36 1 7 1 4.52 1 2 2.53 2 4.67c0 .45.11.88.18 1.33H0v14h20V6z" />,
-    },
+    ...(lowAvailabilityBatches.length > 0
+      ? [{
+        id: 1,
+        title: 'Low Availability',
+        desc: `${lowAvailabilityBatches[0].to || lowAvailabilityBatches[0].category} is running low on capacity.`,
+        iconBg: '#f97316',
+        primaryAction: 'Review Batch',
+        secondaryAction: null,
+        icon: <path d="M20 6h-2.18c.07-.44.18-.88.18-1.33C18 2.53 15.48 1 13 1c-1.36 0-2.5.93-3 2.28C9.5 1.93 8.36 1 7 1 4.52 1 2 2.53 2 4.67c0 .45.11.88.18 1.33H0v14h20V6z" />,
+      }]
+      : []),
+    ...(distributions.length === 0
+      ? [{
+        id: 2,
+        title: 'No Live Batches',
+        desc: 'No aid batches are currently loaded from the backend.',
+        iconBg: '#ef4444',
+        primaryAction: 'Retry Sync',
+        secondaryAction: null,
+        icon: <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />,
+      }]
+      : [])
   ];
+
+  if (flags.length === 0) {
+    flags.push({
+      id: 99,
+      title: 'No Compliance Issues',
+      desc: 'Loaded batches are within capacity thresholds.',
+      iconBg: '#10b981',
+      primaryAction: 'View Details',
+      secondaryAction: null,
+      icon: <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14l-4-4 1.41-1.41L11 13.17l4.59-4.59L17 10l-6 6z" />,
+    });
+  }
   return (
     <div className="aid-compliance-card">
       <div className="aid-compliance-header">

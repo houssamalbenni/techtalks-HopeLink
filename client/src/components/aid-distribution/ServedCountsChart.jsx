@@ -1,13 +1,14 @@
 const ServedCountsChart = ({ distributions = [] }) => {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  // Generate served counts from distributions
-  const served = days.map(() => 
-    Math.floor(Math.random() * 500) + (distributions.length * 100)
-  );
-  const gaps = days.map(() => 
-    Math.floor(Math.random() * 300) + 200
-  );
-  const maxVal = 1800;
+  const days = distributions.length > 0
+    ? distributions.slice(0, 7).map((dist, index) => dist.category || `Batch ${index + 1}`)
+    : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const served = distributions.length > 0
+    ? distributions.slice(0, 7).map((dist) => Math.max(Number(dist.capacity || 0) - Number(dist.availability || 0), 0))
+    : days.map(() => 0);
+  const gaps = distributions.length > 0
+    ? distributions.slice(0, 7).map((dist) => Number(dist.availability || 0))
+    : days.map(() => 0);
+  const maxVal = Math.max(...served, ...gaps, 1);
   const h = 140;
   const w = 340;
 
@@ -22,7 +23,7 @@ const ServedCountsChart = ({ distributions = [] }) => {
     <div className="aid-chart-card">
       <div className="aid-chart-header">
         <div>
-          <h3 className="aid-chart-title">Served Counts vs Gaps</h3>
+          <h3 className="aid-chart-title">Served Counts vs Remaining Capacity</h3>
           <p className="aid-chart-subtitle">Beneficiary verification via privacy tokens</p>
         </div>
         <button className="aid-chart-dots-btn">···</button>
@@ -56,7 +57,7 @@ const ServedCountsChart = ({ distributions = [] }) => {
         </div>
         <div className="aid-legend-item">
           <div className="aid-legend-dashed" />
-          Gaps (Unmet Need)
+          Remaining Capacity
         </div>
       </div>
     </div>

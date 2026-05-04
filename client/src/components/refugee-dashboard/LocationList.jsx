@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from './LanguageContext';
 import { t } from './translations';
-import { buildServiceStatus, formatServiceAddress } from '../../services/serviceService';
+import { buildServiceStatus, formatServiceAddress } from '../../../services/serviceService';
 
 const LocationList = ({ selectedId, onSelect, requests = [] }) => {
   const { language } = useLanguage();
