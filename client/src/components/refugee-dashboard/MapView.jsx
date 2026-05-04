@@ -2,7 +2,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useLanguage } from './LanguageContext';
-import { buildServiceStatus, formatServiceAddress } from '../../services/serviceService';
+import { buildServiceStatus, formatServiceAddress } from '../../../services/serviceService';
 
 // Lebanon coordinates
 const LEBANON_CENTER = [33.8547, 35.8623];
