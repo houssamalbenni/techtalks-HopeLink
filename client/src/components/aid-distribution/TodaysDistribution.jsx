@@ -5,9 +5,21 @@ const TodaysDistribution = ({ distributions = [] }) => {
     return sum + weight;
   }, 0);
 
-  // Daily goal (can be adjusted)
-  const dailyGoal = 3600;
+  const dailyGoal = Math.max(totalWeight + 1000, 3600);
   const progressPercent = Math.min(Math.round((totalWeight / dailyGoal) * 100), 100);
+
+  const graphPoints = distributions.length > 0
+    ? distributions.map((dist, index) => {
+        const load = Math.max(Number(dist.capacity || 0) - Number(dist.availability || 0), 0);
+        return {
+          x: distributions.length === 1 ? 300 : (index / (distributions.length - 1)) * 300,
+          y: 80 - Math.min((load / Math.max(Number(dist.capacity || 1), 1)) * 70, 70),
+        };
+      })
+    : [
+        { x: 0, y: 70 },
+        { x: 300, y: 70 },
+      ];
 
   // Generate tags from distributions
   const tags = distributions.slice(0, 3).map((dist, index) => {
@@ -49,8 +61,22 @@ const TodaysDistribution = ({ distributions = [] }) => {
           {[0, 40, 80].map((y) => (
             <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="#2a3050" strokeWidth="0.5" />
           ))}
-          <path d="M0,80 C50,70 80,50 120,60 C160,70 180,30 240,20 C270,15 290,10 300,8" fill="url(#distGrad)" stroke="none" />
-          <path d="M0,80 C50,70 80,50 120,60 C160,70 180,30 240,20 C270,15 290,10 300,8" fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" />
+          {graphPoints.length > 1 && (
+            <>
+              <path
+                d={`M${graphPoints.map((point) => `${point.x},${point.y}`).join(' L')}`}
+                fill="url(#distGrad)"
+                stroke="none"
+              />
+              <path
+                d={`M${graphPoints.map((point) => `${point.x},${point.y}`).join(' L')}`}
+                fill="none"
+                stroke="#3b82f6"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+            </>
+          )}
         </svg>
       </div>
 

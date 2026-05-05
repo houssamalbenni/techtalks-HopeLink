@@ -4,7 +4,7 @@ import FRSidebar from './FRSidebar';
 import FRTopBar from './FRTopBar';
 import CaseList from './CaseList';
 import CaseDetail from './CaseDetail';
-import { getMyCases, transformCaseToUI } from '../../services/familyReunificationService';
+import { getMyCases, transformCaseToUI } from '../../../services/familyReunificationService';
 
 const FamilyReunification = () => {
   const [cases, setCases] = useState([]);
@@ -17,7 +17,12 @@ const FamilyReunification = () => {
       try {
         setLoading(true);
         const response = await getMyCases();
-        const transformedCases = response.map((missingCase, index) =>
+        const payload = response?.data || response;
+        const cases = Array.isArray(payload)
+          ? payload
+          : payload?.cases || payload?.missingCases || [];
+
+        const transformedCases = cases.map((missingCase, index) =>
           transformCaseToUI(missingCase, index)
         );
         setCases(transformedCases);

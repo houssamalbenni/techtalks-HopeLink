@@ -1,6 +1,7 @@
 import { safeApiCall } from "../utils/helper";
 import { ApiConst } from "../utils/APIConst";
 import api from "../utils/axios";
+import { formatServiceAddress } from "./serviceService";
 
 // Get all distributions (services with locations)
 export const getAllDistributions = () =>
@@ -20,21 +21,29 @@ export const getNearbyDistributions = (lng, lat, distance = 5000) =>
 
 // Transform service data to batch format for UI
 export const transformServiceToBatch = (service, index) => {
-  const statusOptions = ['pending', 'in-transit', 'delivered'];
-  const status = statusOptions[index % 3];
+  const capacity = Number(service?.capacity || 0);
+  const availability = Number(service?.availability || 0);
+  const status = availability <= 0
+    ? 'delivered'
+    : availability < Math.max(capacity * 0.5, 1)
+      ? 'in-transit'
+      : 'pending';
+  const [lng = 0, lat = 0] = service?.location?.coordinates || [];
+  const mapTop = `${15 + (Math.abs(lat * 7 + index * 11) % 70)}%`;
+  const mapLeft = `${15 + (Math.abs(lng * 5 + index * 13) % 70)}%`;
   
   return {
     id: service._id || `#SERVICE${index}`,
     category: service.title || 'Service',
     subcategory: service.facilities?.[0] || 'Distribution',
     from: 'Central Hub',
-    to: service.address || 'Unknown Location',
-    weight: `${Math.floor(Math.random() * 500) + 100} kg`,
-    eta: new Date(Date.now() + Math.random() * 86400000).toLocaleString(),
+    to: formatServiceAddress(service.address),
+    weight: `${Math.max(capacity - availability, 0) * 5 + 100} kg`,
+    eta: service.intake_hours?.endTime || 'Scheduled today',
     status: status.charAt(0).toUpperCase() + status.slice(1),
     statusValue: status,
-    mapTop: `${Math.random() * 70 + 15}%`,
-    mapLeft: `${Math.random() * 70 + 15}%`,
+    mapTop,
+    mapLeft,
     handler: 'Distribution Team',
     vehicle: `Vehicle-${index}`,
     lastUpdated: new Date().toLocaleString(),
@@ -43,9 +52,9 @@ export const transformServiceToBatch = (service, index) => {
     checkpoints: [
       `Service active since registration`,
       `Phone: ${service.phone_number || 'N/A'}`,
-      `Intake hours: ${service.intake_hours || 'Not specified'}`,
+      `Intake hours: ${service.intake_hours?.startTime && service.intake_hours?.endTime ? `${service.intake_hours.startTime} - ${service.intake_hours.endTime}` : 'Not specified'}`,
     ],
-    coordinates: service.location?.coordinates || [0, 0],
+    coordinates: service.location?.coordinates || [lng, lat],
     capacity: service.capacity,
     availability: service.availability,
   };

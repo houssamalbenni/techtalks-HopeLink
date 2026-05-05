@@ -7,7 +7,7 @@ import MapTracker from './MapTracker';
 import InventoryLedger from './InventoryLedger';
 import ServedCountsChart from './ServedCountsChart';
 import ComplianceFlags from './ComplianceFlags';
-import { getAllDistributions, transformServiceToBatch } from '../../services/aidDistributionService';
+import { getAllDistributions, transformServiceToBatch } from '../../../services/aidDistributionService';
 
 const AidDistribution = () => {
   const [statusFilter, setStatusFilter] = useState('in-transit');

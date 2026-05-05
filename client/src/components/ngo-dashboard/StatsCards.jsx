@@ -1,4 +1,13 @@
-const StatsCards = () => {
+const StatsCards = ({ loading = false, error = null, metrics = {} }) => {
+  const {
+    totalRequests = 0,
+    pendingRequests = 0,
+    totalCapacity = 0,
+    availableSlots = 0,
+    capacityUsed = 0,
+    serviceCount = 0,
+  } = metrics;
+
   return (
     <div className="stats-row">
       <div className="stat-card">
@@ -10,32 +19,42 @@ const StatsCards = () => {
             </svg>
           </div>
         </div>
-        <div className="stat-card-value">1,245</div>
+        <div className="stat-card-value">{loading ? '...' : totalRequests.toLocaleString()}</div>
         <div className="stat-card-badge">
-          ↑ 12% <span>vs last week</span>
+          {loading ? 'Loading live data' : `${pendingRequests} pending review`}
         </div>
       </div>
 
       <div className="stat-card">
         <div className="stat-card-header">
-          <span className="stat-card-label">Shelter Occupancy</span>
+          <span className="stat-card-label">Active Service Capacity</span>
           <div className="stat-card-icon">
             <svg viewBox="0 0 24 24">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
             </svg>
           </div>
         </div>
-        <div className="stat-card-value">8,432</div>
+        <div className="stat-card-value">{loading ? '...' : availableSlots.toLocaleString()}</div>
         <div className="capacity-bar-wrap">
           <div className="capacity-bar-labels">
-            <span>85% Capacity</span>
-            <span>1,568 spots left</span>
+            <span>{loading ? 'Loading' : `${capacityUsed}% utilized`}</span>
+            <span>{loading ? 'Loading' : `${serviceCount} services online`}</span>
           </div>
           <div className="capacity-bar">
-            <div className="capacity-bar-fill" />
+            <div className="capacity-bar-fill" style={{ width: `${Math.min(capacityUsed, 100)}%` }} />
           </div>
         </div>
       </div>
+
+      {error && (
+        <div className="stat-card" style={{ gridColumn: '1 / -1', borderColor: '#ef4444' }}>
+          <div className="stat-card-header">
+            <span className="stat-card-label">Dashboard Sync</span>
+          </div>
+          <div className="stat-card-value" style={{ fontSize: '18px' }}>Data unavailable</div>
+          <div className="stat-card-badge" style={{ color: '#ef4444' }}>{error}</div>
+        </div>
+      )}
     </div>
   );
 };
