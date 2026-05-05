@@ -1,6 +1,7 @@
 const UsersService = require("../service/usersService.js");
 const asyncHandler = require("../middleware/asyncHandler");
 
+<<<<<<< HEAD
 // توزيع الأعمار
 exports.getDemographics = asyncHandler(async (req, res) => {
   const demographics = await UsersService.getDemographics();
@@ -10,6 +11,9 @@ exports.getDemographics = asyncHandler(async (req, res) => {
     data: demographics,
   });
 });
+=======
+
+>>>>>>> 6c4dac5da57378261fe538a3a7c53f446ea11374
 
 exports.getAllUsers = asyncHandler(async (req, res) => {
   const users = await UsersService.getAllUsers();
@@ -74,4 +78,9 @@ exports.getUserRole = asyncHandler(async (req, res) => {
     message: "User role retrieved successfully",
     data: { role },
   });
+<<<<<<< HEAD
 });
+=======
+});
+
+>>>>>>> 6c4dac5da57378261fe538a3a7c53f446ea11374

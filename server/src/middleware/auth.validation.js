@@ -86,6 +86,7 @@ const loginRules = [
 
   validate,
 ];
+<<<<<<< HEAD
 // const validation_token = (req, res, next) => {
 //   const token = req.headers.authorization;
 //   if (!token) return res.status(401).json({ status: "error", message: "No token provided" });
@@ -105,6 +106,15 @@ const validation_token = (req, res, next) => {
     ? authHeader.slice(7) 
     : authHeader;
     
+=======
+const validation_token = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ status: "error", message: "No token provided" });
+
+  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : authHeader;
+  if (!token) return res.status(401).json({ status: "error", message: "No token provided" });
+
+>>>>>>> 6c4dac5da57378261fe538a3a7c53f446ea11374
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
