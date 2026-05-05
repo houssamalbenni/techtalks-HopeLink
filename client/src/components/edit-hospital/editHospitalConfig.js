@@ -52,6 +52,7 @@ export const EDIT_INITIAL_FORM = {
   hospitalName: "Mercy General Hospital",
   facilityType: "specialty",
   description: "Regional Medical Center & Level I Trauma Facility",
+  logoUrl: "",
   totalBeds: 500,
   overallStatus: "active",
   erStatus: "accepting",

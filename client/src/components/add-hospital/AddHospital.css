@@ -151,37 +151,59 @@
 
 .ah-map {
   width: 100%;
-  min-height: 180px;
   border: 1px solid var(--hospital-border);
-  border-radius: 10px;
+  border-radius: 12px;
   background: #f8fafc;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   gap: 12px;
 }
 
-.ah-map i {
-  color: #94a3b8;
+.ah-map-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.ah-map p {
-  margin: 0;
-  color: var(--hospital-muted);
-  font-size: 14px;
-}
-
-.ah-map span {
+.ah-map-actions button {
+  border: 1px solid var(--hospital-border);
+  background: #fff;
+  border-radius: 8px;
   padding: 8px 12px;
+  font-size: 13px;
+  color: #334155;
+}
+
+.ah-map-actions span {
+  color: var(--hospital-muted);
+  font-size: 12px;
+}
+
+.ah-coords-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ah-coords-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: #334155;
+  font-weight: 600;
+}
+
+.ah-coord-input {
   border: 1px solid var(--hospital-border);
   border-radius: 8px;
-  background: #fff;
-  color: #334155;
+  padding: 8px 10px;
   font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  color: var(--hospital-text);
+  background: #fff;
 }
 
 .ah-stack {
@@ -302,6 +324,39 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
+}
+
+.ah-upload.is-uploading {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.ah-file-input {
+  display: none;
+}
+
+.ah-upload-preview {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ah-upload-preview img {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--hospital-border);
+}
+
+.ah-upload-preview button {
+  border: 1px solid var(--hospital-border);
+  background: #fff;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #334155;
 }
 
 .ah-upload i {

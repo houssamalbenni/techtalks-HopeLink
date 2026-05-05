@@ -15,6 +15,17 @@
   justify-content: center;
 }
 
+.visuallyHidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
 .appShell {
   width: 100%;
   height: 960px;
@@ -526,6 +537,7 @@
   display: flex;
   align-items: center;
   gap: 20px;
+  flex-wrap: wrap;
 }
 
 .playerThumb {
@@ -562,6 +574,43 @@
   gap: 14px;
   flex: 1;
   justify-content: center;
+}
+
+.progressArea {
+  flex: 1 1 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progressSlider {
+  width: 100%;
+  max-width: 260px;
+  height: 6px;
+  appearance: none;
+  background: linear-gradient(to right, #7b5fd4 var(--progress), #ddd8f0 var(--progress));
+  border-radius: 999px;
+  outline: none;
+}
+
+.progressSlider::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #7b5fd4;
+  box-shadow: 0 1px 4px rgba(123, 95, 212, 0.35);
+  cursor: pointer;
+}
+
+.progressSlider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #7b5fd4;
+  box-shadow: 0 1px 4px rgba(123, 95, 212, 0.35);
+  cursor: pointer;
+  border: none;
 }
 
 .ctrlBtn {
@@ -611,24 +660,33 @@
   color: #9b97b8;
 }
 
-.volTrack {
-  width: 80px;
-  height: 4px;
-  background: linear-gradient(to right, #7b5fd4 65%, #ddd8f0 65%);
-  border-radius: 2px;
-  position: relative;
+.volumeSlider {
+  width: 90px;
+  height: 6px;
+  appearance: none;
+  background: linear-gradient(to right, #7b5fd4 var(--volume), #ddd8f0 var(--volume));
+  border-radius: 999px;
+  outline: none;
 }
 
-.volThumb {
+.volumeSlider::-webkit-slider-thumb {
+  appearance: none;
   width: 12px;
   height: 12px;
-  background: #7b5fd4;
   border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  left: 65%;
-  transform: translate(-50%, -50%);
+  background: #7b5fd4;
   box-shadow: 0 1px 4px rgba(123, 95, 212, 0.4);
+  cursor: pointer;
+}
+
+.volumeSlider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #7b5fd4;
+  box-shadow: 0 1px 4px rgba(123, 95, 212, 0.4);
+  cursor: pointer;
+  border: none;
 }
 
 .timeLabel {

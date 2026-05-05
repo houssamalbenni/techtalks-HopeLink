@@ -1,5 +1,5 @@
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -9,6 +9,7 @@ import { SIDEBAR_LINKS, USER_PROFILE } from "../hospitals/hospitalsData";
 import FieldGroup from "./FieldGroup";
 import FormSection from "./FormSection";
 import ToggleCard from "./ToggleCard";
+import MapComponent from "../add-shelter/MapComponent";
 import {
   BREADCRUMBS,
   DEFAULT_FORM,
@@ -20,6 +21,7 @@ import {
 } from "./addHospitalConfig";
 import api from "../../../utils/axios";
 import { ApiConst } from "../../../utils/APIConst";
+import { getSupabaseClient } from "../../../utils/supabaseClient";
 import "../hospitals/Hospitals.css";
 import "./AddHospital.css";
 
@@ -131,6 +133,11 @@ export default function AddHospital() {
   const navigate = useNavigate();
   const [form, setForm] = useState(DEFAULT_FORM);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const logoInputRef = useRef(null);
+  const [mapKey, setMapKey] = useState(0);
+
+  const supabaseBucket = import.meta.env.VITE_SUPABASE_BUCKET || "public-images";
 
   const actions = useMemo(
     () =>
@@ -226,6 +233,64 @@ export default function AddHospital() {
     }
   }
 
+  async function uploadLogo(file) {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      toast.error("Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+      return "";
+    }
+
+    const ownerNgoId = getOwnerNgoId() || "public";
+    const extension = file.name.split(".").pop() || "png";
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${extension}`;
+    const filePath = `hospitals/${ownerNgoId}/${fileName}`;
+
+    const { error } = await supabase.storage.from(supabaseBucket).upload(filePath, file, {
+      contentType: file.type,
+      upsert: true,
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    const { data } = supabase.storage.from(supabaseBucket).getPublicUrl(filePath);
+    return data?.publicUrl || "";
+  }
+
+  async function handleLogoChange(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const maxBytes = 5 * 1024 * 1024;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > maxBytes) {
+      toast.error("Image must be 5MB or smaller.");
+      event.target.value = "";
+      return;
+    }
+
+    setIsUploadingLogo(true);
+
+    try {
+      const publicUrl = await uploadLogo(file);
+      if (!publicUrl) return;
+
+      updateField("logoUrl", publicUrl);
+      toast.success("Logo uploaded successfully.");
+    } catch (error) {
+      toast.error(error?.message || "Failed to upload logo.");
+    } finally {
+      setIsUploadingLogo(false);
+      event.target.value = "";
+    }
+  }
+
   function getCurrentCoordinates() {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
@@ -245,10 +310,26 @@ export default function AddHospital() {
     });
   }
 
+  async function handleUseMyLocation() {
+    try {
+      const [longitude, latitude] = await getCurrentCoordinates();
+      updateField("lng", String(longitude));
+      updateField("lat", String(latitude));
+      setMapKey((prev) => prev + 1);
+      toast.success("Location updated.");
+    } catch (error) {
+      toast.error(error?.message || "Unable to read your location.");
+    }
+  }
+
   async function onSubmit(event) {
     event.preventDefault();
 
     if (isSubmitting) return;
+    if (isUploadingLogo) {
+      toast.error("Please wait for the logo upload to finish.");
+      return;
+    }
 
     const capacity = Number(form.totalBeds);
     if (!Number.isFinite(capacity) || capacity <= 0) {
@@ -261,7 +342,11 @@ export default function AddHospital() {
     setIsSubmitting(true);
 
     try {
-      const coordinates = await getCurrentCoordinates();
+      const lng = parseFloat(form.lng);
+      const lat = parseFloat(form.lat);
+      const coordinates = Number.isFinite(lng) && Number.isFinite(lat)
+        ? [lng, lat]
+        : await getCurrentCoordinates();
 
       const payload = {
         title: "hospital",
@@ -271,6 +356,7 @@ export default function AddHospital() {
         },
         capacity,
         availability: capacity,
+        images: form.logoUrl ? [form.logoUrl] : [],
         phone_number: form.phone,
         address: {
           street: form.streetAddress,
@@ -387,15 +473,48 @@ export default function AddHospital() {
                   </div>
 
                   <FieldGroup className="ah-span-all" label="Map Location">
-                    <button type="button" className="ah-map">
-                      <div>
-                        <i className="fa-solid fa-map" />
-                        <p>Click to set exact coordinates</p>
+                    <div className="ah-map">
+                      <MapComponent
+                        key={mapKey}
+                        coords={form.lat && form.lng ? [Number(form.lat), Number(form.lng)] : undefined}
+                        onCoordsChange={({ latitude, longitude }) => {
+                          updateField("lat", latitude);
+                          updateField("lng", longitude);
+                        }}
+                      />
+                      <div className="ah-map-actions">
+                        <button type="button" onClick={handleUseMyLocation}>
+                          Use my location
+                        </button>
+                        <span>
+                          Lat: {form.lat || "--"} | Lng: {form.lng || "--"}
+                        </span>
                       </div>
-                      <span>
-                        <i className="fa-solid fa-location-dot" /> Drop Pin
-                      </span>
-                    </button>
+                      <div className="ah-coords-row">
+                        <label>
+                          Latitude
+                          <input
+                            type="number"
+                            className="ah-coord-input"
+                            value={form.lat}
+                            onChange={(event) => updateField("lat", event.target.value)}
+                            step="0.000001"
+                            placeholder="33.8547"
+                          />
+                        </label>
+                        <label>
+                          Longitude
+                          <input
+                            type="number"
+                            className="ah-coord-input"
+                            value={form.lng}
+                            onChange={(event) => updateField("lng", event.target.value)}
+                            step="0.000001"
+                            placeholder="35.8623"
+                          />
+                        </label>
+                      </div>
+                    </div>
                   </FieldGroup>
                 </div>
               </FormSection>
@@ -514,11 +633,31 @@ export default function AddHospital() {
 
                   <div>
                     <FieldGroup label="Facility Logo / Cover Image">
-                      <button type="button" className="ah-upload">
+                      <input
+                        ref={logoInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="ah-file-input"
+                        onChange={handleLogoChange}
+                      />
+                      <button
+                        type="button"
+                        className={`ah-upload ${isUploadingLogo ? "is-uploading" : ""}`}
+                        onClick={() => logoInputRef.current?.click()}
+                        disabled={isUploadingLogo}
+                      >
                         <i className="fa-solid fa-cloud-arrow-up" />
-                        <strong>Click to upload or drag and drop</strong>
+                        <strong>
+                          {isUploadingLogo ? "Uploading logo..." : "Click to upload or drag and drop"}
+                        </strong>
                         <span>SVG, PNG, JPG or GIF (max. 5MB)</span>
                       </button>
+                      {form.logoUrl ? (
+                        <div className="ah-upload-preview">
+                          <img src={form.logoUrl} alt="Hospital logo preview" />
+                          <button type="button" onClick={() => updateField("logoUrl", "")}>Remove</button>
+                        </div>
+                      ) : null}
                     </FieldGroup>
                   </div>
 
@@ -530,7 +669,11 @@ export default function AddHospital() {
                 <button type="button" className="hospitals-secondary-btn" onClick={() => navigate("/hospitals")}>
                   Cancel
                 </button>
-                <button type="submit" className="hospitals-primary-btn" disabled={isSubmitting}>
+                <button
+                  type="submit"
+                  className="hospitals-primary-btn"
+                  disabled={isSubmitting || isUploadingLogo}
+                >
                   {isSubmitting ? "Publishing..." : "Publish Hospital"} <i className="fa-solid fa-arrow-right" />
                 </button>
               </footer>

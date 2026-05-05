@@ -38,6 +38,9 @@ export const HEADER_ACTIONS = [
 export const DEFAULT_FORM = {
   hospitalName: "",
   description: "",
+  logoUrl: "",
+  lat: "",
+  lng: "",
   streetAddress: "",
   city: "",
   state: "",

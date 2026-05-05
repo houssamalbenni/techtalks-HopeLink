@@ -22,6 +22,7 @@ import {
 } from "./editHospitalConfig";
 import api from "../../../utils/axios";
 import { ApiConst } from "../../../utils/APIConst";
+import { getSupabaseClient } from "../../../utils/supabaseClient";
 import "../hospitals/Hospitals.css";
 import "./EditHospital.css";
 
@@ -56,9 +57,12 @@ export default function EditHospital() {
   const [form, setForm] = useState(EDIT_INITIAL_FORM);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [logoPreview, setLogoPreview] = useState(
     "https://storage.googleapis.com/uxpilot-auth.appspot.com/8a63a1214d-61dda6d03bd05096ba47.png",
   );
+
+  const supabaseBucket = import.meta.env.VITE_SUPABASE_BUCKET || "public-images";
 
   const breadcrumbs = useMemo(() => EDIT_BREADCRUMBS, []);
   const headerActions = useMemo(
@@ -147,12 +151,15 @@ export default function EditHospital() {
 
         if (!isMounted) return;
 
+        const logoUrl = Array.isArray(hospital?.images) ? hospital.images[0] : "";
+
         setForm((prev) => {
           const nextCapacity = hospital?.capacity ?? prev.totalBeds;
           return {
             ...prev,
             hospitalName: hospital?.address?.building || prev.hospitalName,
             description: hospital?.requirements || "",
+            logoUrl,
             totalBeds: nextCapacity,
             phone: hospital?.phone_number || "",
             address1: hospital?.address?.street || "",
@@ -165,6 +172,10 @@ export default function EditHospital() {
             lat: lat != null ? String(lat) : "",
           };
         });
+
+        if (logoUrl) {
+          setLogoPreview(logoUrl);
+        }
       } catch (error) {
         console.error("Failed to fetch hospital:", error);
         toast.error("Failed to load hospital data.");
@@ -211,6 +222,10 @@ export default function EditHospital() {
     event.preventDefault();
 
     if (isSubmitting) return;
+    if (isUploadingLogo) {
+      toast.error("Please wait for the logo upload to finish.");
+      return;
+    }
     if (!id) {
       console.error("Missing hospital id in route params.");
       toast.error("Please open this page from a specific hospital record.");
@@ -262,6 +277,10 @@ export default function EditHospital() {
         },
       };
 
+      if (form.logoUrl) {
+        payload.images = [form.logoUrl];
+      }
+
       await api.put(ApiConst.UPDATE_SERVICE(id), payload);
       toast.success("Hospital updated successfully.");
       navigate("/hospitals");
@@ -278,13 +297,63 @@ export default function EditHospital() {
     }
   }
 
-  function handleLogoChange(event) {
+  async function uploadLogo(file) {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      toast.error("Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+      return "";
+    }
+
+    const ownerNgoId = getOwnerNgoId(form.ownerNgo) || "public";
+    const extension = file.name.split(".").pop() || "png";
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${extension}`;
+    const filePath = `hospitals/${ownerNgoId}/${fileName}`;
+
+    const { error } = await supabase.storage.from(supabaseBucket).upload(filePath, file, {
+      contentType: file.type,
+      upsert: true,
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    const { data } = supabase.storage.from(supabaseBucket).getPublicUrl(filePath);
+    return data?.publicUrl || "";
+  }
+
+  async function handleLogoChange(event) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const objectUrl = URL.createObjectURL(file);
-    setLogoPreview(objectUrl);
-    toast.success("Logo selected.");
+    const maxBytes = 5 * 1024 * 1024;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > maxBytes) {
+      toast.error("Image must be 5MB or smaller.");
+      event.target.value = "";
+      return;
+    }
+
+    setIsUploadingLogo(true);
+
+    try {
+      const publicUrl = await uploadLogo(file);
+      if (!publicUrl) return;
+
+      updateField("logoUrl", publicUrl);
+      setLogoPreview(publicUrl);
+      toast.success("Logo uploaded successfully.");
+    } catch (error) {
+      toast.error(error?.message || "Failed to upload logo.");
+    } finally {
+      setIsUploadingLogo(false);
+      event.target.value = "";
+    }
   }
 
   function renderOptionList(options) {

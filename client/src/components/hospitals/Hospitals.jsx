@@ -43,6 +43,7 @@ function mapServiceToHospital(service) {
     district: service?.address?.street || "Unknown District",
     email: service?.owner_ngo?.email || "-",
     phone: service?.phone_number || "-",
+    logoUrl: Array.isArray(service?.images) ? service.images[0] : "",
     status: resolveStatus(capacity, safeAvailability),
     specialties: Array.isArray(service?.facilities) ? service.facilities : [],
     availability: safeAvailability,

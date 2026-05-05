@@ -36,7 +36,11 @@ export default function HospitalRow({ hospital, isSelected, onToggleSelection })
       <td>
         <div className="hospital-name-cell">
           <div className={`hospital-icon ${isSelected ? "selected" : ""}`}>
-            <i className="fa-solid fa-hospital" />
+            {hospital.logoUrl ? (
+              <img src={hospital.logoUrl} alt={`${hospital.name} logo`} />
+            ) : (
+              <i className="fa-solid fa-hospital" />
+            )}
           </div>
           <div>
             <p className={isSelected ? "strong" : ""}>{hospital.name}</p>
