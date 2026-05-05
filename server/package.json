@@ -1,7 +1,10 @@
 {
   "name": "hopelink-server",
   "private": true,
+<<<<<<< HEAD
   
+=======
+>>>>>>> 6c4dac5da57378261fe538a3a7c53f446ea11374
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js"
@@ -16,6 +19,6 @@
     "mongoose": "^8.23.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.14"
   }
 }

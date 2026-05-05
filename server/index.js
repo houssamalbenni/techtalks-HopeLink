@@ -7,6 +7,11 @@ const adminRoute= require("./src/routes/adminRoute.js")
 const usersRoute = require("./src/routes/usersRoute.js");
 const donorRoute = require("./src/routes/donorRoute.js");
 const refugeeRoute = require("./src/routes/refugeeRoutes.js");
+<<<<<<< HEAD
+=======
+const missingPersonRoute = require("./src/routes/missingPersonRoutes.js");
+const ngoRoute = require("./src/routes/ngoRoute.js");
+>>>>>>> 6c4dac5da57378261fe538a3a7c53f446ea11374
 const errorHandler = require("./src/middleware/errorHandling.js");
 const app = express();
 
@@ -20,6 +25,11 @@ app.use("/admin", adminRoute);
 app.use("/users", usersRoute);
 app.use("/donor", donorRoute);
 app.use("/refugee",refugeeRoute);
+<<<<<<< HEAD
+=======
+app.use("/missing-person", missingPersonRoute);
+app.use('/ngo', ngoRoute);
+>>>>>>> 6c4dac5da57378261fe538a3a7c53f446ea11374
 app.use(errorHandler);
 
 const startServer = async () => {
