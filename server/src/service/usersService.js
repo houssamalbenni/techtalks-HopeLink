@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const User = require("../models/user").User;
 
 class UsersService {
@@ -23,12 +22,6 @@ class UsersService {
       { name: "Unspecified", value: total ? Math.round((unspecified / total) * 100) : 0 },
     ];
   }
-=======
-const  User  = require("../models/user").User;
-
-
-class UsersService {
->>>>>>> 6c4dac5da57378261fe538a3a7c53f446ea11374
 
   static async getAllUsers() {
     try {
