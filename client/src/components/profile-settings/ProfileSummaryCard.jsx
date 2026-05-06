@@ -1,12 +1,39 @@
-function ProfileSummaryCard({ profile, onAction }) {
+import { useRef } from 'react';
+
+function ProfileSummaryCard({ profile, onAction, onAvatarSelect, avatarUploading }) {
+  const fileInputRef = useRef(null);
+
+  const handlePickAvatar = () => {
+    if (avatarUploading) {
+      return;
+    }
+
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      onAvatarSelect?.(file);
+      event.target.value = '';
+    }
+  };
+
   return (
     <div className="ps-profile-top">
       <div className="ps-profile-identity">
         <div className="ps-avatar-wrap">
           <img src={profile.avatar} alt="Profile" />
-          <button type="button" aria-label="Change avatar">
+          <button type="button" aria-label="Change avatar" onClick={handlePickAvatar} disabled={avatarUploading}>
             <i className="fa-solid fa-camera" aria-hidden="true" />
           </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="ps-avatar-input"
+            onChange={handleFileChange}
+          />
         </div>
         <div>
           <h2>

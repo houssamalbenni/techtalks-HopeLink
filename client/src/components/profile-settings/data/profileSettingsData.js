@@ -53,6 +53,7 @@ export const profileFieldSections = [
       { id: 'birth-date', label: 'Date of Birth', value: 'August 12, 1985', type: 'text' },
       { id: 'email', label: 'Email Address', value: 'michael.chen@example.com', type: 'email' },
       { id: 'phone', label: 'Phone Number', value: '+1 (555) 019-8432', type: 'tel' },
+      { id: 'password', label: 'New Password', value: '', type: 'password' },
     ],
   },
   {

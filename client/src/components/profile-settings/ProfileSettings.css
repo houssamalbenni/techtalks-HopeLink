@@ -331,6 +331,15 @@
   color: #94a3b8;
 }
 
+.ps-avatar-wrap button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ps-avatar-input {
+  display: none;
+}
+
 .ps-profile-identity h2 {
   margin: 0;
   display: flex;
@@ -360,6 +369,20 @@
 .ps-profile-actions {
   display: flex;
   gap: 10px;
+}
+
+.ps-inline-note,
+.ps-inline-error {
+  margin: 12px 0 0;
+  font-size: 12px;
+}
+
+.ps-inline-note {
+  color: var(--ps-text-muted);
+}
+
+.ps-inline-error {
+  color: var(--ps-red);
 }
 
 .ps-profile-actions button {
@@ -437,6 +460,11 @@
   font-size: 14px;
 }
 
+.ps-editing .ps-field input {
+  border-color: rgb(59 130 246 / 35%);
+  box-shadow: 0 0 0 1px rgb(59 130 246 / 20%);
+}
+
 .ps-select-field {
   display: grid;
   gap: 10px;
@@ -458,6 +486,11 @@
 
 .ps-select-wrap select {
   appearance: none;
+}
+
+.ps-select-wrap select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .ps-select-field small,

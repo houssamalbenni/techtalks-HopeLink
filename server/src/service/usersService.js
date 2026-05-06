@@ -1,5 +1,5 @@
 const  User  = require("../models/user").User;
-
+const bcrypt = require('bcryptjs');
 
 class UsersService {
 
@@ -21,6 +21,10 @@ class UsersService {
 
   static async updateUser(userId, updateData) { // userId from the token
     try {
+      if(updateData.password){
+        const cryptedPassword = bcrypt.hashSync(updateData.password, 10);
+        updateData.password = cryptedPassword;
+      }
       const user = await User.findByIdAndUpdate(userId, updateData, { new: true });
       if (!user) {
         const err = new Error("User not found");
