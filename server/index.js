@@ -31,7 +31,7 @@ app.use("/users", usersRoute);
 app.use("/donor", donorRoute);
 app.use("/refugee", refugeeRoute);
 app.use("/missing-person", missingPersonRoute);
-app.use('/ngo', ngoRoute);
+// app.use('/ngo', ngoRoute);
 app.use("/notifications", notificationRoute);
 app.use("/family", missingPersonRoute);
 
