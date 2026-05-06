@@ -56,7 +56,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="sidebar">
+    <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
       <div className="sidebar-logo">
         <div className="sidebar-logo-icon">
           <svg viewBox="0 0 24 24">

@@ -4,7 +4,7 @@ import HeroSection from './HeroSection';
 import RolesSection from './RolesSection';
 import PrivacySection from './PrivacySection';
 import FooterSection from './FooterSection';
-
+import './Landing.css';
 function LandingPage() {
   return (
     <div className="landing-page">

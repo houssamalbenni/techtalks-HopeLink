@@ -12,7 +12,7 @@
   color: #ffffff;
 }
 
-/* SIDEBAR */
+/* SIDEBAR*/
 .sidebar {
   width: 130px;
   background: #111827;
@@ -23,7 +23,7 @@
   padding: 20px 0;
   gap: 8px;
   flex-shrink: 0;
-}
+} 
 
 .sidebar-logo {
   display: flex;

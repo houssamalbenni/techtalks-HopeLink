@@ -9,7 +9,6 @@ import SignupFlow from "./components/full-create-account/SignupFlow";
 import EditShelter from "./components/edit-shelter/EditShelter";
 import FamilyReunification from './components/family-reunification/FamilyReunification';
 import RefugeeDashboard from './components/refugee-dashboard/RefugeeDashboard';
-import AidDistribution from './components/aid-distribution/AidDistribution';
 import Hospitals from "./components/hospitals/Hospitals";
 import AddHospital from "./components/add-hospital/AddHospital";
 import EditHospital from "./components/edit-hospital/EditHospital";
@@ -24,8 +23,6 @@ import SupportHome from "./components/support-home/SupportHome";
 // import Hospitals from "./components/hospitals/Hospitals";
 // import AddHospital from "./components/add-hospital/AddHospital";
 // import EditHospital from "./components/edit-hospital/EditHospital";
-// import MeshAdmin from "./components/test/meshAdmin";
-// import Socket from "./components/test/socket";
 import MeshAdmin2 from "./components/test/meshAdmin2";
 import NotificationPage from "./components/notification/Notification";
 import DoctorChat from "./components/test/DoctorChat";
@@ -35,9 +32,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/landing" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={<SignupFlow />} />
+        <Route path="/create/:role" element={<SignupFlow />} />
         <Route path="/digital-identity" element={<DigitalIdentityVault />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile-settings" element={<ProfileSettings />} />
@@ -49,10 +46,9 @@ function App() {
         <Route path="/EditShelter" element={<EditShelter />} />
         <Route path="/family-reunification" element={<FamilyReunification />} />
         <Route path="/refugee-dashboard" element={<RefugeeDashboard />} />
-        <Route path="/aid-distribution" element={<AidDistribution />} />
          <Route path="/InteractiveExercises" element={<InteractiveExercises />} />
          <Route path="/chatting" element={<Chatting />} />
-         <Route path="/counselor-portal" element={<CounselorPortal />} />
+         <Route path="/counselor" element={<CounselorPortal />} />
          <Route path="/support-home" element={<SupportHome />} />
         <Route path="/test/doctor-chat" element={<DoctorChat />} />
         <Route path="/test/refugee-chat" element={<RefugeeChat />} />
