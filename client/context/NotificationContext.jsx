@@ -8,6 +8,7 @@ export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [chating, setChating] = useState([]);
+  const [endSessionSignal, setEndSessionSignal] = useState(null);
   const SOCKET_URL = "http://localhost:5000";
   const socketRef = useRef(null);
 
@@ -30,7 +31,6 @@ export const NotificationProvider = ({ children }) => {
         });
         setLoading(false);
       });
-
 
     const socket = socketRef.current;
 
@@ -57,16 +57,22 @@ export const NotificationProvider = ({ children }) => {
       setChating((prev) => [...prev, { ...data, createdAt }]);
     };
 
+    const handleEndSession = (data) => {
+      setEndSessionSignal(data);
+    };
+
     socket.on("global_notification", handleGlobalNotification);
     socket.on("new_message", handleNewMessage);
     socket.on("error", handleSocketError);
     socket.on("response", handleChating);
+    socket.on("end_session", handleEndSession);
 
     return () => {
       socket.off("global_notification", handleGlobalNotification);
       socket.off("new_message", handleNewMessage);
       socket.off("error", handleSocketError);
       socket.off("response", handleChating);
+      socket.off("end_session", handleEndSession);
     };
   }, []);
 
@@ -92,6 +98,18 @@ export const NotificationProvider = ({ children }) => {
     setChating((prev) => [...prev, { ...data, createdAt }]);
   };
 
+  const sendEndSession = (data) => {
+    socketRef.current.emit("end_session", data);
+  };
+
+  const clearChatting = () => {
+    setChating([]);
+  };
+
+  const clearEndSessionSignal = () => {
+    setEndSessionSignal(null);
+  };
+
   const value = {
     notifications,
     loading,
@@ -101,6 +119,10 @@ export const NotificationProvider = ({ children }) => {
     socket: socketRef.current,
     chating,
     sendChats,
+    clearChatting,
+    endSessionSignal,
+    sendEndSession,
+    clearEndSessionSignal,
   };
 
   return (

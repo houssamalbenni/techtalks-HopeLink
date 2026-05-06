@@ -1,9 +1,16 @@
 import "./CounselorPortal.css";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import SectionHeader from "./SectionHeader";
 import RequestFilters from "./RequestFilters";
 import RequestList from "./RequestList";
+import {
+  acceptChatRequest,
+  getChatRequestQueue,
+} from "../../../services/chatRequestService";
+import { formatNotificationTime } from "../../../utils/helper";
 
 const navItems = [
   {
@@ -91,56 +98,110 @@ const navItems = [
   },
 ];
 
-const filters = [
-  { id: "all", label: "All (5)", active: true, tone: "all" },
-  { id: "critical", label: "Critical (2)", tone: "critical" },
-  { id: "general", label: "General (3)", tone: "general" },
-];
-
-const requests = [
-  {
-    id: 1,
-    type: "Critical",
-    note: "Someone needs immediate support",
-    time: "Just now",
-    priority: "High Priority",
-    tone: "critical",
-  },
-  {
-    id: 2,
-    type: "Critical",
-    note: "Someone needs immediate support",
-    time: "2 min ago",
-    priority: "High Priority",
-    tone: "critical",
-  },
-  {
-    id: 3,
-    type: "General",
-    note: "Looking for guidance and support",
-    time: "5 min ago",
-    priority: "Normal Priority",
-    tone: "general",
-  },
-  {
-    id: 4,
-    type: "General",
-    note: "Looking for guidance and support",
-    time: "8 min ago",
-    priority: "Normal Priority",
-    tone: "general",
-  },
-  {
-    id: 5,
-    type: "General",
-    note: "Looking for guidance and support",
-    time: "12 min ago",
-    priority: "Normal Priority",
-    tone: "general",
-  },
-];
-
 export default function CounselorPortal() {
+  const [requests, setRequests] = useState([]);
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [isLoading, setIsLoading] = useState(false);
+  const [acceptingId, setAcceptingId] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadQueue = async () => {
+      setIsLoading(true);
+      try {
+        const res = await getChatRequestQueue();
+        const queue = res?.data?.requests || [];
+        if (isMounted) {
+          setRequests(queue);
+        }
+      } catch {
+        if (isMounted) {
+          setRequests([]);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadQueue();
+    const intervalId = setInterval(loadQueue, 5000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  const mappedRequests = useMemo(
+    () =>
+      requests.map((request) => {
+        const tone = request.priority === "critical" ? "critical" : "general";
+
+        return {
+          id: request._id,
+          type: tone === "critical" ? "Critical" : "General",
+          note: request.note || "Looking for guidance and support",
+          time: formatNotificationTime(request.createdAt),
+          priority: tone === "critical" ? "High Priority" : "Normal Priority",
+          tone,
+          refugeeId: request.refugeeId,
+        };
+      }),
+    [requests],
+  );
+
+  const filteredRequests = mappedRequests.filter((request) => {
+    if (activeFilter === "all") {
+      return true;
+    }
+
+    return request.tone === activeFilter;
+  });
+
+  const filters = [
+    {
+      id: "all",
+      label: `All (${mappedRequests.length})`,
+      active: activeFilter === "all",
+      tone: "all",
+    },
+    {
+      id: "critical",
+      label: `Critical (${mappedRequests.filter((r) => r.tone === "critical").length})`,
+      active: activeFilter === "critical",
+      tone: "critical",
+    },
+    {
+      id: "general",
+      label: `General (${mappedRequests.filter((r) => r.tone === "general").length})`,
+      active: activeFilter === "general",
+      tone: "general",
+    },
+  ];
+
+  const handleAccept = async (requestId) => {
+    if (acceptingId) {
+      return;
+    }
+
+    setAcceptingId(requestId);
+    try {
+      const res = await acceptChatRequest(requestId);
+      const acceptedRequest = res?.data;
+      if (acceptedRequest?.refugeeId) {
+        navigate(`/test/doctor-chat/${acceptedRequest.refugeeId}`);
+      }
+      setRequests((prev) => prev.filter((item) => item._id !== requestId));
+    } catch {
+      setAcceptingId(null);
+    } finally {
+      setAcceptingId(null);
+    }
+  };
+
   return (
     <div className="portal-page">
       <div className="portal-shell">
@@ -154,10 +215,16 @@ export default function CounselorPortal() {
             <SectionHeader
               title="Incoming Chat Requests"
               subtitle="Queue is prioritized by urgency"
-              action="View All (5)"
+              action={
+                isLoading ? "Loading..." : `View All (${mappedRequests.length})`
+              }
             />
-            <RequestFilters filters={filters} />
-            <RequestList requests={requests} />
+            <RequestFilters filters={filters} onSelect={setActiveFilter} />
+            <RequestList
+              requests={filteredRequests}
+              onAccept={handleAccept}
+              acceptingId={acceptingId}
+            />
           </section>
         </main>
       </div>

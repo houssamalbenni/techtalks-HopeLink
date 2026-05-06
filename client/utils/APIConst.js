@@ -1,5 +1,4 @@
 export const ApiConst = {
-
   REGISTER_USER: "/auth/register",
   LOGIN_USER: "/auth/login",
   GET_ALL_USERS: "/users", // Admin
@@ -17,9 +16,8 @@ export const ApiConst = {
   UPDATE_SERVICE: (id) => `/admin/services/${id}`,
   DELETE_SERVICE: (id) => `/admin/services/${id}`,
 
-
   DONATE: "/donor",
-  GET_DONATIONS:(id)=> `/donor/${id}`,
+  GET_DONATIONS: (id) => `/donor/${id}`,
   GET_TOTAL_DONATIONS: "/donor/total",
 
   CREATE_REQUEST: "/requests",
@@ -51,5 +49,12 @@ export const ApiConst = {
   GET_NOTIFICATION_BY_ID: (id) => `/notifications/${id}`,
   GET_USER_NOTIFICATIONS: "/notifications/user",
   DELETE_ALL_NOTIFICATIONS: "/notifications",
-  
+
+  GET_CHAT_HISTORY: (otherUserId) => `/chating/history/${otherUserId}`,
+
+  CREATE_CHAT_REQUEST: "/chat-requests",
+  GET_CHAT_REQUEST_QUEUE: "/chat-requests/queue",
+  GET_ACTIVE_CHAT_REQUEST: "/chat-requests/my",
+  GET_CHAT_REQUEST_BY_ID: (id) => `/chat-requests/${id}`,
+  ACCEPT_CHAT_REQUEST: (id) => `/chat-requests/${id}/accept`,
 };

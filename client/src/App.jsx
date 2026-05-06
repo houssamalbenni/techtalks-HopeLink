@@ -7,9 +7,9 @@ import AddShelter from "./components/add-shelter/AddShelter";
 import DigitalIdentityVault from "./components/digital-identity-profile/DigitalIdentityVault";
 import SignupFlow from "./components/full-create-account/SignupFlow";
 import EditShelter from "./components/edit-shelter/EditShelter";
-import FamilyReunification from './components/family-reunification/FamilyReunification';
-import RefugeeDashboard from './components/refugee-dashboard/RefugeeDashboard';
-import AidDistribution from './components/aid-distribution/AidDistribution';
+import FamilyReunification from "./components/family-reunification/FamilyReunification";
+import RefugeeDashboard from "./components/refugee-dashboard/RefugeeDashboard";
+import AidDistribution from "./components/aid-distribution/AidDistribution";
 import Hospitals from "./components/hospitals/Hospitals";
 import AddHospital from "./components/add-hospital/AddHospital";
 import EditHospital from "./components/edit-hospital/EditHospital";
@@ -50,13 +50,18 @@ function App() {
         <Route path="/family-reunification" element={<FamilyReunification />} />
         <Route path="/refugee-dashboard" element={<RefugeeDashboard />} />
         <Route path="/aid-distribution" element={<AidDistribution />} />
-         <Route path="/InteractiveExercises" element={<InteractiveExercises />} />
-         <Route path="/chatting" element={<Chatting />} />
-         <Route path="/counselor-portal" element={<CounselorPortal />} />
-         <Route path="/support-home" element={<SupportHome />} />
+        <Route
+          path="/InteractiveExercises"
+          element={<InteractiveExercises />}
+        />
+        <Route path="/chatting" element={<Chatting />} />
+        <Route path="/counselor-portal" element={<CounselorPortal />} />
+        <Route path="/support-home" element={<SupportHome />} />
         <Route path="/test/doctor-chat" element={<DoctorChat />} />
+        <Route path="/test/doctor-chat/:refugeeId" element={<DoctorChat />} />
         <Route path="/test/refugee-chat" element={<RefugeeChat />} />
-        <Route path="/notification" element={<NotificationPage/>}/>
+        <Route path="/test/refugee-chat/:doctorId" element={<RefugeeChat />} />
+        <Route path="/notification" element={<NotificationPage />} />
       </Routes>
     </BrowserRouter>
   );

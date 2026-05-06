@@ -111,6 +111,26 @@ module.exports = (io) => {
       }
     });
 
+    socket.on(SocketEvents.END_SESSION, (data) => {
+      try {
+        const { receivedId, senderId } = data || {};
+        const receiverSocketId = users[receivedId];
+        const payload = {
+          senderId,
+          receivedId,
+          endedAt: new Date().toISOString(),
+        };
+
+        if (receiverSocketId && receiverSocketId !== socket.id) {
+          io.to(receiverSocketId).emit(SocketEvents.END_SESSION, payload);
+        }
+      } catch (err) {
+        socket.emit(SocketEvents.ERROR, {
+          message: "Failed to end session: " + err.message,
+        });
+      }
+    });
+
     socket.on(SocketEvents.DISCONNECT, () => {
       for (let userId in users) {
         if (users[userId] === socket.id) {

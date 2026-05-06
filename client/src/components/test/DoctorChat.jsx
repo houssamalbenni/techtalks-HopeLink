@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useNotifications } from "../../../context/NotificationContext";
 import { formatNotificationTime } from "../../../utils/helper";
+import { getStoredUserId, getStoredUserRole } from "../../../utils/authStorage";
+import { getChatHistory } from "../../../services/chatingService";
 import "../chatting/Chatting.css";
 
 const navItems = [
@@ -67,18 +70,63 @@ const navItems = [
   },
 ];
 const DoctorChat = () => {
-  const { registerToSocket, chating, sendChats } = useNotifications();
+  const {
+    registerToSocket,
+    chating,
+    sendChats,
+    clearChatting,
+    sendEndSession,
+  } = useNotifications();
   const [message, setMessage] = useState("");
-
-  const refugeeId = "69e12b58350ccd29cbc674c9";
-  const doctorId = "69e63b214bf8bccbeb1cf109";
+  const [history, setHistory] = useState([]);
+  const navigate = useNavigate();
+  const { refugeeId: refugeeIdParam } = useParams();
+  const doctorId = getStoredUserId();
+  const doctorRole = getStoredUserRole() || "doctor";
+  const refugeeId = refugeeIdParam;
 
   useEffect(() => {
-    registerToSocket(doctorId, "doctor");
-  }, []);
+    if (!doctorId) {
+      return;
+    }
+
+    registerToSocket(doctorId, doctorRole);
+  }, [doctorId, doctorRole, registerToSocket]);
+
+  useEffect(() => {
+    if (!doctorId || !refugeeId) {
+      return;
+    }
+
+    let isMounted = true;
+
+    const loadHistory = async () => {
+      try {
+        const res = await getChatHistory(refugeeId);
+        const messages = res?.data?.messages || [];
+        if (isMounted) {
+          setHistory(messages);
+        }
+      } catch {
+        if (isMounted) {
+          setHistory([]);
+        }
+      }
+    };
+
+    loadHistory();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [doctorId, refugeeId]);
 
   const handleSend = () => {
     if (!message.trim()) return;
+
+    if (!doctorId || !refugeeId) {
+      return;
+    }
 
     sendChats({
       senderId: doctorId,
@@ -86,6 +134,34 @@ const DoctorChat = () => {
       message: message,
     });
     setMessage("");
+  };
+
+  const filteredMessages = chating.filter((msg) => {
+    if (!doctorId || !refugeeId) {
+      return false;
+    }
+
+    const isDoctorSender =
+      msg.senderId === doctorId && msg.receivedId === refugeeId;
+    const isRefugeeSender =
+      msg.senderId === refugeeId && msg.receivedId === doctorId;
+    return isDoctorSender || isRefugeeSender;
+  });
+
+  const mergedMessages = [...history, ...filteredMessages].sort((a, b) => {
+    const timeA = new Date(a.createdAt).getTime();
+    const timeB = new Date(b.createdAt).getTime();
+    return timeA - timeB;
+  });
+
+  const handleEndSession = () => {
+    if (doctorId && refugeeId) {
+      sendEndSession({ senderId: doctorId, receivedId: refugeeId });
+    }
+    setMessage("");
+    setHistory([]);
+    clearChatting();
+    navigate("/counselor-portal");
   };
 
   return (
@@ -175,7 +251,7 @@ const DoctorChat = () => {
           </div>
 
           <section className="chatting-messages">
-            {chating.map((msg, i) => {
+            {mergedMessages.map((msg, i) => {
               const side = msg.senderId === doctorId ? "user" : "counselor";
 
               return (
@@ -214,7 +290,11 @@ const DoctorChat = () => {
           </div>
 
           <div>
-            <button className="end-session" type="button">
+            <button
+              className="end-session"
+              type="button"
+              onClick={handleEndSession}
+            >
               End Session
             </button>
             <div className="session-note">

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useNotifications } from "../../../context/NotificationContext";
 import { formatNotificationTime } from "../../../utils/helper";
+import { getStoredUserId, getStoredUserRole } from "../../../utils/authStorage";
+import { getChatHistory } from "../../../services/chatingService";
 import "../chatting/Chatting.css";
 
 const navItems = [
@@ -68,18 +71,64 @@ const navItems = [
 ];
 
 const RefugeeChat = () => {
-  const { registerToSocket, chating, sendChats } = useNotifications();
+  const {
+    registerToSocket,
+    chating,
+    sendChats,
+    clearChatting,
+    endSessionSignal,
+    clearEndSessionSignal,
+  } = useNotifications();
   const [message, setMessage] = useState("");
-
-  const refugeeId = "69e12b58350ccd29cbc674c9";
-  const doctorId = "69e63b214bf8bccbeb1cf109";
+  const [history, setHistory] = useState([]);
+  const navigate = useNavigate();
+  const { doctorId: doctorIdParam } = useParams();
+  const refugeeId = getStoredUserId();
+  const refugeeRole = getStoredUserRole() || "refugee";
+  const doctorId = doctorIdParam;
 
   useEffect(() => {
-    registerToSocket(refugeeId, "refugee");
-  }, []);
+    if (!refugeeId) {
+      return;
+    }
+
+    registerToSocket(refugeeId, refugeeRole);
+  }, [refugeeId, refugeeRole, registerToSocket]);
+
+  useEffect(() => {
+    if (!refugeeId || !doctorId) {
+      return;
+    }
+
+    let isMounted = true;
+
+    const loadHistory = async () => {
+      try {
+        const res = await getChatHistory(doctorId);
+        const messages = res?.data?.messages || [];
+        if (isMounted) {
+          setHistory(messages);
+        }
+      } catch {
+        if (isMounted) {
+          setHistory([]);
+        }
+      }
+    };
+
+    loadHistory();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [refugeeId, doctorId]);
 
   const handleSend = () => {
     if (!message.trim()) return;
+
+    if (!refugeeId || !doctorId) {
+      return;
+    }
 
     sendChats({
       senderId: refugeeId,
@@ -88,6 +137,50 @@ const RefugeeChat = () => {
     });
     setMessage("");
   };
+
+  const filteredMessages = chating.filter((msg) => {
+    if (!refugeeId || !doctorId) {
+      return false;
+    }
+
+    const isRefugeeSender =
+      msg.senderId === refugeeId && msg.receivedId === doctorId;
+    const isDoctorSender =
+      msg.senderId === doctorId && msg.receivedId === refugeeId;
+    return isRefugeeSender || isDoctorSender;
+  });
+
+  const mergedMessages = [...history, ...filteredMessages].sort((a, b) => {
+    const timeA = new Date(a.createdAt).getTime();
+    const timeB = new Date(b.createdAt).getTime();
+    return timeA - timeB;
+  });
+
+  useEffect(() => {
+    if (!endSessionSignal || !doctorId || !refugeeId) {
+      return;
+    }
+
+    const isMatch =
+      endSessionSignal.senderId === doctorId &&
+      endSessionSignal.receivedId === refugeeId;
+
+    if (!isMatch) {
+      return;
+    }
+
+    setMessage("");
+    setHistory([]);
+    clearChatting();
+    clearEndSessionSignal();
+    window.location.assign("/support-home");
+  }, [
+    endSessionSignal,
+    doctorId,
+    refugeeId,
+    clearChatting,
+    clearEndSessionSignal,
+  ]);
 
   return (
     <div className="chatting-page">
@@ -176,7 +269,7 @@ const RefugeeChat = () => {
           </div>
 
           <section className="chatting-messages">
-            {chating.map((msg, i) => {
+            {mergedMessages.map((msg, i) => {
               const side = msg.senderId === refugeeId ? "user" : "counselor";
 
               return (
@@ -214,13 +307,8 @@ const RefugeeChat = () => {
             </button>
           </div>
 
-          <div>
-            <button className="end-session" type="button">
-              End Session
-            </button>
-            <div className="session-note">
-              Your session will end and messages will be cleared.
-            </div>
+          <div className="session-note">
+            Your session will end and messages will be cleared.
           </div>
         </main>
       </div>
