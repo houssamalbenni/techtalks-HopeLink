@@ -2,12 +2,12 @@ import { createContext, useContext, useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import toast from "react-hot-toast";
 import { getUserNotifications } from "./../services/notificationsService";
-
 const NotificationContext = createContext();
 
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [chating, setChating] = useState([]);
   const SOCKET_URL = "http://localhost:5000";
   const socketRef = useRef(null);
 
@@ -15,23 +15,29 @@ export const NotificationProvider = ({ children }) => {
     if (!socketRef.current) {
       socketRef.current = io(SOCKET_URL);
     }
-
+    if (!localStorage.getItem("token")) {
+      setLoading(false);
+      return;
+    }
     getUserNotifications()
       .then((res) => {
         setNotifications(res.data);
       })
       .then(() => setLoading(false))
       .catch((err) => {
-        toast.error(err.message || "Error fetching notifications",{
+        toast.error(err.message || "Error fetching notifications", {
           style: { background: "#e44f4f86", color: "#fff" },
         });
         setLoading(false);
       });
 
+
     const socket = socketRef.current;
 
     const handleGlobalNotification = (data) => {
-      toast.success(`new ${data.type.toUpperCase()} message`, { duration: 5000 });
+      toast.success(`new ${data.type.toUpperCase()} message`, {
+        duration: 5000,
+      });
       setNotifications((prev) => [{ ...data, _isNew: true }, ...prev]);
     };
 
@@ -39,7 +45,6 @@ export const NotificationProvider = ({ children }) => {
       toast(`new ${data.type.toUpperCase()} message`, {
         icon: "📩",
         duration: 5000,
-        
       });
       setNotifications((prev) => [{ ...data, _isNew: true }, ...prev]);
     };
@@ -47,15 +52,21 @@ export const NotificationProvider = ({ children }) => {
     const handleSocketError = (err) => {
       toast.error(err.message || "Socket error");
     };
+    const handleChating = (data) => {
+      const createdAt = data.createdAt || new Date().toISOString();
+      setChating((prev) => [...prev, { ...data, createdAt }]);
+    };
 
     socket.on("global_notification", handleGlobalNotification);
     socket.on("new_message", handleNewMessage);
     socket.on("error", handleSocketError);
+    socket.on("response", handleChating);
 
     return () => {
       socket.off("global_notification", handleGlobalNotification);
       socket.off("new_message", handleNewMessage);
       socket.off("error", handleSocketError);
+      socket.off("response", handleChating);
     };
   }, []);
 
@@ -74,6 +85,13 @@ export const NotificationProvider = ({ children }) => {
     socketRef.current.emit("send_private_message", msgData);
   };
 
+  const sendChats = (data) => {
+    const createdAt = new Date().toISOString();
+    socketRef.current.emit("chating", data);
+
+    setChating((prev) => [...prev, { ...data, createdAt }]);
+  };
+
   const value = {
     notifications,
     loading,
@@ -81,6 +99,8 @@ export const NotificationProvider = ({ children }) => {
     sendAnnouncement,
     sendPrivateMessage,
     socket: socketRef.current,
+    chating,
+    sendChats,
   };
 
   return (

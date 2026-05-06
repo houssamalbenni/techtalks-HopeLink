@@ -9,7 +9,9 @@ const SocketEvents = Object.freeze({
     USER_ONLINE: 'user_online',
     NEW_MESSAGE: 'new_message',
     GLOBAL_NOTIFICATION: 'global_notification',
-    ERROR: 'socket_error'
+    ERROR: 'socket_error',
+    CHATING:'chating',
+    RESPONSE:'response',
 });
  
 module.exports = SocketEvents;

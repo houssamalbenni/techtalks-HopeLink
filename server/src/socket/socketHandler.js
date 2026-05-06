@@ -1,7 +1,7 @@
 const SocketEvents = require("./socketEvents");
 const NotificationService = require("../service/notificationService");
 const User = require("../models/User").User;
-
+const ChatingServices = require("../service/chatingService");
 let users = {};
 
 module.exports = (io) => {
@@ -73,6 +73,40 @@ module.exports = (io) => {
       } catch (err) {
         socket.emit(SocketEvents.ERROR, {
           message: "Failed to send message: " + err.message,
+        });
+      }
+    });
+
+    socket.on(SocketEvents.CHATING, async (data) => {
+      try {
+        console.log("chating", data);
+        const { receivedId, senderId, message } = data;
+        const receiverSocketId = users[receivedId];
+
+        const { chating: chat, messageEntry } =
+          await ChatingServices.createOrAppendMessage({
+            senderId,
+            receivedId,
+            message,
+          });
+
+        const payload = {
+          senderId,
+          receivedId,
+          message,
+          chatId: chat._id,
+          createdAt: messageEntry.createdAt,
+        };
+
+        if (receiverSocketId && receiverSocketId !== socket.id) {
+          io.to(receiverSocketId).emit(SocketEvents.RESPONSE, payload);
+        } else {
+          console.log(`User ${receivedId} is offline. Message saved to DB.`);
+          console.log(`Online users are :`, users);
+        }
+      } catch (err) {
+        socket.emit(SocketEvents.ERROR, {
+          message: "Failed to send chating: " + err.message,
         });
       }
     });
