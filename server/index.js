@@ -13,6 +13,8 @@ const usersRoute = require("./src/routes/usersRoute");
 const donorRoute = require("./src/routes/donorRoute");
 const refugeeRoute = require("./src/routes/refugeeRoutes");
 const notificationRoute = require("./src/routes/notificationRoute");
+const chatingRoute = require("./src/routes/chatingRoute");
+const chatRequestRoute = require("./src/routes/chatRequestRoute");
 const missingPersonRoute = require("./src/routes/familyRoute");
 const errorHandler = require("./src/middleware/errorHandling");
 
@@ -20,64 +22,56 @@ const app = express();
 
 app.use(express.json());
 
-app.use(cors({
-  origin:"http://localhost:5173",
-  credentials:true
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 
 app.use("/auth", userRoutes);
 app.use("/admin", adminRoute);
 app.use("/users", usersRoute);
 app.use("/donor", donorRoute);
 app.use("/refugee", refugeeRoute);
+app.use("/missing-person", missingPersonRoute);
+// app.use('/ngo', ngoRoute);
 app.use("/notifications", notificationRoute);
+app.use("/chating", chatingRoute);
+app.use("/chat-requests", chatRequestRoute);
 app.use("/family", missingPersonRoute);
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
   res.send("API running");
 });
 
 app.use(errorHandler);
 
-
-
 const server = http.createServer(app);
 
-const io = new Server(server,{
-   cors:{
-      origin:"http://localhost:5173",
-      credentials:true
-   }
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    credentials: true,
+  },
 });
 
 require("./src/socket/socketHandler")(io);
 
-
-
 const startServer = async () => {
+  try {
+    await connectDB();
 
-  try{
+    const PORT = process.env.PORT || 5000;
 
-      await connectDB();
+    server.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Server startup error:", error.message);
 
-      const PORT = process.env.PORT || 5000;
-
-      server.listen(PORT,()=>{
-          console.log(
-             `Server running on port ${PORT}`
-          );
-      });
-
+    process.exit(1);
   }
-  catch(error){
-      console.error(
-        "Server startup error:",
-        error.message
-      );
-
-      process.exit(1);
-  }
-
 };
 
 startServer();
