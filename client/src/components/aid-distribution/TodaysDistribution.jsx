@@ -1,10 +1,35 @@
-const tags = [
-  { label: 'Medical 450kg', color: '#3b82f6' },
-  { label: 'Food 1,200kg', color: '#f97316' },
-  { label: 'Shelter 800kg', color: '#10b981' },
-];
+const TodaysDistribution = ({ distributions = [] }) => {
+  // Calculate total weight from distributions
+  const totalWeight = distributions.reduce((sum, dist) => {
+    const weight = parseInt(dist.weight) || 0;
+    return sum + weight;
+  }, 0);
 
-const TodaysDistribution = () => {
+  const dailyGoal = Math.max(totalWeight + 1000, 3600);
+  const progressPercent = Math.min(Math.round((totalWeight / dailyGoal) * 100), 100);
+
+  const graphPoints = distributions.length > 0
+    ? distributions.map((dist, index) => {
+        const load = Math.max(Number(dist.capacity || 0) - Number(dist.availability || 0), 0);
+        return {
+          x: distributions.length === 1 ? 300 : (index / (distributions.length - 1)) * 300,
+          y: 80 - Math.min((load / Math.max(Number(dist.capacity || 1), 1)) * 70, 70),
+        };
+      })
+    : [
+        { x: 0, y: 70 },
+        { x: 300, y: 70 },
+      ];
+
+  // Generate tags from distributions
+  const tags = distributions.slice(0, 3).map((dist, index) => {
+    const colors = ['#3b82f6', '#f97316', '#10b981'];
+    return {
+      label: `${dist.category} ${dist.weight}`,
+      color: colors[index % colors.length],
+    };
+  });
+
   return (
     <div className="aid-dist-card">
       <div className="aid-dist-card-header">
@@ -13,12 +38,16 @@ const TodaysDistribution = () => {
       </div>
 
       <div className="aid-dist-tags">
-        {tags.map((tag) => (
-          <div key={tag.label} className="aid-dist-tag">
-            <div className="aid-dist-tag-dot" style={{ background: tag.color }} />
-            {tag.label}
-          </div>
-        ))}
+        {tags.length > 0 ? (
+          tags.map((tag) => (
+            <div key={tag.label} className="aid-dist-tag">
+              <div className="aid-dist-tag-dot" style={{ background: tag.color }} />
+              {tag.label}
+            </div>
+          ))
+        ) : (
+          <p style={{ fontSize: '12px', color: '#666' }}>No distributions today</p>
+        )}
       </div>
 
       <div className="aid-dist-chart-area">
@@ -32,20 +61,34 @@ const TodaysDistribution = () => {
           {[0, 40, 80].map((y) => (
             <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="#2a3050" strokeWidth="0.5" />
           ))}
-          <path d="M0,80 C50,70 80,50 120,60 C160,70 180,30 240,20 C270,15 290,10 300,8" fill="url(#distGrad)" stroke="none" />
-          <path d="M0,80 C50,70 80,50 120,60 C160,70 180,30 240,20 C270,15 290,10 300,8" fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" />
+          {graphPoints.length > 1 && (
+            <>
+              <path
+                d={`M${graphPoints.map((point) => `${point.x},${point.y}`).join(' L')}`}
+                fill="url(#distGrad)"
+                stroke="none"
+              />
+              <path
+                d={`M${graphPoints.map((point) => `${point.x},${point.y}`).join(' L')}`}
+                fill="none"
+                stroke="#3b82f6"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+            </>
+          )}
         </svg>
       </div>
 
       <div className="aid-dist-progress-section">
         <div className="aid-progress-bar-wrap">
-          <div className="aid-progress-bar-fill">
-            <span className="aid-progress-label">68%</span>
+          <div className="aid-progress-bar-fill" style={{ width: `${progressPercent}%` }}>
+            <span className="aid-progress-label">{progressPercent}%</span>
           </div>
         </div>
         <div className="aid-progress-meta">
           <span>0%</span>
-          <span>2,450 kg / 3,600 kg daily goal (68%)</span>
+          <span>{totalWeight} kg / {dailyGoal} kg daily goal ({progressPercent}%)</span>
           <span>100%</span>
         </div>
       </div>

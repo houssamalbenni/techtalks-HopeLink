@@ -1,9 +1,14 @@
-const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const served = [1100, 1050, 900, 1200, 1350, 1100, 1500];
-const gaps = [400, 450, 500, 350, 300, 420, 280];
-
-const ServedCountsChart = () => {
-  const maxVal = 1800;
+const ServedCountsChart = ({ distributions = [] }) => {
+  const days = distributions.length > 0
+    ? distributions.slice(0, 7).map((dist, index) => dist.category || `Batch ${index + 1}`)
+    : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const served = distributions.length > 0
+    ? distributions.slice(0, 7).map((dist) => Math.max(Number(dist.capacity || 0) - Number(dist.availability || 0), 0))
+    : days.map(() => 0);
+  const gaps = distributions.length > 0
+    ? distributions.slice(0, 7).map((dist) => Number(dist.availability || 0))
+    : days.map(() => 0);
+  const maxVal = Math.max(...served, ...gaps, 1);
   const h = 140;
   const w = 340;
 
@@ -18,7 +23,7 @@ const ServedCountsChart = () => {
     <div className="aid-chart-card">
       <div className="aid-chart-header">
         <div>
-          <h3 className="aid-chart-title">Served Counts vs Gaps</h3>
+          <h3 className="aid-chart-title">Served Counts vs Remaining Capacity</h3>
           <p className="aid-chart-subtitle">Beneficiary verification via privacy tokens</p>
         </div>
         <button className="aid-chart-dots-btn">···</button>
@@ -52,7 +57,7 @@ const ServedCountsChart = () => {
         </div>
         <div className="aid-legend-item">
           <div className="aid-legend-dashed" />
-          Gaps (Unmet Need)
+          Remaining Capacity
         </div>
       </div>
     </div>

@@ -1,37 +1,17 @@
-const requests = [
-  {
-    id: 1,
-    title: 'Emergency Medical Supply',
-    badge: 'Urgent',
-    badgeClass: 'badge-urgent',
-    dotClass: '',
-    desc: 'Camp Alpha needs insulin and basic first aid kits immediately.',
-    location: 'Camp Alpha, Sector 4',
-    time: '2 mins ago',
-  },
-  {
-    id: 2,
-    title: 'Blankets & Winter Gear',
-    badge: 'High Priority',
-    badgeClass: 'badge-high',
-    dotClass: 'high',
-    desc: 'Requesting 200 blankets for new arrivals at the registration center.',
-    location: 'Main Registration Hub',
-    time: '15 mins ago',
-  },
-  {
-    id: 3,
-    title: 'Food Rations',
-    badge: 'Standard',
-    badgeClass: 'badge-standard',
-    dotClass: 'standard',
-    desc: 'Weekly food ration replenishment required for Sector 2.',
-    location: 'Camp Beta, Sector 2',
-    time: '1 hour ago',
-  },
-];
+const AidRequestQueue = ({ requests = [], loading = false, error = null }) => {
+  const normalizedRequests = requests.map((request) => ({
+    id: request._id || request.id,
+    title: request.service?.title || request.title || 'Request',
+    desc: request.description || request.notes || '',
+    location:
+      request.service?.address?.display ||
+      request.service?.address?.city ||
+      request.location ||
+      'Unknown',
+    time: request.createdAt ? new Date(request.createdAt).toLocaleString() : '',
+    raw: request,
+  }));
 
-const AidRequestQueue = () => {
   return (
     <div className="section-card">
       <div className="section-header">
@@ -44,13 +24,15 @@ const AidRequestQueue = () => {
         </button>
       </div>
       <div className="request-list">
-        {requests.map((req) => (
+        {loading && <p>Loading...</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {!loading && normalizedRequests.length === 0 && <p>No requests found.</p>}
+        {normalizedRequests.map((req) => (
           <div key={req.id} className="request-item">
             <div className="request-item-header">
               <div className="request-item-title">
-                <div className={`request-dot ${req.dotClass}`} />
+                <div className="request-dot" />
                 {req.title}
-                <span className={`badge ${req.badgeClass}`}>{req.badge}</span>
               </div>
               <span className="request-time">{req.time}</span>
             </div>

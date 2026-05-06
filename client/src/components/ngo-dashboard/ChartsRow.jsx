@@ -1,19 +1,46 @@
 import { useState } from 'react';
 
-const SupplyChart = () => {
+const getRequestStatusCounts = (requests = []) => {
+  return requests.reduce(
+    (accumulator, request) => {
+      const status = String(request?.status || 'pending').toLowerCase();
+      if (status in accumulator) {
+        accumulator[status] += 1;
+      } else {
+        accumulator.pending += 1;
+      }
+      return accumulator;
+    },
+    { pending: 0, approved: 0, completed: 0, rejected: 0 }
+  );
+};
+
+const getServiceSeries = (services = []) => {
+  const visibleServices = services.slice(0, 6);
+  const labels = visibleServices.map((service, index) => service.title || `Service ${index + 1}`);
+  const capacity = visibleServices.map((service) => Number(service?.capacity || 0));
+  const availability = visibleServices.map((service) => Number(service?.availability || 0));
+
+  return {
+    labels: labels.length > 0 ? labels : ['No data'],
+    capacity: capacity.length > 0 ? capacity : [0],
+    availability: availability.length > 0 ? availability : [0],
+  };
+};
+
+const SupplyChart = ({ services = [] }) => {
   const [showSupplyDropdown, setShowSupplyDropdown] = useState(false);
   const [expandedSupply, setExpandedSupply] = useState(false);
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-  const foodData = [300, 450, 380, 520, 480, 600];
-  const medData = [200, 320, 410, 350, 550, 490];
+  const { labels, capacity, availability } = getServiceSeries(services);
+  const maxVal = Math.max(...capacity, ...availability, 1);
 
   const toPath = (data, color) => {
-    const maxVal = 700;
     const w = 280;
     const h = 140;
-    const points = data.map((v, i) => {
-      const x = (i / (data.length - 1)) * w;
-      const y = h - (v / maxVal) * h;
+    const denom = Math.max(data.length - 1, 1);
+    const points = data.map((value, index) => {
+      const x = (index / denom) * w;
+      const y = h - (value / maxVal) * h;
       return `${x},${y}`;
     });
     return (
@@ -32,21 +59,21 @@ const SupplyChart = () => {
     <>
       <div className={`chart-card ${expandedSupply ? 'chart-active' : ''}`} onClick={() => setExpandedSupply(true)}>
         <div className="chart-header">
-          <h3 className="chart-title">Supply Inventory Trends</h3>
+          <h3 className="chart-title">Service Capacity Snapshot</h3>
           <div className="chart-filter-wrapper">
             <button className="chart-filter" onClick={(e) => {
               e.stopPropagation();
               setShowSupplyDropdown(!showSupplyDropdown);
             }}>
-              Last 30 Days
+              Live services
               <svg style={{ width: 12, height: 12, fill: '#a0aec0' }} viewBox="0 0 24 24">
                 <path d="M7 10l5 5 5-5z" />
               </svg>
             </button>
             {showSupplyDropdown && (
               <div className="chart-dropdown">
-                <div className="dropdown-option">Medical</div>
-                <div className="dropdown-option">Security</div>
+                <div className="dropdown-option">Capacity</div>
+                <div className="dropdown-option">Availability</div>
               </div>
             )}
           </div>
@@ -55,29 +82,29 @@ const SupplyChart = () => {
           {[0, 50, 100, 150].map((y) => (
             <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="#2a3050" strokeWidth="0.5" />
           ))}
-          {toPath(foodData, '#3b82f6')}
-          {toPath(medData, '#8b5cf6')}
-          {months.map((m, i) => (
+          {toPath(capacity, '#3b82f6')}
+          {toPath(availability, '#8b5cf6')}
+          {labels.map((label, i) => (
             <text
-              key={m}
-              x={(i / (months.length - 1)) * 280 + 10}
+              key={label}
+                  x={(i / Math.max(labels.length - 1, 1)) * 280 + 10}
               y="148"
               fill="#6b7db3"
               fontSize="9"
               textAnchor="middle"
             >
-              {m}
+              {label}
             </text>
           ))}
         </svg>
         <div className="chart-legend">
           <div className="legend-item">
             <div className="legend-dot" style={{ background: '#3b82f6' }} />
-            Food
+            Capacity
           </div>
           <div className="legend-item">
             <div className="legend-dot" style={{ background: '#8b5cf6' }} />
-            Medical
+            Availability
           </div>
         </div>
       </div>
@@ -88,34 +115,34 @@ const SupplyChart = () => {
             <button className="chart-modal-close" onClick={() => setExpandedSupply(false)}>
               ✕
             </button>
-            <h2 className="chart-modal-title">Supply Inventory Trends</h2>
+            <h2 className="chart-modal-title">Service Capacity Snapshot</h2>
             <svg className="chart-modal-area" viewBox="0 0 300 150" preserveAspectRatio="xMidYMid meet">
               {[0, 50, 100, 150].map((y) => (
                 <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="#2a3050" strokeWidth="0.5" />
               ))}
-              {toPath(foodData, '#3b82f6')}
-              {toPath(medData, '#8b5cf6')}
-              {months.map((m, i) => (
+              {toPath(capacity, '#3b82f6')}
+              {toPath(availability, '#8b5cf6')}
+              {labels.map((label, i) => (
                 <text
-                  key={m}
-                  x={(i / (months.length - 1)) * 280 + 10}
+                  key={label}
+                  x={(i / Math.max(labels.length - 1, 1)) * 280 + 10}
                   y="148"
                   fill="#6b7db3"
                   fontSize="9"
                   textAnchor="middle"
                 >
-                  {m}
+                  {label}
                 </text>
               ))}
             </svg>
             <div className="chart-legend">
               <div className="legend-item">
                 <div className="legend-dot" style={{ background: '#3b82f6' }} />
-                Food
+                Capacity
               </div>
               <div className="legend-item">
                 <div className="legend-dot" style={{ background: '#8b5cf6' }} />
-                Medical
+                Availability
               </div>
             </div>
           </div>
@@ -125,32 +152,33 @@ const SupplyChart = () => {
   );
 };
 
-const IncidentChart = () => {
+const IncidentChart = ({ requests = [] }) => {
   const [showIncidentDropdown, setShowIncidentDropdown] = useState(false);
   const [expandedIncident, setExpandedIncident] = useState(false);
-  const weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-  const medical = [12, 18, 14, 20];
-  const security = [6, 8, 10, 7];
+  const statusCounts = getRequestStatusCounts(requests);
+  const labels = ['Pending', 'Approved', 'Completed', 'Rejected'];
+  const values = [statusCounts.pending, statusCounts.approved, statusCounts.completed, statusCounts.rejected];
+  const maxVal = Math.max(...values, 1);
 
   return (
     <>
       <div className={`chart-card ${expandedIncident ? 'chart-active' : ''}`} onClick={() => setExpandedIncident(true)}>
         <div className="chart-header">
-          <h3 className="chart-title">Incident Report Volume</h3>
+          <h3 className="chart-title">Request Status Breakdown</h3>
           <div className="chart-filter-wrapper">
             <button className="chart-filter" onClick={(e) => {
               e.stopPropagation();
               setShowIncidentDropdown(!showIncidentDropdown);
             }}>
-              All Categories
+              Current status
               <svg style={{ width: 12, height: 12, fill: '#a0aec0' }} viewBox="0 0 24 24">
                 <path d="M7 10l5 5 5-5z" />
               </svg>
             </button>
             {showIncidentDropdown && (
               <div className="chart-dropdown">
-                <div className="dropdown-option">Medical</div>
-                <div className="dropdown-option">Security</div>
+                <div className="dropdown-option">Pending</div>
+                <div className="dropdown-option">Completed</div>
               </div>
             )}
           </div>
@@ -159,20 +187,17 @@ const IncidentChart = () => {
           {[0, 50, 100, 150].map((y) => (
             <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="#2a3050" strokeWidth="0.5" />
           ))}
-          {weeks.map((w, i) => {
-            const maxVal = 25;
+          {labels.map((label, i) => {
             const h = 130;
-            const slotW = 300 / weeks.length;
+            const slotW = 300 / labels.length;
             const x = i * slotW + slotW * 0.15;
-            const barW = slotW * 0.28;
-            const mH = (medical[i] / maxVal) * h;
-            const sH = (security[i] / maxVal) * h;
+            const barW = slotW * 0.55;
+            const barH = (values[i] / maxVal) * h;
             return (
-              <g key={w}>
-                <rect x={x} y={h - mH} width={barW} height={mH} fill="#3b82f6" rx="3" />
-                <rect x={x + barW + 4} y={h - sH} width={barW} height={sH} fill="#ef4444" rx="3" />
-                <text x={x + barW} y="148" fill="#6b7db3" fontSize="8" textAnchor="middle">
-                  {w}
+              <g key={label}>
+                <rect x={x} y={h - barH} width={barW} height={barH} fill="#3b82f6" rx="3" />
+                <text x={x + barW / 2} y="148" fill="#6b7db3" fontSize="8" textAnchor="middle">
+                  {label}
                 </text>
               </g>
             );
@@ -181,11 +206,7 @@ const IncidentChart = () => {
         <div className="chart-legend">
           <div className="legend-item">
             <div className="legend-dot" style={{ background: '#3b82f6' }} />
-            Medical
-          </div>
-          <div className="legend-item">
-            <div className="legend-dot" style={{ background: '#ef4444' }} />
-            Security
+            Requests
           </div>
         </div>
       </div>
@@ -196,25 +217,22 @@ const IncidentChart = () => {
             <button className="chart-modal-close" onClick={() => setExpandedIncident(false)}>
               ✕
             </button>
-            <h2 className="chart-modal-title">Incident Report Volume</h2>
+            <h2 className="chart-modal-title">Request Status Breakdown</h2>
             <svg className="chart-modal-area" viewBox="0 0 300 150" preserveAspectRatio="xMidYMid meet">
               {[0, 50, 100, 150].map((y) => (
                 <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="#2a3050" strokeWidth="0.5" />
               ))}
-              {weeks.map((w, i) => {
-                const maxVal = 25;
+              {labels.map((label, i) => {
                 const h = 130;
-                const slotW = 300 / weeks.length;
+                const slotW = 300 / labels.length;
                 const x = i * slotW + slotW * 0.15;
-                const barW = slotW * 0.28;
-                const mH = (medical[i] / maxVal) * h;
-                const sH = (security[i] / maxVal) * h;
+                const barW = slotW * 0.55;
+                const barH = (values[i] / maxVal) * h;
                 return (
-                  <g key={w}>
-                    <rect x={x} y={h - mH} width={barW} height={mH} fill="#3b82f6" rx="3" />
-                    <rect x={x + barW + 4} y={h - sH} width={barW} height={sH} fill="#ef4444" rx="3" />
-                    <text x={x + barW} y="148" fill="#6b7db3" fontSize="8" textAnchor="middle">
-                      {w}
+                  <g key={label}>
+                    <rect x={x} y={h - barH} width={barW} height={barH} fill="#3b82f6" rx="3" />
+                    <text x={x + barW / 2} y="148" fill="#6b7db3" fontSize="8" textAnchor="middle">
+                      {label}
                     </text>
                   </g>
                 );
@@ -223,11 +241,7 @@ const IncidentChart = () => {
             <div className="chart-legend">
               <div className="legend-item">
                 <div className="legend-dot" style={{ background: '#3b82f6' }} />
-                Medical
-              </div>
-              <div className="legend-item">
-                <div className="legend-dot" style={{ background: '#ef4444' }} />
-                Security
+                Requests
               </div>
             </div>
           </div>
@@ -237,11 +251,11 @@ const IncidentChart = () => {
   );
 };
 
-const ChartsRow = () => {
+const ChartsRow = ({ requests = [], services = [] }) => {
   return (
     <div className="charts-row">
-      <SupplyChart />
-      <IncidentChart />
+      <SupplyChart services={services} />
+      <IncidentChart requests={requests} />
     </div>
   );
 };

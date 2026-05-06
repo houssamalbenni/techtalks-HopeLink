@@ -1,4 +1,5 @@
 const Request = require("../models/aidRequests").AidRequest;
+const  Service  = require("../models/services").Service;
 
 class RefugeeService {
   static async requestService(userId,body) { // userId from the token
@@ -28,7 +29,14 @@ class RefugeeService {
 
   static async updateRequest(requestId, updateData) {
     try {
-      const request = await Request.findByIdAndUpdate(requestId, updateData, {
+      const {status,...data} = updateData;
+      const servece=await Request.findById(requestId).populate("service").populate("user");
+      if(status && status==="approved"){
+        await Service.findByIdAndUpdate(servece.service._id, {
+          $inc: { availability: -servece.user.family_number ||-1 },
+        });
+      }
+      const request = await Request.findByIdAndUpdate(requestId, {status, ...data}, {
         new: true,
       });
       if (!request) {

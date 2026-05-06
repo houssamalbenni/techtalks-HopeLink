@@ -1,7 +1,6 @@
 module.exports = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };
-
 /*
 
     app.get('/user/:id', async (req, res) => {

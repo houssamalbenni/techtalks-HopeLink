@@ -8,7 +8,9 @@ import ServiceAreaInput from "./ServiceAreaInput";
 import "./complete-profile.css";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../../services/userService";
+import { saveAuthSession } from "../../../utils/authStorage";
 import toast from "react-hot-toast";
+import { useNotifications } from "../../../context/NotificationContext";
 import { useState } from "react";
 const CompleteProfile = ({
   onBack,
@@ -24,7 +26,7 @@ const CompleteProfile = ({
 }) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const { registerToSocket } = useNotifications();
   const handleSubmit = async () => {
     if (isSubmitting) return;
 
@@ -53,10 +55,15 @@ const CompleteProfile = ({
     try {
       const res = await registerUser(payload);
       if (res) {
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("userId", res.data.user._id);
-        localStorage.setItem("role", res.data.user.role);
+        console.log("Registration successful:", res);
+        console.log("Received token:", res.data.token);
+        saveAuthSession({ token: res.data.token, user: res.data.user });
+        console.log(
+          "Token stored in localStorage:",
+          localStorage.getItem("token"),
+        );
         toast.success("Registration successful! Redirecting to dashboard...");
+        registerToSocket(res.data.user._id, res.data.user.role);
         navigate("/dashboard");
       }
     } catch (error) {
