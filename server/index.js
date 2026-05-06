@@ -13,9 +13,7 @@ const usersRoute = require("./src/routes/usersRoute");
 const donorRoute = require("./src/routes/donorRoute");
 const refugeeRoute = require("./src/routes/refugeeRoutes");
 const notificationRoute = require("./src/routes/notificationRoute");
-const missingPersonRoute = require("./src/routes/missingPersonRoutes.js");
-const ngoRoute = require("./src/routes/ngoRoute.js");
-
+const missingPersonRoute = require("./src/routes/familyRoute");
 const errorHandler = require("./src/middleware/errorHandling");
 
 const app = express();
@@ -35,6 +33,7 @@ app.use("/refugee", refugeeRoute);
 app.use("/missing-person", missingPersonRoute);
 app.use('/ngo', ngoRoute);
 app.use("/notifications", notificationRoute);
+app.use("/family", missingPersonRoute);
 
 app.get("/",(req,res)=>{
   res.send("API running");

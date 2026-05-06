@@ -28,6 +28,8 @@ import SupportHome from "./components/support-home/SupportHome";
 // import Socket from "./components/test/socket";
 import MeshAdmin2 from "./components/test/meshAdmin2";
 import NotificationPage from "./components/notification/Notification";
+import DoctorChat from "./components/test/DoctorChat";
+import RefugeeChat from "./components/test/RefugeeChat";
 function App() {
   return (
     <BrowserRouter>
@@ -51,6 +53,8 @@ function App() {
          <Route path="/chatting" element={<Chatting />} />
          <Route path="/counselor-portal" element={<CounselorPortal />} />
          <Route path="/support-home" element={<SupportHome />} />
+        <Route path="/test/doctor-chat" element={<DoctorChat />} />
+        <Route path="/test/refugee-chat" element={<RefugeeChat />} />
       </Routes>
     </BrowserRouter>
   );
