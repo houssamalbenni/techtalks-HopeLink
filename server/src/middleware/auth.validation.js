@@ -86,25 +86,9 @@ const loginRules = [
 
   validate,
 ];
-// const validation_token = (req, res, next) => {
-//   const token = req.headers.authorization;
-//   if (!token) return res.status(401).json({ status: "error", message: "No token provided" });
-//   try {
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//     req.user = decoded;
-//     next();
-//   } catch {
-//     return res.status(401).json({ status: "error", message: "Invalid or expired token" });
-//   }
-// };
 const validation_token = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ status: "error", message: "No token provided" });
-  
-  const token = authHeader.startsWith("Bearer ") 
-    ? authHeader.slice(7) 
-    : authHeader;
-    
+  const token = req.headers.authorization;
+  if (!token) return res.status(401).json({ status: "error", message: "No token provided" });
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;

@@ -1,7 +1,16 @@
 const mongoose = require("mongoose");
-const { NotificationPriority, NotificationTypes,RoleTypes } = require("../constant/enum");
+const {
+  NotificationPriority,
+  NotificationTypes,
+  RoleTypes,
+} = require("../constant/enum");
 const NotificationSchema = new mongoose.Schema(
   {
+    receivedId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      index: true,
+    },
     type: {
       type: String,
       enum: NotificationTypes,
@@ -17,7 +26,7 @@ const NotificationSchema = new mongoose.Schema(
     audience: {
       // target users
       type: String,
-      enum: ["all", ...RoleTypes],
+      enum: ["all", "private", ...RoleTypes],
       default: "all",
       index: true,
     },
@@ -34,6 +43,11 @@ const NotificationSchema = new mongoose.Schema(
     },
     image_url: {
       type: String,
+    },
+    isRead: {
+      type: Boolean,
+      default: false,
+      index: true,
     },
   },
   { timestamps: true },

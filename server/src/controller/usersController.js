@@ -1,15 +1,7 @@
 const UsersService = require("../service/usersService.js");
 const asyncHandler = require("../middleware/asyncHandler");
 
-// توزيع الأعمار
-exports.getDemographics = asyncHandler(async (req, res) => {
-  const demographics = await UsersService.getDemographics();
-  return res.status(200).json({
-    success: true,
-    message: "Demographics calculated successfully",
-    data: demographics,
-  });
-});
+
 
 exports.getAllUsers = asyncHandler(async (req, res) => {
   const users = await UsersService.getAllUsers();
@@ -75,3 +67,4 @@ exports.getUserRole = asyncHandler(async (req, res) => {
     data: { role },
   });
 });
+
