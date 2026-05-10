@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "./ShelterOverview.css";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
@@ -14,15 +15,26 @@ import {
 } from "./shelterOverviewApi";
 
 export default function ShelterOverview() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const statusParam = searchParams.get("status") || "active";
+
   const [shelters, setShelters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState(0);
   const [selected, setSelected] = useState(new Set());
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [activeNav, setActiveNav] = useState("Shelters");
   const rowsPerPage = 4;
+
+  // Get active tab based on status param
+  const activeTab =
+    {
+      active: 0,
+      pending: 1,
+      archived: 2,
+    }[statusParam] || 0;
 
   // Fetch shelters from backend on component mount
   useEffect(() => {
@@ -47,12 +59,24 @@ export default function ShelterOverview() {
   /* Filter */
   const filtered = useMemo(
     () =>
-      shelters.filter(
-        (s) =>
+      shelters.filter((s) => {
+        const matchesSearch =
           s.name.toLowerCase().includes(search.toLowerCase()) ||
-          s.city.toLowerCase().includes(search.toLowerCase()),
-      ),
-    [search, shelters],
+          s.city.toLowerCase().includes(search.toLowerCase());
+
+        // Filter by status
+        const matchesStatus =
+          statusParam === "active"
+            ? s.status === "active"
+            : statusParam === "pending"
+              ? s.status === "pending"
+              : statusParam === "archived"
+                ? s.status === "archived"
+                : true;
+
+        return matchesSearch && matchesStatus;
+      }),
+    [search, shelters, statusParam],
   );
 
   const totalPages = Math.ceil(filtered.length / rowsPerPage);
@@ -129,7 +153,8 @@ export default function ShelterOverview() {
   };
 
   const handleTabChange = (index) => {
-    setActiveTab(index);
+    const statusMap = ["active", "pending", "archived"];
+    navigate(`/?status=${statusMap[index]}`);
     setCurrentPage(1);
   };
 
@@ -137,12 +162,31 @@ export default function ShelterOverview() {
     setCurrentPage(page);
   };
 
+  const handleAddShelter = () => {
+    navigate("/add-shelter");
+  };
+
+  const handleNavChange = (label) => {
+    setActiveNav(label);
+    if (label === "Add Shelter") {
+      navigate("/add-shelter");
+    } else if (label === "Add Hospital") {
+      navigate("/add-hospital");
+    } else if (label === "Hospitals") {
+      navigate("/hospitals");
+    } else if (label === "Admin Dashboard") {
+      navigate("/dashboard");
+    } else if (label === "Settings") {
+      navigate("/profile-settings");
+    }
+  };
+
   return (
     <div className="app-shell">
       {/* ── Sidebar ── */}
       <Sidebar
         activeNav={activeNav}
-        onNavChange={setActiveNav}
+        onNavChange={handleNavChange}
         navItems={NAV_ITEMS}
       />
 
@@ -161,7 +205,7 @@ export default function ShelterOverview() {
                 Manage and monitor all registered shelter facilities
               </p>
             </div>
-            <button className="btn-add">
+            <button className="btn-add" onClick={handleAddShelter}>
               <span>＋</span> Add Shelter
             </button>
           </div>

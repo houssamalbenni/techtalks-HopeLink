@@ -1,5 +1,6 @@
 // EditShelter.jsx  –  Root page component
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
@@ -15,6 +16,7 @@ import "./EditShelter.css";
 
 export default function EditShelter() {
   const [activeNav, setActiveNav] = useState("Shelters");
+  const { id } = useParams();
 
   const {
     data,
@@ -26,7 +28,7 @@ export default function EditShelter() {
     handleSave,
     handleUpdate,
     handleCancel,
-  } = useEditShelterForm();
+  } = useEditShelterForm(id || "1");
 
   return (
     <div className="app-shell">

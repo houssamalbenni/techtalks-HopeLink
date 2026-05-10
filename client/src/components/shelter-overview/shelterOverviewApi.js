@@ -8,7 +8,27 @@ const API_ENDPOINTS = {
 export const fetchShelters = async () => {
   try {
     const response = await api.get(API_ENDPOINTS.GET_ALL_SERVICES);
-    return response.data?.data || response.data || [];
+    const raw = response.data?.data || response.data || [];
+    if (!Array.isArray(raw)) return [];
+
+    return raw.map((service) => {
+      const capacity = Number(service?.capacity) || 0;
+      const availability = Number(service?.availability) || 0;
+      const occupied = Number(service?.occupied_beds);
+      const used = Number.isFinite(occupied)
+        ? occupied
+        : Math.max(capacity - availability, 0);
+
+      return {
+        id: service?._id || service?.id,
+        name: service?.address?.building || service?.address?.street || "Unnamed Shelter",
+        address: service?.address?.street || "",
+        city: service?.address?.city || "",
+        capacity: used,
+        total: capacity,
+        status: service?.status || "active",
+      };
+    });
   } catch (error) {
     console.error("Error fetching shelters:", error);
     throw error;

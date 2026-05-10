@@ -32,6 +32,75 @@ export function useEditShelterForm(shelterId = "1") {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
+  const parseNumber = (value) => {
+    const num = Number(value);
+    return Number.isFinite(num) ? num : null;
+  };
+
+  const mapFacilitiesToAmenities = (facilities) => {
+    if (!Array.isArray(facilities)) return [];
+    const map = {
+      Family_Rooms: "family",
+      Hot_Meals: "meals",
+    };
+    return facilities
+      .map((f) => map[f])
+      .filter((f) => typeof f === "string");
+  };
+
+  const mapAmenitiesToFacilities = (amenities) => {
+    if (!Array.isArray(amenities)) return [];
+    const map = {
+      family: "Family_Rooms",
+      meals: "Hot_Meals",
+    };
+    return amenities
+      .map((a) => map[a])
+      .filter((a) => typeof a === "string");
+  };
+
+  const mapServiceToForm = (service) => {
+    if (!service) return null;
+    return {
+      name: service.address?.building || service.address?.street || "",
+      orgType: "Non-Profit Organization",
+      operatingStatus: "Active & Accepting Intake",
+      description: service.requirements || "",
+      email: "",
+      phone: service.phone_number || "",
+      street: service.address?.street || "",
+      city: service.address?.city || "",
+      state: "",
+      zip: "",
+      totalCapacity: service.capacity ?? "",
+      overflowLimit: "",
+      amenities: mapFacilitiesToAmenities(service.facilities),
+      availability: service.availability ?? service.capacity ?? "",
+    };
+  };
+
+  const buildUpdatePayload = (formData) => {
+    const capacity = parseNumber(formData.totalCapacity);
+    const availability = parseNumber(formData.availability) ?? capacity ?? null;
+    if (capacity === null) {
+      throw new Error("Total capacity must be a valid number.");
+    }
+
+    return {
+      title: "shelter",
+      capacity,
+      availability: availability ?? capacity,
+      phone_number: formData.phone,
+      address: {
+        building: formData.name,
+        street: formData.street,
+        city: formData.city,
+      },
+      requirements: formData.description || undefined,
+      facilities: mapAmenitiesToFacilities(formData.amenities),
+    };
+  };
+
   // Fetch shelter data on mount
   useEffect(() => {
     const loadShelter = async () => {
@@ -40,7 +109,8 @@ export function useEditShelterForm(shelterId = "1") {
         setError(null);
         const shelterData = await fetchShelter(shelterId);
         if (shelterData) {
-          setData(shelterData);
+          const mapped = mapServiceToForm(shelterData);
+          if (mapped) setData(mapped);
         }
       } catch (err) {
         console.warn("Failed to fetch shelter, using default data:", err);
@@ -77,7 +147,8 @@ export function useEditShelterForm(shelterId = "1") {
       setLoading(true);
       setError(null);
       
-      const response = await updateShelter(shelterId, data);
+      const updatePayload = buildUpdatePayload(data);
+      await updateShelter(shelterId, updatePayload);
       setSuccess(true);
       setIsDirty(false);
       

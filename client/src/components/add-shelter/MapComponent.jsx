@@ -82,6 +82,13 @@ export default function MapComponent({ coords, onCoordsChange }) {
     );
     marker.openPopup();
 
+    if (!coords && onCoordsChangeRef.current) {
+      onCoordsChangeRef.current({
+        latitude: markerPos[0].toFixed(4),
+        longitude: markerPos[1].toFixed(4),
+      });
+    }
+
     // Cleanup function
     return () => {
       map.off("click", handleMapClick);
