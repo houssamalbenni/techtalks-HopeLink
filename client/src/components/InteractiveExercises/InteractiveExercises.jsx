@@ -172,7 +172,6 @@ export default function InteractiveExercises({
   onPause,
 }) {
   const audioRef = useRef(null);
-  const breathIndexRef = useRef(0);
   const [currentNav, setCurrentNav] = useState(activeNav);
   const [currentTab, setCurrentTab] = useState(activeTab);
   const [selectedSoundId, setSelectedSoundId] = useState(sounds[0]?.id ?? "");
@@ -180,15 +179,17 @@ export default function InteractiveExercises({
   const [volume, setVolume] = useState(0.65);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [breathSteps] = useState(
+  const [breathSteps, setBreathSteps] = useState(
     breathTags.map((tag) => ({
       ...tag,
       seconds: BREATH_SECONDS,
       value: `${BREATH_SECONDS}s`,
     }))
   );
-  const [breathIndex, setBreathIndex] = useState(0);
-  const [breathRemaining, setBreathRemaining] = useState(breathSteps[0]?.seconds ?? BREATH_SECONDS);
+  const [breathState, setBreathState] = useState({
+    index: 0,
+    remaining: breathSteps[0]?.seconds ?? BREATH_SECONDS,
+  });
   const [breathPaused, setBreathPaused] = useState(false);
 
   const soundSources = useMemo(() => {
@@ -268,7 +269,24 @@ export default function InteractiveExercises({
     setCurrentTime(nextTime);
   };
 
-  const handleBreathAdjust = () => {};
+  const handleBreathAdjust = (delta) => {
+    const minSeconds = 2;
+    const maxSeconds = 8;
+
+    setBreathSteps((prev) => {
+      if (!prev.length) return prev;
+      const nextSeconds = Math.min(
+        maxSeconds,
+        Math.max(minSeconds, (prev[0]?.seconds ?? BREATH_SECONDS) + delta)
+      );
+
+      return prev.map((step) => ({
+        ...step,
+        seconds: nextSeconds,
+        value: `${nextSeconds}s`,
+      }));
+    });
+  };
 
   const toggleBreathPause = () => {
     setBreathPaused((prev) => {
@@ -277,10 +295,6 @@ export default function InteractiveExercises({
       return next;
     });
   };
-
-  useEffect(() => {
-    breathIndexRef.current = breathIndex;
-  }, [breathIndex]);
 
   useEffect(() => {
     if (!audioRef.current || !audioSrc) return;
@@ -303,12 +317,15 @@ export default function InteractiveExercises({
   useEffect(() => {
     if (breathPaused || breathSteps.length === 0) return;
     const timer = setInterval(() => {
-      setBreathRemaining((prev) => {
-        if (prev > 1) return prev - 1;
-        const nextIndex = (breathIndexRef.current + 1) % breathSteps.length;
-        breathIndexRef.current = nextIndex;
-        setBreathIndex(nextIndex);
-        return breathSteps[nextIndex]?.seconds ?? BREATH_SECONDS;
+      setBreathState((prev) => {
+        if (prev.remaining > 1) {
+          return { ...prev, remaining: prev.remaining - 1 };
+        }
+        const nextIndex = (prev.index + 1) % breathSteps.length;
+        return {
+          index: nextIndex,
+          remaining: breathSteps[nextIndex]?.seconds ?? BREATH_SECONDS,
+        };
       });
     }, 1000);
 
@@ -316,9 +333,15 @@ export default function InteractiveExercises({
   }, [breathPaused, breathSteps]);
 
   useEffect(() => {
-    const next = breathSteps[breathIndex]?.seconds ?? BREATH_SECONDS;
-    setBreathRemaining(next);
-  }, [breathSteps, breathIndex]);
+    if (!breathSteps.length) return;
+    setBreathState((prev) => {
+      const nextIndex = Math.min(prev.index, breathSteps.length - 1);
+      return {
+        index: nextIndex,
+        remaining: breathSteps[nextIndex]?.seconds ?? BREATH_SECONDS,
+      };
+    });
+  }, [breathSteps]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -326,8 +349,8 @@ export default function InteractiveExercises({
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const displayLabel = breathSteps[breathIndex]?.label ?? circleLabel;
-  const displayTimer = breathSteps.length ? `${breathRemaining}s` : circleTimer;
+  const displayLabel = breathSteps[breathState.index]?.label ?? circleLabel;
+  const displayTimer = breathSteps.length ? `${breathState.remaining}s` : circleTimer;
   const playerInfo = selectedSound
     ? {
         name: selectedSound.name,

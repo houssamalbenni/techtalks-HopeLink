@@ -479,6 +479,141 @@ tbody tr:hover {
   font-size: 10px;
 }
 
+
+  @keyframes hospitals-shimmer {
+    0% {
+      background-position: -500px 0;
+    }
+    100% {
+      background-position: 500px 0;
+    }
+  }
+
+  .hospitals-skeleton-row td {
+    padding: 18px 16px;
+  }
+
+  .hospitals-skeleton-box {
+    background: linear-gradient(90deg, #eef2f7 0%, #f8fafc 40%, #eef2f7 80%);
+    background-size: 800px 100%;
+    animation: hospitals-shimmer 1.2s ease-in-out infinite;
+    border-radius: 8px;
+    height: 12px;
+  }
+
+  .hospitals-skeleton-box.sm {
+    width: 60px;
+  }
+
+  .hospitals-skeleton-box.md {
+    width: 90px;
+  }
+
+  .hospitals-skeleton-box.lg {
+    width: 140px;
+  }
+
+  .hospitals-skeleton-box.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+
+  .hospitals-skeleton-box.badge {
+    width: 80px;
+    height: 22px;
+    border-radius: 999px;
+  }
+
+  .hospitals-skeleton-box.bar {
+    width: 120px;
+    height: 8px;
+    border-radius: 999px;
+  }
+
+  .hospitals-skeleton-box.icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+  }
+
+  .hospitals-skeleton-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hospitals-skeleton-lines {
+    display: grid;
+    gap: 8px;
+  }
+
+  .hospitals-skeleton-actions {
+    display: inline-flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .ah-skeleton {
+    display: grid;
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+
+  .ah-skeleton-card {
+    background: var(--hospital-surface);
+    border: 1px solid var(--hospital-border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--hospital-shadow);
+    display: grid;
+    gap: 14px;
+  }
+
+  .ah-skeleton-line {
+    background: linear-gradient(90deg, #eef2f7 0%, #f8fafc 40%, #eef2f7 80%);
+    background-size: 800px 100%;
+    animation: hospitals-shimmer 1.2s ease-in-out infinite;
+    border-radius: 999px;
+    height: 14px;
+    width: 160px;
+  }
+
+  .ah-skeleton-line.md {
+    width: 140px;
+  }
+
+  .ah-skeleton-line.lg {
+    width: 200px;
+  }
+
+  .ah-skeleton-grid {
+    display: grid;
+    gap: 14px;
+  }
+
+  .ah-skeleton-grid.two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ah-skeleton-block {
+    background: linear-gradient(90deg, #eef2f7 0%, #f8fafc 40%, #eef2f7 80%);
+    background-size: 800px 100%;
+    animation: hospitals-shimmer 1.2s ease-in-out infinite;
+    border-radius: 10px;
+    height: 44px;
+  }
+
+  .ah-skeleton-block.tall {
+    height: 140px;
+  }
+
+  @media (max-width: 900px) {
+    .ah-skeleton-grid.two {
+      grid-template-columns: 1fr;
+    }
+  }
 .hospitals-check.is-selected {
   border-color: #0f172a;
   color: #0f172a;

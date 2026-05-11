@@ -1,0 +1,14 @@
+<svg width="1200" height="520" viewBox="0 0 1200 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Box breathing calm frame">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e6f2ff" />
+      <stop offset="55%" stop-color="#f1e9ff" />
+      <stop offset="100%" stop-color="#fff3e6" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="520" fill="url(#bg)" />
+  <rect x="210" y="110" width="780" height="300" rx="40" fill="#ffffff" opacity="0.92" />
+  <rect x="320" y="190" width="180" height="180" rx="24" fill="#dbe8ff" />
+  <rect x="520" y="190" width="180" height="180" rx="24" fill="#e5ddff" />
+  <rect x="720" y="190" width="180" height="180" rx="24" fill="#ffe4d6" />
+</svg>

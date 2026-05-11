@@ -10,11 +10,15 @@ export default function HospitalsTableCard({
   hospitals,
   selectedRows,
   onToggleRow,
+  onDeleteRow,
+  isLoading,
   pagination,
   onPreviousPage,
   onNextPage,
   onSelectPage,
 }) {
+  const skeletonRows = Array.from({ length: 6 }, (_, index) => index);
+
   return (
     <section className="hospitals-table-card">
       {selectedCount > 0 && (
@@ -51,14 +55,59 @@ export default function HospitalsTableCard({
           </thead>
 
           <tbody>
-            {hospitals.map((hospital) => (
-              <HospitalRow
-                key={hospital.id}
-                hospital={hospital}
-                isSelected={selectedRows.has(hospital.id)}
-                onToggleSelection={onToggleRow}
-              />
-            ))}
+            {isLoading
+              ? skeletonRows.map((row) => (
+                <tr key={`skeleton-${row}`} className="hospitals-skeleton-row">
+                  <td>
+                    <div className="hospitals-skeleton-box sm" />
+                  </td>
+                  <td>
+                    <div className="hospitals-skeleton-cell">
+                      <div className="hospitals-skeleton-box avatar" />
+                      <div className="hospitals-skeleton-lines">
+                        <div className="hospitals-skeleton-box lg" />
+                        <div className="hospitals-skeleton-box md" />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="hospitals-skeleton-lines">
+                      <div className="hospitals-skeleton-box md" />
+                      <div className="hospitals-skeleton-box sm" />
+                    </div>
+                  </td>
+                  <td>
+                    <div className="hospitals-skeleton-lines">
+                      <div className="hospitals-skeleton-box sm" />
+                      <div className="hospitals-skeleton-box md" />
+                    </div>
+                  </td>
+                  <td>
+                    <div className="hospitals-skeleton-box badge" />
+                  </td>
+                  <td>
+                    <div className="hospitals-skeleton-lines">
+                      <div className="hospitals-skeleton-box bar" />
+                      <div className="hospitals-skeleton-box md" />
+                    </div>
+                  </td>
+                  <td className="align-right">
+                    <div className="hospitals-skeleton-actions">
+                      <div className="hospitals-skeleton-box icon" />
+                      <div className="hospitals-skeleton-box icon" />
+                    </div>
+                  </td>
+                </tr>
+              ))
+              : hospitals.map((hospital) => (
+                <HospitalRow
+                  key={hospital.id}
+                  hospital={hospital}
+                  isSelected={selectedRows.has(hospital.id)}
+                  onToggleSelection={onToggleRow}
+                  onDelete={onDeleteRow}
+                />
+              ))}
           </tbody>
         </table>
       </div>

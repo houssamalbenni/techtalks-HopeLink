@@ -18,6 +18,18 @@ import InteractiveExercises from "./components/InteractiveExercises/InteractiveE
 import Chatting from "./components/chatting/Chatting";
 import CounselorPortal from "./components/counselor-portal/CounselorPortal";
 import SupportHome from "./components/support-home/SupportHome";
+import StandingTogetherInCrisis from "./components/support-home/articles/StandingTogetherInCrisis";
+import SafeHavenConflictZones from "./components/support-home/articles/SafeHavenConflictZones";
+import HopeUnderFire from "./components/support-home/articles/HopeUnderFire";
+import RebuildingLives from "./components/support-home/articles/RebuildingLives";
+import RoofOfHope from "./components/support-home/articles/RoofOfHope";
+import FromFearToSafety from "./components/support-home/articles/FromFearToSafety";
+import BoxBreathing from "./components/support-home/breathing/BoxBreathing";
+import FourSevenEightBreath from "./components/support-home/breathing/FourSevenEightBreath";
+import CalmWaveBreathing from "./components/support-home/breathing/CalmWaveBreathing";
+import TriangleBreath from "./components/support-home/breathing/TriangleBreath";
+import ExtendedExhale from "./components/support-home/breathing/ExtendedExhale";
+import MorningResetBreath from "./components/support-home/breathing/MorningResetBreath";
 // import EditShelter from "./components/edit-shelter/EditShelter";
 // import FamilyReunification from './components/family-reunification/FamilyReunification';
 // import RefugeeDashboard from './components/refugee-dashboard/RefugeeDashboard';
@@ -54,6 +66,54 @@ function App() {
         <Route path="/chatting" element={<Chatting />} />
         <Route path="/counselor-portal" element={<CounselorPortal />} />
         <Route path="/support-home" element={<SupportHome />} />
+        <Route
+          path="/support-home/articles/standing-together-in-crisis"
+          element={<StandingTogetherInCrisis />}
+        />
+        <Route
+          path="/support-home/articles/safe-haven-conflict-zones"
+          element={<SafeHavenConflictZones />}
+        />
+        <Route
+          path="/support-home/articles/hope-under-fire"
+          element={<HopeUnderFire />}
+        />
+        <Route
+          path="/support-home/articles/rebuilding-lives"
+          element={<RebuildingLives />}
+        />
+        <Route
+          path="/support-home/articles/roof-of-hope"
+          element={<RoofOfHope />}
+        />
+        <Route
+          path="/support-home/articles/from-fear-to-safety"
+          element={<FromFearToSafety />}
+        />
+        <Route
+          path="/support-home/breathing/box-breathing"
+          element={<BoxBreathing />}
+        />
+        <Route
+          path="/support-home/breathing/4-7-8-breath"
+          element={<FourSevenEightBreath />}
+        />
+        <Route
+          path="/support-home/breathing/calm-wave"
+          element={<CalmWaveBreathing />}
+        />
+        <Route
+          path="/support-home/breathing/triangle-breath"
+          element={<TriangleBreath />}
+        />
+        <Route
+          path="/support-home/breathing/extended-exhale"
+          element={<ExtendedExhale />}
+        />
+        <Route
+          path="/support-home/breathing/morning-reset"
+          element={<MorningResetBreath />}
+        />
         <Route path="/test/doctor-chat" element={<DoctorChat />} />
         <Route path="/test/doctor-chat/:refugeeId" element={<DoctorChat />} />
         <Route path="/test/refugee-chat" element={<RefugeeChat />} />

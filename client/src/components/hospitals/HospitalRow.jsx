@@ -7,7 +7,7 @@ function capacityColor(status) {
   return "var(--hospital-green)";
 }
 
-export default function HospitalRow({ hospital, isSelected, onToggleSelection }) {
+export default function HospitalRow({ hospital, isSelected, onToggleSelection, onDelete }) {
   const navigate = useNavigate();
   const occupancyPercent = hospital.totalBeds > 0
     ? Math.round((hospital.occupiedBeds / hospital.totalBeds) * 100)
@@ -82,9 +82,6 @@ export default function HospitalRow({ hospital, isSelected, onToggleSelection })
 
       <td className="align-right">
         <div className="hospital-actions">
-          <button type="button" title="View Details" aria-label="View details">
-            <i className="fa-regular fa-eye" />
-          </button>
           <button
             type="button"
             title="Edit"
@@ -92,6 +89,14 @@ export default function HospitalRow({ hospital, isSelected, onToggleSelection })
             onClick={handleEditClick}
           >
             <i className="fa-solid fa-pen" />
+          </button>
+          <button
+            type="button"
+            title="Delete"
+            aria-label="Delete hospital"
+            onClick={() => onDelete(hospital)}
+          >
+            <i className="fa-solid fa-trash" />
           </button>
         </div>
       </td>

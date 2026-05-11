@@ -1,74 +1,9 @@
 import "./Chatting.css";
 import ChatInput from "./ChatInput";
-import ChattingSidebar from "./ChattingSidebar";
 import ChattingTopbar from "./ChattingTopbar";
 import MessagesList from "./MessagesList";
 import SecurityBanner from "./SecurityBanner";
 import SessionFooter from "./SessionFooter";
-
-const navItems = [
-  {
-    id: "chat",
-    label: "Chat",
-    active: true,
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M4 5h16v10H7l-3 3V5z" />
-      </svg>
-    ),
-  },
-  {
-    id: "resources",
-    label: "Resources",
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M6 4h12v16H6z" />
-        <path d="M10 8h4" />
-      </svg>
-    ),
-  },
-  {
-    id: "tools",
-    label: "Wellness Tools",
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="12" r="8" />
-        <path d="M12 7v5l3 3" />
-      </svg>
-    ),
-  },
-  {
-    id: "journal",
-    label: "Journaling",
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M6 4h10a2 2 0 012 2v12H6z" />
-        <path d="M8 8h6" />
-        <path d="M8 12h6" />
-      </svg>
-    ),
-  },
-  {
-    id: "settings",
-    label: "Settings",
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="12" r="3" />
-        <path d="M4 12h2m12 0h2M12 4v2m0 12v2" />
-      </svg>
-    ),
-  },
-  {
-    id: "privacy",
-    label: "Privacy",
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="5" y="10" width="14" height="10" rx="2" />
-        <path d="M8 10V7a4 4 0 018 0v3" />
-      </svg>
-    ),
-  },
-];
 
 const messages = [
   {
@@ -101,8 +36,6 @@ export default function Chatting() {
   return (
     <div className="chatting-page">
       <div className="chatting-shell">
-        <ChattingSidebar navItems={navItems} />
-
         <main className="chatting-main">
           <ChattingTopbar />
           <SecurityBanner />

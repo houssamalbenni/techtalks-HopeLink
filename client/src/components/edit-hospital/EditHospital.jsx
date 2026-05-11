@@ -5,62 +5,84 @@ import toast from "react-hot-toast";
 import AdminSidebar from "../hospitals/AdminSidebar";
 import TopHeader from "../hospitals/TopHeader";
 import { SIDEBAR_LINKS, USER_PROFILE } from "../hospitals/hospitalsData";
-import FieldControl from "./FieldControl";
-import OperatingHoursTable from "./OperatingHoursTable";
-import OptionGrid from "./OptionGrid";
-import SectionCard from "./SectionCard";
+import FieldGroup from "../add-hospital/FieldGroup";
+import FormSection from "../add-hospital/FormSection";
+import MapComponent from "../add-shelter/MapComponent";
 import {
   EDIT_BREADCRUMBS,
   EDIT_HEADER_ACTIONS,
-  EDIT_INITIAL_FORM,
-  ER_STATUS_OPTIONS,
-  FACILITY_TYPES,
-  INSURANCE_OPTIONS,
-  OPERATING_DAYS,
-  OVERALL_STATUS_OPTIONS,
-  SPECIALTY_OPTIONS,
+  EDIT_DEFAULT_FORM,
 } from "./editHospitalConfig";
+import { DEPARTMENT_OPTIONS } from "../add-hospital/addHospitalConfig";
 import api from "../../../utils/axios";
 import { ApiConst } from "../../../utils/APIConst";
 import { getSupabaseClient } from "../../../utils/supabaseClient";
 import "../hospitals/Hospitals.css";
 import "./EditHospital.css";
 
-const BASIC_FIELD_GROUP = [
-  { field: "hospitalName", label: "Hospital Name", required: true },
-  { field: "facilityType", label: "Facility Type", required: true, options: FACILITY_TYPES },
+const BASIC_FIELDS = [
+  {
+    field: "hospitalName",
+    label: "Hospital Name",
+    required: true,
+    type: "input",
+    className: "ah-span-all",
+    inputType: "text",
+    placeholder: "e.g. Mercy General Hospital",
+  },
+  {
+    field: "description",
+    label: "Description",
+    type: "textarea",
+    className: "ah-span-all",
+    rows: 3,
+    placeholder: "Brief description of the facility and its primary focus...",
+  },
 ];
 
-const STATUS_FIELD_GROUP = [
-  { field: "overallStatus", label: "Overall Status", options: OVERALL_STATUS_OPTIONS },
-  { field: "erStatus", label: "ER Status", options: ER_STATUS_OPTIONS },
-  { field: "totalBeds", label: "Total Beds", required: true, type: "number" },
+const LOCATION_FIELDS = [
+  {
+    field: "streetAddress",
+    label: "Street Address",
+    required: true,
+    type: "input",
+    className: "ah-span-all",
+    inputType: "text",
+    placeholder: "123 Health Ave",
+  },
+  {
+    field: "city",
+    label: "City",
+    required: true,
+    type: "input",
+    inputType: "text",
+    placeholder: "San Francisco",
+  },
 ];
 
-const ADDRESS_FIELD_GROUP = [
-  { field: "city", label: "City", required: true },
-  { field: "state", label: "State", required: true },
-  { field: "zip", label: "ZIP Code", required: true },
-];
+const LOCATION_INNER_FIELDS = [];
 
-const CONTACT_FIELD_GROUP = [
-  { field: "phone", label: "Main Phone Number", required: true },
-  { field: "email", label: "Contact Email", type: "email" },
+const CONFIG_FIELDS = [
+  {
+    field: "totalBeds",
+    label: "Total Bed Capacity *",
+    type: "input",
+    inputType: "number",
+    placeholder: "e.g. 500",
+  },
 ];
 
 export default function EditHospital() {
   const navigate = useNavigate();
   const { id } = useParams();
   const formRef = useRef(null);
-  const fileInputRef = useRef(null);
   const initialOccupiedBedsRef = useRef(0);
-  const [form, setForm] = useState(EDIT_INITIAL_FORM);
+  const [form, setForm] = useState(EDIT_DEFAULT_FORM);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
-  const [logoPreview, setLogoPreview] = useState(
-    "https://storage.googleapis.com/uxpilot-auth.appspot.com/8a63a1214d-61dda6d03bd05096ba47.png",
-  );
+  const logoInputRef = useRef(null);
+  const [mapKey, setMapKey] = useState(0);
 
   const supabaseBucket = import.meta.env.VITE_SUPABASE_BUCKET || "public-images";
 
@@ -152,6 +174,8 @@ export default function EditHospital() {
         if (!isMounted) return;
 
         const logoUrl = Array.isArray(hospital?.images) ? hospital.images[0] : "";
+        const intakeHours = hospital?.intake_hours || {};
+        const facilities = Array.isArray(hospital?.facilities) ? hospital.facilities : [];
 
         setForm((prev) => {
           const nextCapacity = hospital?.capacity ?? prev.totalBeds;
@@ -160,22 +184,20 @@ export default function EditHospital() {
             hospitalName: hospital?.address?.building || prev.hospitalName,
             description: hospital?.requirements || "",
             logoUrl,
+            operatingHoursStart: intakeHours?.startTime || "",
+            operatingHoursEnd: intakeHours?.endTime || "",
+            operatingHoursEmergencyInterval: intakeHours?.emergency_interval || "",
             totalBeds: nextCapacity,
             phone: hospital?.phone_number || "",
-            address1: hospital?.address?.street || "",
+            streetAddress: hospital?.address?.street || "",
             city: hospital?.address?.city || "",
-            state: hospital?.address?.state || prev.state,
-            zip: hospital?.address?.zip || prev.zip,
             availability: safeAvailability,
             ownerNgo: getOwnerNgoId(ownerNgoId),
             lng: lng != null ? String(lng) : "",
             lat: lat != null ? String(lat) : "",
+            departments: facilities.length ? facilities : prev.departments,
           };
         });
-
-        if (logoUrl) {
-          setLogoPreview(logoUrl);
-        }
       } catch (error) {
         console.error("Failed to fetch hospital:", error);
         toast.error("Failed to load hospital data.");
@@ -205,16 +227,10 @@ export default function EditHospital() {
     });
   }
 
-  function updateHours(day, key, value) {
+  function removeInsuranceTag(tag) {
     setForm((prev) => ({
       ...prev,
-      hours: {
-        ...prev.hours,
-        [day]: {
-          ...prev.hours[day],
-          [key]: value,
-        },
-      },
+      insuranceTags: prev.insuranceTags.filter((item) => item !== tag),
     }));
   }
 
@@ -232,11 +248,8 @@ export default function EditHospital() {
       return;
     }
 
-    const lng = parseFloat(form.lng);
-    const lat = parseFloat(form.lat);
-    if (Number.isNaN(lng) || Number.isNaN(lat)) {
-      console.error("Invalid coordinates in edit form", { lng: form.lng, lat: form.lat });
-      toast.error("Valid location coordinates are required before saving.");
+    if ((form.operatingHoursStart && !form.operatingHoursEnd) || (!form.operatingHoursStart && form.operatingHoursEnd)) {
+      toast.error("Operating hours require both a start and end time.");
       return;
     }
 
@@ -259,6 +272,22 @@ export default function EditHospital() {
         toast("Capacity is now lower than current occupancy, so availability was set to 0.");
       }
 
+      const lng = parseFloat(form.lng);
+      const lat = parseFloat(form.lat);
+      const coordinates = Number.isFinite(lng) && Number.isFinite(lat)
+        ? [lng, lat]
+        : await getCurrentCoordinates();
+
+      const intakeHours = form.operatingHoursStart && form.operatingHoursEnd
+        ? {
+            startTime: form.operatingHoursStart,
+            endTime: form.operatingHoursEnd,
+            ...(form.operatingHoursEmergencyInterval
+              ? { emergency_interval: form.operatingHoursEmergencyInterval }
+              : {}),
+          }
+        : undefined;
+
       const payload = {
         title: "hospital",
         capacity,
@@ -268,11 +297,13 @@ export default function EditHospital() {
         ...(ownerNgo ? { owner_ngo: ownerNgo } : {}),
         location: {
           type: "Point",
-          coordinates: [lng, lat],
+          coordinates,
         },
+        facilities: form.departments,
+        ...(intakeHours ? { intake_hours: intakeHours } : {}),
         address: {
           building: form.hospitalName?.trim(),
-          street: form.address1?.trim(),
+          street: form.streetAddress?.trim(),
           city: form.city?.trim(),
         },
       };
@@ -294,6 +325,37 @@ export default function EditHospital() {
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  function getCurrentCoordinates() {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error("Geolocation is not supported in this browser."));
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { longitude, latitude } = position.coords;
+          resolve([longitude, latitude]);
+        },
+        () => {
+          reject(new Error("Location permission is required to update a hospital service."));
+        },
+      );
+    });
+  }
+
+  async function handleUseMyLocation() {
+    try {
+      const [longitude, latitude] = await getCurrentCoordinates();
+      updateField("lng", String(longitude));
+      updateField("lat", String(latitude));
+      setMapKey((prev) => prev + 1);
+      toast.success("Location updated.");
+    } catch (error) {
+      toast.error(error?.message || "Unable to read your location.");
     }
   }
 
@@ -346,7 +408,6 @@ export default function EditHospital() {
       if (!publicUrl) return;
 
       updateField("logoUrl", publicUrl);
-      setLogoPreview(publicUrl);
       toast.success("Logo uploaded successfully.");
     } catch (error) {
       toast.error(error?.message || "Failed to upload logo.");
@@ -356,38 +417,53 @@ export default function EditHospital() {
     }
   }
 
-  function renderOptionList(options) {
-    return options.map((item) => (
-      <option key={item.value} value={item.value}>
-        {item.label}
-      </option>
-    ));
-  }
-
-  function renderFieldControl(config) {
-    const { field, label, required, options, type = "text" } = config;
+  function renderField(config) {
+    const {
+      field,
+      label,
+      required,
+      className,
+      type,
+      inputType = "text",
+      placeholder,
+      rows,
+      options,
+    } = config;
 
     return (
-      <FieldControl key={field} label={label} required={required} htmlFor={field}>
-        {options ? (
-          <select
-            id={field}
-            className="eh-input"
+      <FieldGroup key={field} className={className} label={label} required={required}>
+        {type === "textarea" ? (
+          <textarea
+            rows={rows || 2}
+            className="ah-textarea"
             value={form[field]}
             onChange={(event) => updateField(field, event.target.value)}
+            placeholder={placeholder}
+          />
+        ) : type === "select" ? (
+          <select
+            className="ah-select"
+            value={form[field]}
+            onChange={(event) => updateField(field, event.target.value)}
+            required={required}
           >
-            {renderOptionList(options)}
+            {options.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
           </select>
         ) : (
           <input
-            id={field}
-            type={type}
-            className="eh-input"
+            type={inputType}
+            className="ah-input"
             value={form[field]}
-            onChange={(event) => updateField(field, type === "number" ? Number(event.target.value) : event.target.value)}
+            onChange={(event) => updateField(field, event.target.value)}
+            placeholder={placeholder}
+            required={required}
           />
         )}
-      </FieldControl>
+      </FieldGroup>
     );
   }
 
@@ -399,129 +475,268 @@ export default function EditHospital() {
         <TopHeader breadcrumbs={breadcrumbs} actions={headerActions} />
 
         <main className="hospitals-content">
-          {isLoading ? <p>Loading hospital details...</p> : null}
-          <div className="eh-page">
-            <header className="eh-page-title">
-              <h1>Edit Hospital Details</h1>
-              <p>
-                Update information for Mercy General Hospital. Changes will be reflected immediately across the system.
-              </p>
-            </header>
+          {isLoading ? (
+            <div className="ah-skeleton">
+              <div className="ah-skeleton-card">
+                <div className="ah-skeleton-line lg" />
+                <div className="ah-skeleton-grid two">
+                  <div className="ah-skeleton-block" />
+                  <div className="ah-skeleton-block" />
+                </div>
+              </div>
+              <div className="ah-skeleton-card">
+                <div className="ah-skeleton-line md" />
+                <div className="ah-skeleton-grid two">
+                  <div className="ah-skeleton-block" />
+                  <div className="ah-skeleton-block" />
+                </div>
+                <div className="ah-skeleton-block tall" />
+              </div>
+              <div className="ah-skeleton-card">
+                <div className="ah-skeleton-line md" />
+                <div className="ah-skeleton-grid two">
+                  <div className="ah-skeleton-block" />
+                  <div className="ah-skeleton-block" />
+                </div>
+                <div className="ah-skeleton-grid two">
+                  <div className="ah-skeleton-block" />
+                  <div className="ah-skeleton-block" />
+                </div>
+              </div>
+            </div>
+          ) : null}
+          {!isLoading ? (
+            <div className="ah-page">
+              <header className="ah-title">
+                <h1>Edit Hospital</h1>
+                <p>Update the details to keep this hospital record accurate.</p>
+              </header>
 
-            <form ref={formRef} className="eh-form" onSubmit={handleSubmit}>
-              <SectionCard title="Basic Information">
-                <div className="eh-grid two-col">{BASIC_FIELD_GROUP.map(renderFieldControl)}</div>
+              <form ref={formRef} className="ah-form" onSubmit={handleSubmit}>
+                <FormSection title="Basic Information">
+                  <div className="ah-grid two-col">{BASIC_FIELDS.map(renderField)}</div>
+                </FormSection>
 
-                <FieldControl label="Description / Subtitle" htmlFor="description" className="top-gap">
-                  <input
-                    id="description"
-                    className="eh-input"
-                    value={form.description}
-                    onChange={(event) => updateField("description", event.target.value)}
-                  />
-                </FieldControl>
+              <FormSection title="Location Details">
+                <div className="ah-grid two-col">
+                  {LOCATION_FIELDS.map(renderField)}
 
-                <div className="eh-logo-row">
-                  <div className="eh-logo-frame">
-                    <img
-                      src={logoPreview}
-                      alt="Hospital logo"
-                    />
+                  <div className="ah-grid inner-two-col">
+                    {LOCATION_INNER_FIELDS.map(renderField)}
                   </div>
+
+                  <FieldGroup className="ah-span-all" label="Map Location">
+                    <div className="ah-map">
+                      <MapComponent
+                        key={mapKey}
+                        coords={form.lat && form.lng ? [Number(form.lat), Number(form.lng)] : undefined}
+                        onCoordsChange={({ latitude, longitude }) => {
+                          updateField("lat", latitude);
+                          updateField("lng", longitude);
+                        }}
+                      />
+                      <div className="ah-map-actions">
+                        <button type="button" onClick={handleUseMyLocation}>
+                          Use my location
+                        </button>
+                        <span>
+                          Lat: {form.lat || "--"} | Lng: {form.lng || "--"}
+                        </span>
+                      </div>
+                      <div className="ah-coords-row">
+                        <label>
+                          Latitude
+                          <input
+                            type="number"
+                            className="ah-coord-input"
+                            value={form.lat}
+                            onChange={(event) => updateField("lat", event.target.value)}
+                            step="0.000001"
+                            placeholder="33.8547"
+                          />
+                        </label>
+                        <label>
+                          Longitude
+                          <input
+                            type="number"
+                            className="ah-coord-input"
+                            value={form.lng}
+                            onChange={(event) => updateField("lng", event.target.value)}
+                            step="0.000001"
+                            placeholder="35.8623"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </FieldGroup>
+                </div>
+              </FormSection>
+
+              <FormSection title="Contact Information">
+                <div className="ah-grid two-col">
+                  <FieldGroup label="Primary Phone" required>
+                    <div className="ah-input-icon">
+                      <i className="fa-solid fa-phone" />
+                      <input
+                        type="tel"
+                        value={form.phone}
+                        onChange={(event) => updateField("phone", event.target.value)}
+                        placeholder="(555) 000-0000"
+                        required
+                      />
+                    </div>
+                  </FieldGroup>
+
+                  <FieldGroup label="Email Address">
+                    <div className="ah-input-icon">
+                      <i className="fa-solid fa-envelope" />
+                      <input
+                        type="email"
+                        value={form.email}
+                        onChange={(event) => updateField("email", event.target.value)}
+                        placeholder="contact@hospital.org"
+                      />
+                    </div>
+                  </FieldGroup>
+
+                  <FieldGroup className="ah-span-all" label="Website">
+                    <div className="ah-web">
+                      <span>https://</span>
+                      <input
+                        type="text"
+                        value={form.website}
+                        onChange={(event) => updateField("website", event.target.value)}
+                        placeholder="www.hospital.org"
+                      />
+                    </div>
+                  </FieldGroup>
+                </div>
+              </FormSection>
+
+              <FormSection title="Services & Operations">
+                <div className="ah-stack">
                   <div>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept=".png,.jpg,.jpeg,.svg"
-                      onChange={handleLogoChange}
-                      style={{ display: "none" }}
-                    />
-                    <button
-                      type="button"
-                      className="hospitals-secondary-btn"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      Change Logo
-                    </button>
-                    <p>JPG, PNG or SVG. Max size of 2MB.</p>
+                    <FieldGroup label="Departments & Specialties">
+                      <div className="ah-chip-grid">
+                        {DEPARTMENT_OPTIONS.map((department) => {
+                          const active = form.departments.includes(department);
+                          return (
+                            <button
+                              key={department}
+                              type="button"
+                              className={`ah-chip ${active ? "active" : ""}`}
+                              onClick={() => toggleFromList("departments", department)}
+                            >
+                              <i className={`fa-solid ${active ? "fa-square-check" : "fa-square"}`} />
+                              {department}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </FieldGroup>
+                  </div>
+
+                  <div>
+                    <div className="ah-tag-row">
+                      {form.insuranceTags.map((tag) => (
+                        <span key={tag} className="ah-tag">
+                          {tag}
+                          <button type="button" onClick={() => removeInsuranceTag(tag)}>
+                            <i className="fa-solid fa-xmark" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </SectionCard>
+              </FormSection>
 
-              <SectionCard title="Status & Capacity">
-                <div className="eh-grid three-col">{STATUS_FIELD_GROUP.map(renderFieldControl)}</div>
-              </SectionCard>
+              <FormSection title="Configuration">
+                <div className="ah-stack">
+                  <div className="ah-grid two-col">{CONFIG_FIELDS.map(renderField)}</div>
 
-              <SectionCard title="Location & Contact">
-                <FieldControl label="Street Address" required htmlFor="address1">
-                  <input
-                    id="address1"
-                    className="eh-input"
-                    value={form.address1}
-                    onChange={(event) => updateField("address1", event.target.value)}
-                  />
-                </FieldControl>
+                  <FieldGroup className="ah-span-all" label="Operating Hours">
+                    <div className="ah-grid inner-two-col">
+                      <label className="ah-label">
+                        Start Time
+                        <input
+                          type="time"
+                          className="ah-input"
+                          value={form.operatingHoursStart}
+                          onChange={(event) => updateField("operatingHoursStart", event.target.value)}
+                        />
+                      </label>
+                      <label className="ah-label">
+                        End Time
+                        <input
+                          type="time"
+                          className="ah-input"
+                          value={form.operatingHoursEnd}
+                          onChange={(event) => updateField("operatingHoursEnd", event.target.value)}
+                        />
+                      </label>
+                    </div>
+                    <div className="ah-top-gap">
+                      <label className="ah-label">
+                        Emergency Interval (optional)
+                        <input
+                          type="text"
+                          className="ah-input"
+                          value={form.operatingHoursEmergencyInterval}
+                          onChange={(event) => updateField("operatingHoursEmergencyInterval", event.target.value)}
+                          placeholder="e.g. 15 mins"
+                        />
+                      </label>
+                    </div>
+                  </FieldGroup>
 
-                <div className="eh-grid three-col top-gap">
-                  {ADDRESS_FIELD_GROUP.map(renderFieldControl)}
+                  <div>
+                    <FieldGroup label="Facility Logo / Cover Image">
+                      <input
+                        ref={logoInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="ah-file-input"
+                        onChange={handleLogoChange}
+                      />
+                      <button
+                        type="button"
+                        className={`ah-upload ${isUploadingLogo ? "is-uploading" : ""}`}
+                        onClick={() => logoInputRef.current?.click()}
+                        disabled={isUploadingLogo}
+                      >
+                        <i className="fa-solid fa-cloud-arrow-up" />
+                        <strong>
+                          {isUploadingLogo ? "Uploading logo..." : "Click to upload or drag and drop"}
+                        </strong>
+                        <span>SVG, PNG, JPG or GIF (max. 5MB)</span>
+                      </button>
+                      {form.logoUrl ? (
+                        <div className="ah-upload-preview">
+                          <img src={form.logoUrl} alt="Hospital logo preview" />
+                          <button type="button" onClick={() => updateField("logoUrl", "")}>Remove</button>
+                        </div>
+                      ) : null}
+                    </FieldGroup>
+                  </div>
                 </div>
+              </FormSection>
 
-                <div className="eh-grid two-col top-gap border-top">
-                  {CONTACT_FIELD_GROUP.map(renderFieldControl)}
-                </div>
-              </SectionCard>
-
-              <SectionCard title="Services & Insurance">
-                <div>
-                  <h3>Available Specialties</h3>
-                  <OptionGrid
-                    options={SPECIALTY_OPTIONS}
-                    selected={form.specialties}
-                    onToggle={(value) => toggleFromList("specialties", value)}
-                  />
-                </div>
-
-                <div className="top-gap border-top">
-                  <h3>Accepted Insurance Providers</h3>
-                  <OptionGrid
-                    options={INSURANCE_OPTIONS}
-                    selected={form.insurance}
-                    onToggle={(value) => toggleFromList("insurance", value)}
-                  />
-                </div>
-              </SectionCard>
-
-              <SectionCard
-                title="Operating Hours"
-                rightSlot={
-                  <label className="eh-inline-check">
-                    <input
-                      type="checkbox"
-                      checked={form.isTwentyFourSeven}
-                      onChange={() => updateField("isTwentyFourSeven", !form.isTwentyFourSeven)}
-                    />
-                    <span>24/7 Facility</span>
-                  </label>
-                }
-              >
-                <OperatingHoursTable
-                  days={OPERATING_DAYS}
-                  hours={form.hours}
-                  disabled={form.isTwentyFourSeven}
-                  onChange={updateHours}
-                />
-              </SectionCard>
-
-              <footer className="eh-footer-actions">
-                <button type="button" className="hospitals-secondary-btn" onClick={() => navigate("/hospitals")}> 
-                  Cancel
-                </button>
-                <button type="submit" className="hospitals-primary-btn" disabled={isSubmitting || isLoading}>
-                  {isSubmitting ? "Saving..." : "Save Changes"}
-                </button>
-              </footer>
-            </form>
-          </div>
+                <footer className="ah-actions">
+                  <button type="button" className="hospitals-secondary-btn" onClick={() => navigate("/hospitals")}>
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="hospitals-primary-btn"
+                    disabled={isSubmitting || isUploadingLogo}
+                  >
+                    {isSubmitting ? "Saving..." : "Save Changes"} <i className="fa-solid fa-arrow-right" />
+                  </button>
+                </footer>
+              </form>
+            </div>
+          ) : null}
         </main>
       </div>
     </div>

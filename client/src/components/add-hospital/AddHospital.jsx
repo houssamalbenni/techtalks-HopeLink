@@ -1,5 +1,5 @@
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -15,8 +15,6 @@ import {
   DEFAULT_FORM,
   DEPARTMENT_OPTIONS,
   HEADER_ACTIONS,
-  OPERATING_HOURS_OPTIONS,
-  STATE_OPTIONS,
   STATUS_OPTIONS,
 } from "./addHospitalConfig";
 import api from "../../../utils/axios";
@@ -66,72 +64,25 @@ const LOCATION_FIELDS = [
 ];
 
 const LOCATION_INNER_FIELDS = [
-  {
-    field: "state",
-    label: "State",
-    required: true,
-    type: "select",
-    options: STATE_OPTIONS,
-    placeholder: "Select State",
-  },
-  {
-    field: "postalCode",
-    label: "Postal Code",
-    required: true,
-    type: "input",
-    inputType: "text",
-    placeholder: "94103",
-  },
+
+ 
 ];
 
 const CONFIG_FIELDS = [
   {
-    field: "operatingHours",
-    label: "Operating Hours",
-    type: "select",
-    options: OPERATING_HOURS_OPTIONS,
-  },
-  {
     field: "totalBeds",
-    label: "Total Bed Capacity (Optional)",
+    label: "Total Bed Capacity *",
     type: "input",
     inputType: "number",
     placeholder: "e.g. 500",
   },
 ];
 
-const STATUS_FIELDS = [
-  {
-    field: "initialStatus",
-    label: "Initial Status",
-    type: "select",
-    options: STATUS_OPTIONS,
-  },
-  {
-    field: "internalNotes",
-    label: "Internal Notes",
-    type: "textarea",
-    rows: 1,
-    placeholder: "Admin notes...",
-  },
-];
-
-const TOGGLE_FIELDS = [
-  {
-    field: "erEnabled",
-    title: "Emergency Room (ER)",
-    description: "Facility has a 24/7 emergency department",
-  },
-  {
-    field: "appointmentsRequired",
-    title: "Appointments Required",
-    description: "Walk-ins are not accepted for general visits",
-  },
-];
 
 export default function AddHospital() {
   const navigate = useNavigate();
   const [form, setForm] = useState(DEFAULT_FORM);
+  const [isPageLoading, setIsPageLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const logoInputRef = useRef(null);
@@ -163,6 +114,11 @@ export default function AddHospital() {
     [navigate, isSubmitting],
   );
   const breadcrumbs = useMemo(() => BREADCRUMBS, []);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setIsPageLoading(false));
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
   function updateField(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -337,6 +293,11 @@ export default function AddHospital() {
       return;
     }
 
+    if ((form.operatingHoursStart && !form.operatingHoursEnd) || (!form.operatingHoursStart && form.operatingHoursEnd)) {
+      toast.error("Operating hours require both a start and end time.");
+      return;
+    }
+
     const ownerNgoId = getOwnerNgoId();
 
     setIsSubmitting(true);
@@ -348,6 +309,16 @@ export default function AddHospital() {
         ? [lng, lat]
         : await getCurrentCoordinates();
 
+      const intakeHours = form.operatingHoursStart && form.operatingHoursEnd
+        ? {
+            startTime: form.operatingHoursStart,
+            endTime: form.operatingHoursEnd,
+            ...(form.operatingHoursEmergencyInterval
+              ? { emergency_interval: form.operatingHoursEmergencyInterval }
+              : {}),
+          }
+        : undefined;
+
       const payload = {
         title: "hospital",
         location: {
@@ -358,6 +329,8 @@ export default function AddHospital() {
         availability: capacity,
         images: form.logoUrl ? [form.logoUrl] : [],
         phone_number: form.phone,
+        facilities: form.departments,
+        ...(intakeHours ? { intake_hours: intakeHours } : {}),
         address: {
           street: form.streetAddress,
           city: form.city,
@@ -459,7 +432,37 @@ export default function AddHospital() {
               <p>Enter the details to register a new hospital facility in the system.</p>
             </header>
 
-            <form className="ah-form" onSubmit={onSubmit}>
+            {isPageLoading ? (
+              <div className="ah-skeleton">
+                <div className="ah-skeleton-card">
+                  <div className="ah-skeleton-line lg" />
+                  <div className="ah-skeleton-grid two">
+                    <div className="ah-skeleton-block" />
+                    <div className="ah-skeleton-block" />
+                  </div>
+                </div>
+                <div className="ah-skeleton-card">
+                  <div className="ah-skeleton-line md" />
+                  <div className="ah-skeleton-grid two">
+                    <div className="ah-skeleton-block" />
+                    <div className="ah-skeleton-block" />
+                  </div>
+                  <div className="ah-skeleton-block tall" />
+                </div>
+                <div className="ah-skeleton-card">
+                  <div className="ah-skeleton-line md" />
+                  <div className="ah-skeleton-grid two">
+                    <div className="ah-skeleton-block" />
+                    <div className="ah-skeleton-block" />
+                  </div>
+                  <div className="ah-skeleton-grid two">
+                    <div className="ah-skeleton-block" />
+                    <div className="ah-skeleton-block" />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <form className="ah-form" onSubmit={onSubmit}>
               <FormSection title="Basic Information">
                 <div className="ah-grid two-col">{BASIC_FIELDS.map(renderField)}</div>
               </FormSection>
@@ -562,17 +565,7 @@ export default function AddHospital() {
 
               <FormSection title="Services & Operations">
                 <div className="ah-stack">
-                  <div className="ah-grid two-col">
-                    {TOGGLE_FIELDS.map((item) => (
-                      <ToggleCard
-                        key={item.field}
-                        title={item.title}
-                        description={item.description}
-                        checked={form[item.field]}
-                        onToggle={() => toggleField(item.field)}
-                      />
-                    ))}
-                  </div>
+              
 
                   <div>
                     <FieldGroup label="Departments & Specialties">
@@ -596,22 +589,7 @@ export default function AddHospital() {
                   </div>
 
                   <div>
-                    <FieldGroup label="Insurance Accepted">
-                      <input
-                        type="text"
-                        className="ah-input"
-                        value={form.insuranceInput}
-                        onChange={(event) => updateField("insuranceInput", event.target.value)}
-                        onBlur={addInsuranceTag}
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter") {
-                            event.preventDefault();
-                            addInsuranceTag();
-                          }
-                        }}
-                        placeholder="Type to add insurance providers... (e.g. BlueCross, Medicare)"
-                      />
-                    </FieldGroup>
+                  
 
                     <div className="ah-tag-row">
                       {form.insuranceTags.map((tag) => (
@@ -630,6 +608,41 @@ export default function AddHospital() {
               <FormSection title="Configuration">
                 <div className="ah-stack">
                   <div className="ah-grid two-col">{CONFIG_FIELDS.map(renderField)}</div>
+
+                  <FieldGroup className="ah-span-all" label="Operating Hours">
+                    <div className="ah-grid inner-two-col">
+                      <label className="ah-label">
+                        Start Time
+                        <input
+                          type="time"
+                          className="ah-input"
+                          value={form.operatingHoursStart}
+                          onChange={(event) => updateField("operatingHoursStart", event.target.value)}
+                        />
+                      </label>
+                      <label className="ah-label">
+                        End Time
+                        <input
+                          type="time"
+                          className="ah-input"
+                          value={form.operatingHoursEnd}
+                          onChange={(event) => updateField("operatingHoursEnd", event.target.value)}
+                        />
+                      </label>
+                    </div>
+                    <div className="ah-top-gap">
+                      <label className="ah-label">
+                        Emergency Interval (optional)
+                        <input
+                          type="text"
+                          className="ah-input"
+                          value={form.operatingHoursEmergencyInterval}
+                          onChange={(event) => updateField("operatingHoursEmergencyInterval", event.target.value)}
+                          placeholder="e.g. 15 mins"
+                        />
+                      </label>
+                    </div>
+                  </FieldGroup>
 
                   <div>
                     <FieldGroup label="Facility Logo / Cover Image">
@@ -661,7 +674,7 @@ export default function AddHospital() {
                     </FieldGroup>
                   </div>
 
-                  <div className="ah-grid two-col">{STATUS_FIELDS.map(renderField)}</div>
+                  
                 </div>
               </FormSection>
 
@@ -677,7 +690,8 @@ export default function AddHospital() {
                   {isSubmitting ? "Publishing..." : "Publish Hospital"} <i className="fa-solid fa-arrow-right" />
                 </button>
               </footer>
-            </form>
+              </form>
+            )}
           </div>
         </main>
       </div>

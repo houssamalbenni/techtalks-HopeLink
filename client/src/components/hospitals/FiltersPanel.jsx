@@ -13,7 +13,6 @@ export default function FiltersPanel({
   onSpecialtyChange,
   onRemoveTag,
   onClearAll,
-  onMoreFilters,
 }) {
   return (
     <section className="hospitals-filters">
@@ -49,9 +48,7 @@ export default function FiltersPanel({
             value={specialtyValue}
             onChange={(event) => onSpecialtyChange(event.target.value)}
           />
-          <button type="button" className="hospitals-filter-btn" onClick={onMoreFilters}>
-            <i className="fa-solid fa-sliders" /> More Filters
-          </button>
+          
         </div>
       </div>
 

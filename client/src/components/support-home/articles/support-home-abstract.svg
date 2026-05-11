@@ -1,0 +1,33 @@
+<svg width="1200" height="540" viewBox="0 0 1200 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Abstract support home landscape">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ffe7d9" />
+      <stop offset="50%" stop-color="#e8e2ff" />
+      <stop offset="100%" stop-color="#dff1ff" />
+    </linearGradient>
+    <linearGradient id="hill" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#ffc3a0" />
+      <stop offset="100%" stop-color="#9ad5b6" />
+    </linearGradient>
+    <linearGradient id="roof" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ff8a65" />
+      <stop offset="100%" stop-color="#ffb74d" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="540" fill="url(#sky)" />
+  <path d="M0 360 C 200 310, 380 420, 560 390 C 760 350, 920 420, 1200 360 L1200 540 L0 540 Z" fill="url(#hill)" opacity="0.85" />
+  <path d="M0 420 C 200 380, 420 480, 640 450 C 860 420, 1020 500, 1200 460 L1200 540 L0 540 Z" fill="#9aa7ff" opacity="0.25" />
+  <g transform="translate(350 190)">
+    <rect x="0" y="80" width="280" height="170" rx="20" fill="#ffffff" opacity="0.92" />
+    <rect x="30" y="120" width="80" height="60" rx="12" fill="#f3f5ff" />
+    <rect x="170" y="120" width="80" height="60" rx="12" fill="#f3f5ff" />
+    <rect x="120" y="160" width="40" height="90" rx="10" fill="#e8ecff" />
+    <path d="M-20 110 L140 20 L300 110 Z" fill="url(#roof)" />
+    <circle cx="140" cy="60" r="22" fill="#fff3e0" />
+  </g>
+  <g opacity="0.65">
+    <circle cx="140" cy="120" r="36" fill="#ffffff" />
+    <circle cx="180" cy="120" r="24" fill="#ffffff" />
+    <circle cx="210" cy="120" r="28" fill="#ffffff" />
+  </g>
+</svg>

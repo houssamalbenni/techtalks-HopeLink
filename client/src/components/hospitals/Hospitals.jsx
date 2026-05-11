@@ -336,6 +336,31 @@ export default function Hospitals() {
     setCurrentPage(Math.min(Math.max(pageNumber, 1), pagination.totalPages));
   }
 
+  async function handleDeleteHospital(hospital) {
+    const hospitalId = hospital?._id || hospital?.id;
+    if (!hospitalId) {
+      toast.error("Unable to delete: missing hospital ID.");
+      return;
+    }
+
+    const confirmed = window.confirm(`Delete ${hospital.name || "this hospital"}? This cannot be undone.`);
+    if (!confirmed) return;
+
+    try {
+      await api.delete(ApiConst.DELETE_SERVICE(hospitalId));
+      toast.success("Hospital deleted.");
+      await fetchHospitals();
+    } catch (error) {
+      console.error("Failed to delete hospital:", error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.errors?.[0]?.message ||
+        error?.message ||
+        "Failed to delete hospital.";
+      toast.error(errorMessage);
+    }
+  }
+
   return (
     <div className="hospitals-page">
       <AdminSidebar logoText="CareAdmin" navItems={SIDEBAR_LINKS} activeItem="Hospitals" user={USER_PROFILE} />
@@ -369,7 +394,6 @@ export default function Hospitals() {
             onSpecialtyChange={setSpecialtyFilter}
             onRemoveTag={removeTag}
             onClearAll={clearAllFilters}
-            onMoreFilters={() => toast("Use Status/City/Specialty filters above.")}
           />
 
           {errorMessage ? <p>{errorMessage}</p> : null}
@@ -384,6 +408,8 @@ export default function Hospitals() {
             hospitals={paginatedHospitals}
             selectedRows={selectedRows}
             onToggleRow={toggleRowSelection}
+            onDeleteRow={handleDeleteHospital}
+            isLoading={isLoading}
             pagination={pagination}
             onPreviousPage={goToPreviousPage}
             onNextPage={goToNextPage}

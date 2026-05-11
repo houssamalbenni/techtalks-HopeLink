@@ -1,21 +1,10 @@
-export const STATE_OPTIONS = [
-  { value: "CA", label: "California" },
-  { value: "NY", label: "New York" },
-  { value: "TX", label: "Texas" },
-];
+
 
 export const DEPARTMENT_OPTIONS = [
-  "Cardiology",
-  "Pediatrics",
-  "Neurology",
-  "Orthopedics",
-  "Oncology",
-  "Maternity",
-];
-
-export const OPERATING_HOURS_OPTIONS = [
-  { value: "24/7", label: "24/7 (Always Open)" },
-  { value: "custom", label: "Custom Schedule..." },
+  "Wheelchair_Access",
+  "Family_Rooms",
+  "Hot_Meals",
+  "Free_WiFi",
 ];
 
 export const STATUS_OPTIONS = [
@@ -39,21 +28,21 @@ export const DEFAULT_FORM = {
   hospitalName: "",
   description: "",
   logoUrl: "",
+  operatingHoursStart: "",
+  operatingHoursEnd: "",
+  operatingHoursEmergencyInterval: "",
   lat: "",
   lng: "",
   streetAddress: "",
   city: "",
-  state: "",
-  postalCode: "",
   phone: "",
   email: "",
   website: "",
   erEnabled: true,
   appointmentsRequired: false,
-  departments: ["Cardiology", "Pediatrics", "Orthopedics"],
+  departments: ["Wheelchair_Access", "Family_Rooms", "Hot_Meals", "Free_WiFi"],
   insuranceInput: "",
-  insuranceTags: ["Medicare", "Medicaid"],
-  operatingHours: "24/7",
+  insuranceTags: [],
   totalBeds: "",
   initialStatus: "active",
   internalNotes: "",

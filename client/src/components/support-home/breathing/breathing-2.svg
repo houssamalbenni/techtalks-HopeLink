@@ -1,0 +1,12 @@
+<svg width="1200" height="520" viewBox="0 0 1200 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Long exhale waves">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e8f8ff" />
+      <stop offset="60%" stop-color="#efe7ff" />
+      <stop offset="100%" stop-color="#ffe9d8" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="520" fill="url(#bg)" />
+  <path d="M0 300 C 180 260, 360 340, 540 300 C 720 260, 900 340, 1200 300 L1200 520 L0 520 Z" fill="#cfe8ff" opacity="0.8" />
+  <path d="M0 360 C 220 320, 420 400, 640 360 C 860 320, 1040 400, 1200 360 L1200 520 L0 520 Z" fill="#e5dcff" opacity="0.7" />
+</svg>
