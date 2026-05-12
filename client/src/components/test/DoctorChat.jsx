@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useNotifications } from "../../../context/NotificationContext";
 import { formatNotificationTime } from "../../../utils/helper";
@@ -18,6 +18,7 @@ const DoctorChat = () => {
   const [message, setMessage] = useState("");
   const [history, setHistory] = useState([]);
   const [avatars, setAvatars] = useState({ doctor: "", refugee: "" });
+  const messagesRef = useRef(null);
   const navigate = useNavigate();
   const { refugeeId: refugeeIdParam } = useParams();
   const doctorId = getStoredUserId();
@@ -129,6 +130,17 @@ const DoctorChat = () => {
     return timeA - timeB;
   });
 
+  useEffect(() => {
+    if (!messagesRef.current) {
+      return;
+    }
+
+    const container = messagesRef.current;
+    requestAnimationFrame(() => {
+      container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+    });
+  }, [mergedMessages.length]);
+
   const handleEndSession = () => {
     if (doctorId && refugeeId) {
       sendEndSession({ senderId: doctorId, receivedId: refugeeId });
@@ -143,27 +155,7 @@ const DoctorChat = () => {
     <div className="chatting-page">
       <div className="chatting-shell">
         <main className="chatting-main">
-          <header className="chatting-topbar">
-            <div className="guest-toggle">
-              <div>
-                <div className="guest-title">Doctor Chat</div>
-                <div className="guest-sub">Secure session active</div>
-              </div>
-              <div className="toggle-pill" role="switch" aria-checked="true">
-                <span />
-              </div>
-            </div>
-            <div className="counselor-card">
-              <div className="counselor-avatar" />
-              <div>
-                <div className="counselor-name">Assigned Refugee</div>
-                <div className="counselor-meta">Live chat</div>
-              </div>
-              <button className="dots" type="button" aria-label="More options">
-                ...
-              </button>
-            </div>
-          </header>
+
 
           <div className="security-banner">
             <div className="shield">OK</div>
@@ -175,7 +167,7 @@ const DoctorChat = () => {
             </div>
           </div>
 
-          <section className="chatting-messages">
+          <section className="chatting-messages" ref={messagesRef}>
             {mergedMessages.map((msg, i) => {
               const side = msg.senderId === doctorId ? "user" : "counselor";
               const avatarUrl = side === "counselor" ? avatars.refugee : avatars.doctor;
@@ -227,9 +219,6 @@ const DoctorChat = () => {
             >
               End Session
             </button>
-            <div className="session-note">
-              Your session will end and messages will be cleared.
-            </div>
           </div>
         </main>
       </div>
