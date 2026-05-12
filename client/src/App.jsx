@@ -40,6 +40,7 @@ import MeshAdmin2 from "./components/test/meshAdmin2";
 import NotificationPage from "./components/notification/Notification";
 import DoctorChat from "./components/test/DoctorChat";
 import RefugeeChat from "./components/test/RefugeeChat";
+import AdminDashboard from "./components/admin-dashboard/AdminDashboard";
 function App() {
   return (
     <BrowserRouter>
@@ -119,6 +120,7 @@ function App() {
         <Route path="/test/refugee-chat" element={<RefugeeChat />} />
         <Route path="/test/refugee-chat/:doctorId" element={<RefugeeChat />} />
         <Route path="/notification" element={<NotificationPage />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
       </Routes>
     </BrowserRouter>
   );

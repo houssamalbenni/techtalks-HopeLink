@@ -22,6 +22,7 @@ import { ApiConst } from "../../../utils/APIConst";
 import { getSupabaseClient } from "../../../utils/supabaseClient";
 import "../hospitals/Hospitals.css";
 import "./AddHospital.css";
+import { createService } from "../../../services/serviceService";
 
 const BASIC_FIELDS = [
   {
@@ -340,7 +341,7 @@ export default function AddHospital() {
         ...(ownerNgoId ? { owner_ngo: ownerNgoId } : {}),
       };
 
-      await api.post(ApiConst.CREATE_SERVICE, payload);
+      await createService(payload);
       toast.success("Hospital created successfully.");
       navigate("/hospitals");
     } catch (error) {

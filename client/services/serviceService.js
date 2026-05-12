@@ -15,11 +15,16 @@ export const getNearbyServices = (lng, lat, distance = 5000) =>
     })
   );
 
+export const createService = (serviceData) =>
+  safeApiCall(api.post(ApiConst.CREATE_SERVICE, serviceData));
+
+
 const NEED_TO_SERVICE_TITLES = {
   shelter: ["shelter"],
   food: ["food"],
   medicine: ["medicine", "hospital"],
 };
+
 
 const normalizeValue = (value) => String(value || "").trim().toLowerCase();
 
