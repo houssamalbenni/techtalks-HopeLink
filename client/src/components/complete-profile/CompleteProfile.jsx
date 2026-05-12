@@ -59,13 +59,20 @@ const CompleteProfile = ({
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("userId", res.data.user._id);
         localStorage.setItem("role", res.data.user.role);
+        setPhoto(res.data.user.profile_url || null);
         console.log(
           "Token stored in localStorage:",
           localStorage.getItem("token"),
         );
         toast.success("Registration successful! Redirecting to dashboard...");
         registerToSocket(res.data.user._id, res.data.user.role);
-        navigate("/dashboard");
+        if(selectedRole === "refugee") {
+          navigate("/refugee-dashboard");
+        } else if(selectedRole === "ngo") {
+          navigate("dashboard");
+        } else if(selectedRole === "admin") {
+          navigate("/admin/announcement");
+        }
       }
     } catch (error) {
       toast.error(error?.message);

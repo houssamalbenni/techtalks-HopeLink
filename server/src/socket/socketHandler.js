@@ -26,7 +26,6 @@ module.exports = (io) => {
             audience: data.audience || "all",
             title: data.title,
             message: data.message,
-            image_url: data.image_url,
           });
 
           if (data.audience === "all") {
@@ -49,7 +48,7 @@ module.exports = (io) => {
 
     socket.on(SocketEvents.SEND_PRIVATE_MESSAGE, async (data) => {
       try {
-        const { receivedId, senderId, message, title, type, priority } = data;
+        const { receivedId, message, title, type, priority } = data;
 
         const notificationData = {
           receivedId: receivedId,
@@ -80,18 +79,18 @@ module.exports = (io) => {
     socket.on(SocketEvents.CHATING, async (data) => {
       try {
         console.log("chating", data);
-        const { receivedId, senderId, message } = data;
+        const { receivedId, message } = data;
         const receiverSocketId = users[receivedId];
 
         const { chating: chat, messageEntry } =
           await ChatingServices.createOrAppendMessage({
-            senderId,
+          
             receivedId,
             message,
           });
 
         const payload = {
-          senderId,
+        
           receivedId,
           message,
           chatId: chat._id,

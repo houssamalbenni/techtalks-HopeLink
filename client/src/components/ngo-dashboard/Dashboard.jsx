@@ -8,9 +8,9 @@ import ChartsRow from './ChartsRow';
 const Dashboard = () => {
   return (
     <div className="dashboard-layout">
-      <Sidebar />
+      {/* <Sidebar /> */}
       <div className="dashboard-main">
-        <TopBar />
+        {/* <TopBar /> */}
         <StatsCards />
         <AidRequestQueue />
         <ChartsRow />

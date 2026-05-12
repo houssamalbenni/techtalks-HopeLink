@@ -3,7 +3,19 @@ const MissingPerson = require("../models/missingPersone").MissingPerson;
 class MissingPersonService {
   static async createMissingPerson(owner, body) {
     try {
-      const data = { owner, ...body };
+      const { note,image, ...other } = body;
+      const data = {
+        owner,
+        ...other,
+        notes: [
+          {
+            sender: owner,
+            body: note,
+            image: image || null,
+          },
+        ],
+      };
+
       const missingPerson = await MissingPerson.create(data);
 
       return missingPerson;
@@ -57,7 +69,9 @@ class MissingPersonService {
         new: true,
         runValidators: true,
       },
-    );
+    )
+      .populate("owner", "full_name profile_url")
+      .populate("notes.sender", "full_name profile_url");
 
     return updatedMissingPerson;
   }
@@ -71,7 +85,9 @@ class MissingPersonService {
   }
 
   static async getAllMissingPersons() {
-    const AllMissingPersons = await MissingPerson.find();
+    const AllMissingPersons = await MissingPerson.find()
+      .populate("owner", "full_name profile_url")
+      .populate("notes.sender", "full_name profile_url");
 
     if (!AllMissingPersons) {
       throw new Error(" Can't return all family services");

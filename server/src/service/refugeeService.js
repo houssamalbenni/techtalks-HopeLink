@@ -13,7 +13,7 @@ class RefugeeService {
 
   static async getMyRequests(userId) { // userId from the token
     try {
-      return await Request.find({ user: userId }).populate("service");
+      return await Request.find({ user: userId,status:"pending" }).populate("service","_id");
     } catch (error) {
       throw error;
     }

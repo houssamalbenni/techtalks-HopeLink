@@ -15,7 +15,7 @@ export const mainNavItems = [
   { id: 'ngo-operations', icon: 'fa-chart-pie', label: 'NGO Operations Dashboard' },
   { id: 'aid-distribution', icon: 'fa-box-open', label: 'Aid Distribution Monitoring' },
   { id: 'donor-dashboard', icon: 'fa-hand-holding-heart', label: 'Donor Dashboard' },
-  { id: 'interactive-map', icon: 'fa-map-location-dot', label: 'Interactive Map' },
+  { id: 'refugee-dashboard', icon: 'fa-map-location-dot', label: 'Interactive Map' },
   { id: 'profile-settings', icon: 'fa-gear', label: 'Profile & Settings', active: true },
 ];
 
@@ -53,6 +53,7 @@ export const profileFieldSections = [
       { id: 'birth-date', label: 'Date of Birth', value: 'August 12, 1985', type: 'text' },
       { id: 'email', label: 'Email Address', value: 'michael.chen@example.com', type: 'email' },
       { id: 'phone', label: 'Phone Number', value: '+1 (555) 019-8432', type: 'tel' },
+      { id: 'password', label: 'New Password', value: '', type: 'password' },
     ],
   },
   {
