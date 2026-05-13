@@ -1,73 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./MetalHeath.module.css";
 import BreathTag from "./BreathTag";
 import PlayerBar from "./PlayerBar";
 import Sidebar from "./Sidebar";
 import SoundCard from "./SoundCard";
+import { supportNavItems } from "../support-nav/supportNavItems";
 
-const defaultNavItems = [
-  {
-    id: "breathing",
-    label: "Breathing",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <circle cx="12" cy="12" r="9" />
-        <circle cx="12" cy="12" r="4" />
-      </svg>
-    ),
-  },
-  {
-    id: "meditations",
-    label: "Meditations",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path d="M12 2c0 0-4 3-4 8a4 4 0 008 0c0-5-4-8-4-8z" />
-        <path d="M8 18h8" />
-        <path d="M10 21h4" />
-      </svg>
-    ),
-  },
-  {
-    id: "sleep",
-    label: "Sleep",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-      </svg>
-    ),
-  },
-  {
-    id: "sounds",
-    label: "Sounds",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path d="M9 18V5l12-2v13" />
-        <circle cx="6" cy="18" r="3" />
-        <circle cx="18" cy="16" r="3" />
-      </svg>
-    ),
-  },
-  {
-    id: "progress",
-    label: "Progress",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <rect x="3" y="12" width="4" height="9" rx="1" />
-        <rect x="10" y="7" width="4" height="14" rx="1" />
-        <rect x="17" y="3" width="4" height="18" rx="1" />
-      </svg>
-    ),
-  },
-  {
-    id: "favorites",
-    label: "Favorites",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-      </svg>
-    ),
-  },
-];
+const defaultNavItems = supportNavItems;
 
 const defaultTabs = ["All Sounds", "White Noise", "Nature", "Ambient", "Music", "Guided"];
 
@@ -151,7 +91,7 @@ export default function InteractiveExercises({
   title = "Breathing",
   subtitle = "Take a deep breath. You've got this.",
   streak = 7,
-  activeNav = "breathing",
+  activeNav = "interactive-exercises",
   navItems = defaultNavItems,
   breathTags = [
     { id: "inhale", label: "Inhale", value: "4s", tone: "purple" },
@@ -171,6 +111,8 @@ export default function InteractiveExercises({
   onNext,
   onPause,
 }) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const audioRef = useRef(null);
   const [currentNav, setCurrentNav] = useState(activeNav);
   const [currentTab, setCurrentTab] = useState(activeTab);
@@ -217,9 +159,23 @@ export default function InteractiveExercises({
   }, [sounds, currentTab, selectedSound, isPlaying]);
 
   const handleNavSelect = (id) => {
+    const target = supportNavItems.find((item) => item.id === id);
+    if (target) {
+      navigate(target.path);
+    }
     setCurrentNav(id);
     onNavSelect?.(id);
   };
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/support-home")) {
+      setCurrentNav("support-home");
+      return;
+    }
+    if (location.pathname.startsWith("/interactive-exercises")) {
+      setCurrentNav("interactive-exercises");
+    }
+  }, [location.pathname]);
 
   const handleTabSelect = (tab) => {
     setCurrentTab(tab);
