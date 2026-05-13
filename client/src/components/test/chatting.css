@@ -120,8 +120,16 @@ body {
 	justify-content: flex-end;
 }
 
-.message-row.user {
-	flex-direction: row-reverse;
+.message-row.user .message-bubble {
+	margin-left: auto;
+}
+
+.message-row.user .message-avatar {
+	margin-left: 6px;
+}
+
+.message-row.counselor .message-avatar {
+	margin-right: 6px;
 }
 
 .message-avatar {
