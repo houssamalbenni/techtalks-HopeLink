@@ -79,18 +79,18 @@ module.exports = (io) => {
     socket.on(SocketEvents.CHATING, async (data) => {
       try {
         console.log("chating", data);
-        const { receivedId, message } = data;
+        const { senderId, receivedId, message } = data;
         const receiverSocketId = users[receivedId];
 
         const { chating: chat, messageEntry } =
           await ChatingServices.createOrAppendMessage({
-          
+            senderId,
             receivedId,
             message,
           });
 
         const payload = {
-        
+          senderId,
           receivedId,
           message,
           chatId: chat._id,

@@ -120,6 +120,10 @@ body {
 	justify-content: flex-end;
 }
 
+.message-row.user {
+	flex-direction: row-reverse;
+}
+
 .message-avatar {
 	width: 34px;
 	height: 34px;

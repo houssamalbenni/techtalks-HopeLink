@@ -191,11 +191,9 @@ const RefugeeChat = () => {
 
               return (
                 <div key={i} className={`message-row ${side}`}>
-                  {side === "counselor" && (
-                    <div className="message-avatar">
-                      {avatarUrl ? <img src={avatarUrl} alt="User avatar" /> : null}
-                    </div>
-                  )}
+                  <div className="message-avatar">
+                    {avatarUrl ? <img src={avatarUrl} alt="User avatar" /> : null}
+                  </div>
                   <div className="message-bubble">
                     <p>{msg.message}</p>
                     <span className="message-time">
