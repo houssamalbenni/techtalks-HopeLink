@@ -83,22 +83,6 @@ const NotificationsPage = () => {
 
   return (
     <div className="hopelink-container">
-      <header className="main-header">
-        <div className="logo">
-          <img src="../../assets/clock.png" alt="logo" className="logo-img" />
-          <span>HopeLink</span>
-        </div>
-
-        <nav className="desktop-nav">
-          <a href="#">Dashboard</a>
-          <a href="#">Aid Requests</a>
-          <a href="#">Resources</a>
-          <a href="#" className="active">
-            Notifications
-          </a>
-        </nav>
-      </header>
-
       <main className="main-layout">
         <aside className="left-sidebar desktop-only">
           <section className="sidebar-group">
@@ -119,7 +103,7 @@ const NotificationsPage = () => {
         <section className="content-area">
           <div className="content-header">
             <h1>Notifications</h1>
-            <p>Stay updated on aid, shelter, and alerts.</p>
+            <p>Stay updated .</p>
           </div>
 
           <div className="date-group">

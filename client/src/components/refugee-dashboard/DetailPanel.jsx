@@ -1,170 +1,188 @@
-import { buildServiceStatus, formatServiceAddress } from '../../../services/serviceService';
-
-const DetailPanel = ({ selectedId, requests = [] }) => {
-  const selectedItem = requests.find((entry) => (entry.service || entry)._id === selectedId);
-  const service = selectedItem?.service || selectedItem;
-  const request = selectedItem?.request || selectedItem?.serviceRequest || null;
-
-  if (!service) {
-    return (
-      <div className="map-detail-panel">
-        <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-          <p>Select a service to view details</p>
-        </div>
-      </div>
-    );
-  }
-
-  const status = request?.status || buildServiceStatus(service).label.toLowerCase();
-  const statusColors = {
-    pending: '#f97316',
-    approved: '#22c55e',
-    completed: '#3b82f6',
-    full: '#ef4444',
-    limited: '#f97316',
-    open: '#22c55e',
-  };
+import {
+  buildServiceStatus,
+  formatServiceAddress,
+} from "../../../utils/helper";
+import "./DetailPanel.css";
+import { formatNotificationTime } from "../../../utils/helper";
+import { requestService } from "../../../services/refugeeService";
+import { toast } from "react-hot-toast";
+import { useState } from "react";
+const DetailPanel = ({
+  selectedId,
+  isOpen,
+  onClose,
+  requests = [],
+  myRequests = [],
+}) => {
+  if (!selectedId) return null;
+  const [loading, setLoading] = useState(false);
+  const service = requests.find((s) => s._id === selectedId);
+  const status = buildServiceStatus(service);
   const serviceAddress = formatServiceAddress(service.address);
-  const intakeHours = service.intake_hours
-    ? `${service.intake_hours.startTime || 'N/A'} - ${service.intake_hours.endTime || 'N/A'}`
-    : 'Not specified';
-
+  const filledCount = service.capacity - service.availability;
+  const capacityPercentage = Math.min(
+    100,
+    (filledCount / service.capacity) * 100,
+  );
+  const isRequested = myRequests.includes(service._id);
+  const handlerRequest = async (id) => {
+    setLoading(true);
+    try {
+      if (isRequested) {
+        toast.error("You have already requested this service.");
+        return;
+      }
+      const data = {
+        service: id,
+        description: `Requesting service: ${service.title} at ${serviceAddress}`,
+      };
+      await requestService(data);
+      toast.success("Request sent successfully!");
+      myRequests.push(id);
+    } catch (err) {
+      console.error("Failed to send request:", err);
+      toast.error("Failed to send request. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
-    <div className="map-detail-panel">
+    <div className={`map-detail-panel ${!isOpen ? "closed" : ""}`}>
       <div className="detail-image-wrap">
-        <div className="detail-image-placeholder">
-          <svg viewBox="0 0 24 24">
-            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-          </svg>
-        </div>
-        <span className="detail-shelter-badge" style={{ background: statusColors[request?.status || status] || '#8b5cf6' }}>
-          {(request?.status || status || 'pending').toUpperCase()}
-        </span>
-        <div className="detail-nav-btn">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-          </svg>
+        <img
+          src={
+            service.images?.[0] ||
+            "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=1000"
+          }
+          alt={service.title}
+          referrerPolicy="no-referrer"
+        />
+        <button className="detail-close-btn" onClick={onClose}>
+          {/* <img src="../../../assets/close.png" alt="Close"/> */}x
+        </button>
+        <div className="detail-image-overlay">
+          <span
+            className={`detail-category-badge ${service.title?.toLowerCase() || "service"}`}
+          >
+            {service.title || "SERVICE"}
+          </span>
+          <h2 className="detail-name">{service.address.building}</h2>
         </div>
       </div>
 
       <div className="detail-body">
-        <h2 className="detail-name">{service.title || service.name}</h2>
+        <div className="capacity-card">
+          <div className="capacity-header">
+            <span className="capacity-label">Current Capacity</span>
+            <span className={`capacity-status ${status.className}`}>
+              {status.label}
+            </span>
+          </div>
+
+          <div className="capacity-digits">
+            <span className="capacity-count">{filledCount}</span>
+            <span className="capacity-total">
+              / {service.capacity} beds available
+            </span>
+          </div>
+
+          <div className="capacity-progress-bg">
+            <div
+              className="capacity-progress-fill"
+              style={{ width: `${capacityPercentage}%` }}
+            ></div>
+          </div>
+
+          <p className="capacity-updated">
+            Last updated: {formatNotificationTime(service.updatedAt)}
+          </p>
+        </div>
 
         <div className="detail-action-btns">
-          <button className="detail-reserve-btn">
-            <svg viewBox="0 0 24 24">
-              <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" />
-            </svg>
-            View Timeline
+          <button
+            className="detail-reserve-btn"
+            onClick={() => handlerRequest(service._id)}
+            disabled={loading}
+          >
+            <img
+              src="../../../assets/bed.png"
+              alt="Reserve"
+              width="24"
+              height="24"
+            />
+            {loading ? "Reserving..." : "Reserve Spot"}
           </button>
-          <button className="detail-contact-btn">
-            <svg viewBox="0 0 24 24">
-              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-            </svg>
-            Contact Support
+          <button
+            className="detail-contact-btn"
+            onClick={() => toast(`Call this number ${service.phone_number}`)}
+          >
+            <img
+              src="../../../assets/phone-call.png"
+              alt="Contact"
+              width="24"
+              height="24"
+            />
+            Contact
           </button>
         </div>
 
-        <div className="detail-divider" />
+        <div className="info-section">
+          <h3 className="info-section-title">Information</h3>
 
-        <p className="detail-section-label">Request Details</p>
-
-        <div className="detail-info-item">
-          <div className="detail-info-icon">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
-            </svg>
-          </div>
-          <div>
-            <p className="detail-info-label">Type</p>
-            <p className="detail-info-value">{service.title || service.type || 'Service'}</p>
-          </div>
-        </div>
-
-        <div className="detail-info-item">
-          <div className="detail-info-icon">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-            </svg>
-          </div>
-          <div>
-            <p className="detail-info-label">Availability</p>
-            <p className="detail-info-value">{service.availability}/{service.capacity}</p>
-          </div>
-        </div>
-
-        <div className="detail-info-item">
-          <div className="detail-info-icon">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-            </svg>
-          </div>
-          <div>
-            <p className="detail-info-label">Priority Level</p>
-            <p className="detail-info-value">{request?.priority?.charAt(0).toUpperCase() + request?.priority?.slice(1) || 'Standard'}</p>
-          </div>
-        </div>
-
-        <div className="detail-info-item">
-          <div className="detail-info-icon">
-            <svg viewBox="0 0 24 24">
-              <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z" />
-            </svg>
-          </div>
-          <div>
-            <p className="detail-info-label">Status</p>
-            <p className="detail-info-value" style={{ color: statusColors[status] || '#8b5cf6' }}>
-              {(status || 'pending').toUpperCase()}
-            </p>
-          </div>
-        </div>
-
-        {serviceAddress && (
-          <div className="detail-info-item">
-            <div className="detail-info-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-              </svg>
+          <div className="info-list">
+            <div className="info-item">
+              <div className="info-icon">
+                <img
+                  src="../../../assets/blue-clock.png"
+                  alt="Hours"
+                  width="20"
+                  height="20"
+                />
+              </div>
+              <div className="info-content">
+                <p className="info-label">Intake Hours</p>
+                <p className="info-value">
+                  {service.intake_hours?.startTime || "08:00 AM"} -{" "}
+                  {service.intake_hours?.endTime || "10:00 PM"}{" "}
+                  {service.intake_hours?.emergency_interval &&
+                    `(Emergency ${service.intake_hours?.emergency_interval})`}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="detail-info-label">Address</p>
-              <p className="detail-info-value">{serviceAddress}</p>
+
+            <div className="info-item">
+              <div className="info-icon">
+                <img
+                  src="../../../assets/location.png"
+                  alt="Address"
+                  width="20"
+                  height="20"
+                />
+              </div>
+              <div className="info-content">
+                <p className="info-label">Address</p>
+                <p className="info-value">{serviceAddress}</p>
+              </div>
+            </div>
+
+            <div className="info-item">
+              <div className="info-icon">
+                <img
+                  src="../../../assets/requirement.png"
+                  alt="Requirements"
+                  width="20"
+                  height="20"
+                />
+              </div>
+              <div className="info-content">
+                <p className="info-label">Requirements</p>
+                <p className="info-value">
+                  {service.requirements || "no requirements needed"}
+                </p>
+              </div>
             </div>
           </div>
-        )}
-
-        {request?.description && (
-          <>
-            <div className="detail-divider" />
-            <p className="detail-section-label">Description</p>
-            <p className="detail-info-value" style={{ lineHeight: '1.5' }}>
-              {request.description}
-            </p>
-          </>
-        )}
-
-        {service.requirements && (
-          <>
-            <div className="detail-divider" />
-            <p className="detail-section-label">Requirements</p>
-            <p className="detail-info-value" style={{ lineHeight: '1.5' }}>
-              {service.requirements}
-            </p>
-          </>
-        )}
-
-        {service.intake_hours && (
-          <>
-            <div className="detail-divider" />
-            <p className="detail-section-label">Intake Hours</p>
-            <p className="detail-info-value">{intakeHours}</p>
-          </>
-        )}
-
-        <div className="detail-divider" />
-        <p style={{ fontSize: '12px', color: '#999', marginTop: '10px' }}>
-          Updated: {new Date(service.updatedAt || service.createdAt || Date.now()).toLocaleDateString()}
-        </p>
+        </div>
       </div>
     </div>
   );

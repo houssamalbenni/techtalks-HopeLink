@@ -14,10 +14,11 @@ const ServiceSchema = new mongoose.Schema({
   images: [String],
   phone_number: { type: String },
   address: AddressSchema,
+  email: { type: String },
+  website: { type: String },
   requirements: { type: String }, // Documents or conditions needed
   intake_hours: IntakeHoursSchema,
   facilities: [{ type: String, enum: Facilities }],
-  owner_ngo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } 
 }, { timestamps: true });
 
 ServiceSchema.index({ location: '2dsphere' });

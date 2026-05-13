@@ -13,6 +13,7 @@ export default function FiltersPanel({
   onSpecialtyChange,
   onRemoveTag,
   onClearAll,
+  type,
 }) {
   return (
     <section className="hospitals-filters">
@@ -22,7 +23,7 @@ export default function FiltersPanel({
           <input
             id="hospital-search"
             type="text"
-            placeholder="Search hospitals by name or ID..."
+            placeholder={`Search ${type.charAt(0).toUpperCase() + type.slice(1)}s by name or ID...`}
             value={searchQuery}
             onChange={(event) => onSearchChange(event.target.value)}
           />

@@ -36,3 +36,44 @@ export const USER_PROFILE = {
   name: "Dr. Admin",
   email: "admin@careadmin.com",
 };
+
+
+export const BASIC_FIELDS_HOSPITAL = [
+  {
+    field: "hospitalName",
+    label: "Hospital Name",
+    required: true,
+    type: "input",
+    className: "ah-span-all",
+    inputType: "text",
+    placeholder: "e.g. Mercy General Hospital",
+  },
+  {
+    field: "description",
+    label: "Description",
+    type: "textarea",
+    className: "ah-span-all",
+    rows: 3,
+    placeholder: "Brief description of the facility and its primary focus...",
+  },
+];
+
+export const BASIC_FIELDS_SHELTER = [
+  {
+    field: "shelterName",
+    label: "Shelter Name",
+    required: true,
+    type: "input",
+    className: "ah-span-all",
+    inputType: "text",
+    placeholder: "e.g. Hope Shelter",
+  },
+  {
+    field: "description",
+    label: "Description",
+    type: "textarea",
+    className: "ah-span-all",
+    rows: 3,
+    placeholder: "Brief description of the shelter and its services...",
+  },
+];

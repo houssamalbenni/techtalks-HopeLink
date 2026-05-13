@@ -77,6 +77,69 @@ export const getImageSrc = (type) => {
   return "../../assets/shelters.png";
 };
 
+
+
+
+
+const NEED_TO_SERVICE_TITLES = {
+  shelter: ["shelter"],
+  food: ["food"],
+  medicine: ["medicine", "hospital"],
+};
+
+const normalizeValue = (value) => String(value || "").trim().toLowerCase();
+
+export const serviceMatchesNeed = (service, needs = []) => {
+  if (!Array.isArray(needs) || needs.length === 0) {
+    return true;
+  }
+
+  const serviceTitle = normalizeValue(service?.title || service?.type);
+  return needs.some((need) => {
+    const titles = NEED_TO_SERVICE_TITLES[normalizeValue(need)] || [normalizeValue(need)];
+    return titles.includes(serviceTitle);
+  });
+};
+
+export const filterServicesByNeed = (services = [], needs = []) =>
+  services.filter((service) => serviceMatchesNeed(service, needs));
+
+export const buildServiceStatus = (service) => {
+  const availability = Number(service?.availability ?? 0);
+  const capacity = Number(service?.capacity ?? 0);
+
+  if (capacity === 0 && availability === 0) {
+    return { label: "UNKNOWN", className: "status-limited" };
+  }
+
+  if (availability <= 0) {
+    return { label: "FULL", className: "status-full" };
+  }
+
+  if (capacity > 0 && availability / capacity < 0.5) {
+    return { label: "LIMITED", className: "status-limited" };
+  }
+
+  return { label: "OPEN", className: "status-open" };
+};
+
+export const formatServiceAddress = (address) => {
+  if (!address) {
+    return "Address not available";
+  }
+
+  if (typeof address === "string") {
+    return address;
+  }
+
+  return [address.street, address.city, address.country]
+    .filter(Boolean)
+    .join(", ");
+};
+
+
+
+
 export const calculateAge = (dob) => {
   const birthDate = new Date(dob);
 
@@ -174,3 +237,32 @@ export const chartData = (requests) => {
   return acc;
 }, []);
 }
+
+
+
+
+export const formatDonation = (amount) => {
+    if (typeof amount !== "number" || Number.isNaN(amount)) {
+      return "...";
+    }
+
+    const absAmount = Math.abs(amount);
+    const formatScaled = (value, suffix) => {
+      const formatted = value % 1 === 0 ? value.toFixed(0) : value.toFixed(1);
+      return `$${formatted}${suffix}`;
+    };
+
+    if (absAmount >= 1_000_000_000) {
+      return formatScaled(amount / 1_000_000_000, "B");
+    }
+
+    if (absAmount >= 1_000_000) {
+      return formatScaled(amount / 1_000_000, "M");
+    }
+
+    if (absAmount >= 10_000) {
+      return formatScaled(amount / 1_000, "K");
+    }
+
+    return `$${amount.toFixed(2)}`;
+  };

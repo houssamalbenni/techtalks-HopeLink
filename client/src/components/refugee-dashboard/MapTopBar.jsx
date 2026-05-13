@@ -1,5 +1,5 @@
 import { useLanguage } from './LanguageContext';
-import { t } from './translations';
+import { t } from './translation';
 
 const MapTopBar = () => {
   const { language, toggleLanguage } = useLanguage();

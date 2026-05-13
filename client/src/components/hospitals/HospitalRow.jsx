@@ -7,7 +7,7 @@ function capacityColor(status) {
   return "var(--hospital-green)";
 }
 
-export default function HospitalRow({ hospital, isSelected, onToggleSelection, onDelete }) {
+export default function HospitalRow({ hospital, isSelected, onToggleSelection, onDelete,type }) {
   const navigate = useNavigate();
   const occupancyPercent = hospital.totalBeds > 0
     ? Math.round((hospital.occupiedBeds / hospital.totalBeds) * 100)
@@ -15,7 +15,7 @@ export default function HospitalRow({ hospital, isSelected, onToggleSelection, o
 
   function handleEditClick() {
     const hospitalId = hospital._id || hospital.id;
-    const targetPath = `/edit-hospital/${hospitalId}`;
+    const targetPath = `/edit-${type}/${hospitalId}`;
 
     navigate(targetPath);
   }
@@ -93,8 +93,8 @@ export default function HospitalRow({ hospital, isSelected, onToggleSelection, o
           <button
             type="button"
             title="Delete"
-            aria-label="Delete hospital"
-            onClick={() => onDelete(hospital)}
+            aria-label={`Delete ${type}`}
+            onClick={() => onDelete(hospital, type)}
           >
             <i className="fa-solid fa-trash" />
           </button>

@@ -7,7 +7,7 @@ import TopHeader from "../hospitals/TopHeader";
 import { SIDEBAR_LINKS, USER_PROFILE } from "../hospitals/hospitalsData";
 import FieldGroup from "../add-hospital/FieldGroup";
 import FormSection from "../add-hospital/FormSection";
-import MapComponent from "../add-shelter/MapComponent";
+import MapComponent from "../add-hospital/MapComponent";
 import {
   EDIT_BREADCRUMBS,
   EDIT_HEADER_ACTIONS,
@@ -93,7 +93,7 @@ export default function EditHospital() {
         if (action.label === "Cancel") {
           return {
             ...action,
-            onClick: () => navigate("/hospitals"),
+            onClick: () => navigate("/hospital"),
             disabled: isSubmitting,
           };
         }

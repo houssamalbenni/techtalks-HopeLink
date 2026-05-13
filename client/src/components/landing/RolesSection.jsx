@@ -1,4 +1,3 @@
-import { t } from '../refugee-dashboard/translations';
 import RoleCard from './RoleCard';
 
 const roles = [
@@ -11,7 +10,7 @@ const roles = [
       'Find verified shelters, access digital ID, request aid, and reconnect with family members securely.',
     primaryAction: 'Create Account',
     primaryClass: 'blue-btn',
-    type:"refugee"
+    role: 'refugee',
   },
   {
     cardClass: 'ngo-card',
@@ -22,7 +21,7 @@ const roles = [
       'Manage shelter capacity, coordinate aid logistics, verify identities, and track distribution metrics.',
     primaryAction: 'Register Organization',
     primaryClass: 'accent-btn',
-    type:"ngo"
+    role: 'ngo',
   },
   {
     cardClass: 'donor-card',
@@ -33,7 +32,7 @@ const roles = [
       'Fund specific aid packages, track donation impact transparently, and support critical logistics.',
     primaryAction: 'Start Giving',
     primaryClass: 'green-btn',
-    type:"donor"
+    role: 'donor',
   },
 ];
 
@@ -47,7 +46,7 @@ function RolesSection() {
 
       <div className="roles-grid">
         {roles.map((role) => (
-          <RoleCard key={role.title} role={role}  />
+          <RoleCard key={role.title} role={role} />
         ))}
       </div>
     </section>

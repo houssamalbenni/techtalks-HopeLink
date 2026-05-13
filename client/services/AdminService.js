@@ -11,7 +11,10 @@ export const deleteService = (id) =>
   safeApiCall(api.delete(ApiConst.DELETE_SERVICE(id)));
 
 export const getUserbyRole = () =>
-  safeApiCall(api.get(ApiConst.GET_USERS_BY_ROLE("refugee")));
+  safeApiCall(api.get(ApiConst.GET_USER_BY_ROLE("refugee")));
 
 export const getAllRequests = () =>
   safeApiCall(api.get(ApiConst.GET_ALL_REFUGEE_REQUESTS));
+
+export const getTotalDonations = () =>
+  safeApiCall(api.get(ApiConst.GET_TOTAL_DONATIONS));

@@ -47,3 +47,23 @@ export const DEFAULT_FORM = {
   initialStatus: "active",
   internalNotes: "",
 };
+
+
+ export const settingsOptions = [
+    {
+      label: "Shelters",
+      icon: "fa-solid fa-house-chimney-medical",
+      path: "/shelter",
+    },
+    { label: "Hospitals", icon: "fa-solid fa-hospital", path: "/hospital" },
+    {
+      label: "Add Hospital",
+      icon: "fa-solid fa-folder-plus",
+      path: "/add-hospital",
+    },
+    {
+      label: "Add Shelter",
+      icon: "fa-solid fa-plus-circle",
+      path: "/add-shelter",
+    },
+  ];

@@ -1,22 +1,25 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import LandingPage from "./components/landing/LandingPage";
 import Dashboard from "./components/ngo-dashboard/Dashboard";
-import ShelterOverview from "./components/shelter-overview/ShelterOverview";
-import ProfileSettings from "./components/profile-settings/ProfileSettings";
-import AddShelter from "./components/add-shelter/AddShelter";
-import DigitalIdentityVault from "./components/digital-identity-profile/DigitalIdentityVault";
 import SignupFlow from "./components/full-create-account/SignupFlow";
-import EditShelter from "./components/edit-shelter/EditShelter";
-import FamilyReunification from "./components/family-reunification/FamilyReunification";
-import RefugeeDashboard from "./components/refugee-dashboard/RefugeeDashboard";
-import AidDistribution from "./components/aid-distribution-----/AidDistribution";
-import Hospitals from "./components/hospitals/Hospitals";
-import AddHospital from "./components/add-hospital/AddHospital";
-import EditHospital from "./components/edit-hospital/EditHospital";
+import NotificationPage from "./components/notification/Notification";
+import DoctorChat from "./components/test/DoctorChat";
+import RefugeeChat from "./components/test/RefugeeChat";
+import AnnouncementPage from "./components/admin/AnnouncementPage";
 import LoginPage from "./components/login/LoginPage";
-import InteractiveExercises from "./components/InteractiveExercises/InteractiveExercises";
-import Chatting from "./components/chatting/Chatting";
-import CounselorPortal from "./components/counselor-portal/CounselorPortal";
+import FamilyReunification from "./components/family-reunification/FamilyReunification";
+import ProfileSettings from "./components/profile-settings/ProfileSettings";
+import RefugeeDashboard from "./components/refugee-dashboard/RefugeeDashboard";
+import AddHospital from "./components/add-hospital/AddHospital";
+import Hospitals from "./components/hospitals/Hospitals";
+import { Navbar } from "./components/navBar/NavBar";
+import { useNavBar } from "../context/NavBarContext";
+import {
+  BASIC_FIELDS_HOSPITAL,
+  BASIC_FIELDS_SHELTER,
+} from "../../client/src/components/hospitals/hospitalsData";
+import AdminDashboard from "./components/admin-dashboard/AdminDashboard";
+import EditHospital from "./components/edit-hospital/EditHospital";
 import SupportHome from "./components/support-home/SupportHome";
 import StandingTogetherInCrisis from "./components/support-home/articles/StandingTogetherInCrisis";
 import SafeHavenConflictZones from "./components/support-home/articles/SafeHavenConflictZones";
@@ -30,41 +33,29 @@ import CalmWaveBreathing from "./components/support-home/breathing/CalmWaveBreat
 import TriangleBreath from "./components/support-home/breathing/TriangleBreath";
 import ExtendedExhale from "./components/support-home/breathing/ExtendedExhale";
 import MorningResetBreath from "./components/support-home/breathing/MorningResetBreath";
-// import EditShelter from "./components/edit-shelter/EditShelter";
-// import FamilyReunification from './components/family-reunification/FamilyReunification';
-// import RefugeeDashboard from './components/refugee-dashboard/RefugeeDashboard';
-// import Hospitals from "./components/hospitals/Hospitals";
-// import AddHospital from "./components/add-hospital/AddHospital";
-// import EditHospital from "./components/edit-hospital/EditHospital";
-import MeshAdmin2 from "./components/test/meshAdmin2";
-import NotificationPage from "./components/notification/Notification";
-import DoctorChat from "./components/test/DoctorChat";
-import RefugeeChat from "./components/test/RefugeeChat";
-import AdminDashboard from "./components/admin-dashboard/AdminDashboard";
+import CounselorPortal from "./components/counselor-portal/CounselorPortal";
 function App() {
+  const { navitems, photo } = useNavBar();
+  const navigation = useLocation();
+
   return (
-    <BrowserRouter>
+    <>
+      {navigation.pathname !== "/login" &&
+        navigation.pathname !== "/create" &&
+        navigation.pathname !== "/create/refugee" &&
+        navigation.pathname !== "/create/ngo" &&
+        navigation.pathname !== "/create/donor" &&
+        navigation.pathname !== "/" && (
+          <Navbar navItems={navitems} photo={photo} />
+        )}
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
         <Route path="/create/:role" element={<SignupFlow />} />
-        <Route path="/digital-identity" element={<DigitalIdentityVault />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/profile-settings" element={<ProfileSettings />} />
-        <Route path="/shelter-overview" element={<ShelterOverview />} />
-        <Route path="/add-shelter" element={<AddShelter />} />
-        <Route path="/hospitals" element={<Hospitals />} />
-        <Route path="/add-hospital" element={<AddHospital />} />
-        <Route path="/edit-hospital/:id" element={<EditHospital />} />
-        <Route path="/EditShelter" element={<EditShelter />} />
-        <Route path="/family-reunification" element={<FamilyReunification />} />
-        <Route path="/refugee-dashboard" element={<RefugeeDashboard />} />
-        <Route path="/aid-distribution" element={<AidDistribution />} />
-        <Route
-          path="/InteractiveExercises"
-          element={<InteractiveExercises />}
-        />
-        <Route path="/chatting" element={<Chatting />} />
+        <Route path="/notification" element={<NotificationPage />} />
+        <Route path="/test/doctor-chat" element={<DoctorChat />} />
+        <Route path="/test/refugee-chat" element={<RefugeeChat />} />
+        <Route path="/admin/announcement" element={<AnnouncementPage />} />
         <Route path="/counselor-portal" element={<CounselorPortal />} />
         <Route path="/support-home" element={<SupportHome />} />
         <Route
@@ -119,10 +110,28 @@ function App() {
         <Route path="/test/doctor-chat/:refugeeId" element={<DoctorChat />} />
         <Route path="/test/refugee-chat" element={<RefugeeChat />} />
         <Route path="/test/refugee-chat/:doctorId" element={<RefugeeChat />} />
-        <Route path="/notification" element={<NotificationPage />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/profile" element={<ProfileSettings />} />
+        <Route path="/refugee-dashboard" element={<RefugeeDashboard />} />
+        <Route path="/family-reunification" element={<FamilyReunification />} />
+        <Route
+          path="/add-hospital"
+          element={
+            <AddHospital basicField={BASIC_FIELDS_HOSPITAL} type="hospital" />
+          }
+        />
+        <Route
+          path="/add-shelter"
+          element={
+            <AddHospital basicField={BASIC_FIELDS_SHELTER} type="shelter" />
+          }
+        />
+        <Route path="/hospital" element={<Hospitals type={"hospital"} />} />
+        <Route path="/shelter" element={<Hospitals type={"shelter"} />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/edit-hospital/:id" element={<EditHospital />} />
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }
 

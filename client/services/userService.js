@@ -12,6 +12,7 @@ export const loginUser = (data) =>
 export const getAllUsers = () =>
   safeApiCall(api.get(ApiConst.GET_ALL_USERS));
 
+
 export const getUserById = (id) =>
   safeApiCall(api.get(ApiConst.GET_USER_BY_ID(id)));
 

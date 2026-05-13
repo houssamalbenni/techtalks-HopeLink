@@ -7,13 +7,12 @@ import FiltersPanel from "./FiltersPanel";
 import HospitalsTableCard from "./HospitalsTableCard";
 import StatCard from "./StatCard";
 import TopHeader from "./TopHeader";
-import {
-  SIDEBAR_LINKS,
-  USER_PROFILE,
-} from "./hospitalsData";
-import api from "../../../utils/axios";
-import { ApiConst } from "../../../utils/APIConst";
+import { SIDEBAR_LINKS, USER_PROFILE } from "./hospitalsData";
+import { getAllServices } from "../../../services/serviceService";
 import "./Hospitals.css";
+import { settingsOptions } from "../add-hospital/addHospitalConfig";
+
+import SidebarOption from "../notification/SidebarOption";
 
 function resolveStatus(capacity, availability) {
   if (!Number.isFinite(capacity) || capacity <= 0) return "capacity";
@@ -38,7 +37,7 @@ function mapServiceToHospital(service) {
   return {
     _id: service?._id || service?.id,
     id: service?._id || service?.id,
-    name: service?.address?.building || "Unnamed Hospital",
+    name: service?.address?.building || "Unnamed Service",
     city: service?.address?.city || "Unknown City",
     district: service?.address?.street || "Unknown District",
     email: service?.owner_ngo?.email || "-",
@@ -70,11 +69,15 @@ function findFilterLabel(options, value) {
 }
 
 function normalizeFilterValue(value) {
-  return String(value || "").trim().toLowerCase();
+  return String(value || "")
+    .trim()
+    .toLowerCase();
 }
 
 function toUniqueOptions(values) {
-  const unique = Array.from(new Set(values.map((value) => String(value || "").trim()).filter(Boolean)));
+  const unique = Array.from(
+    new Set(values.map((value) => String(value || "").trim()).filter(Boolean)),
+  );
   unique.sort((a, b) => a.localeCompare(b));
 
   return unique.map((label) => ({
@@ -90,7 +93,7 @@ function statusLabel(status) {
   return status;
 }
 
-export default function Hospitals() {
+export default function Hospitals({ type }) {
   const navigate = useNavigate();
   const ITEMS_PER_PAGE = 8;
 
@@ -103,49 +106,56 @@ export default function Hospitals() {
   const [cityFilter, setCityFilter] = useState("");
   const [specialtyFilter, setSpecialtyFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeOption, setActiveOption] = useState("Hospitals");
 
   const fetchHospitals = useCallback(async () => {
     setIsLoading(true);
     setErrorMessage("");
 
     try {
-      const response = await api.get(ApiConst.GET_ALL_SERVICES);
-      const services = response?.data?.data || response?.data || [];
+      const response = await getAllServices();
+      const services = response.data || [];
       const hospitalServices = services
-        .filter((item) => item?.title === "hospital")
+        .filter((item) => item?.title === type)
         .map(mapServiceToHospital)
         .filter((item) => Boolean(item.id));
 
       setHospitals(hospitalServices);
+      console.log("service:", hospitalServices);
       setSelectedRows(new Set());
     } catch (error) {
-      console.error("Failed to load hospitals:", error);
-      setErrorMessage("Could not load hospitals from database.");
-      toast.error("Could not load hospitals from database.");
+      console.error(`Failed to load ${type}:`, error);
+      setErrorMessage(`Could not load ${type} from database.`);
+      toast.error(`Could not load ${type} from database.`);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [type]);
 
   useEffect(() => {
     fetchHospitals();
-  }, [fetchHospitals]);
-
+  }, [fetchHospitals, type]);
+  useEffect(() => {
+    console.log(type);
+  }, [type]);
   const filterOptions = useMemo(() => {
-    const statusOptions = toUniqueOptions(hospitals.map((hospital) => statusLabel(hospital.status))).map(
-      (option) => ({
-        ...option,
-        value: normalizeFilterValue(option.label) === "available"
+    const statusOptions = toUniqueOptions(
+      hospitals.map((hospital) => statusLabel(hospital.status)),
+    ).map((option) => ({
+      ...option,
+      value:
+        normalizeFilterValue(option.label) === "available"
           ? "active"
           : normalizeFilterValue(option.label) === "limited"
             ? "maintenance"
             : normalizeFilterValue(option.label) === "closed"
               ? "capacity"
               : option.value,
-      }),
-    );
+    }));
 
-    const cityOptions = toUniqueOptions(hospitals.map((hospital) => hospital.city));
+    const cityOptions = toUniqueOptions(
+      hospitals.map((hospital) => hospital.city),
+    );
     const specialtyOptions = toUniqueOptions(
       hospitals.flatMap((hospital) =>
         Array.isArray(hospital.specialties) ? hospital.specialties : [],
@@ -165,10 +175,13 @@ export default function Hospitals() {
     return hospitals.filter((hospital) => {
       if (statusFilter && hospital.status !== statusFilter) return false;
 
-      if (cityFilter && normalizeFilterValue(hospital.city) !== cityFilter) return false;
+      if (cityFilter && normalizeFilterValue(hospital.city) !== cityFilter)
+        return false;
 
       if (specialtyFilter) {
-        const specialties = Array.isArray(hospital.specialties) ? hospital.specialties : [];
+        const specialties = Array.isArray(hospital.specialties)
+          ? hospital.specialties
+          : [];
         const hasSpecialty = specialties.some(
           (item) => normalizeFilterValue(item) === specialtyFilter,
         );
@@ -177,7 +190,12 @@ export default function Hospitals() {
 
       if (!normalizedQuery) return true;
 
-      const searchable = [hospital.name, hospital.id, hospital.city, hospital.district]
+      const searchable = [
+        hospital.name,
+        hospital.id,
+        hospital.city,
+        hospital.district,
+      ]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
@@ -247,7 +265,9 @@ export default function Hospitals() {
 
   const selectedCount = selectedRows.size;
   const totalActive = useMemo(
-    () => filteredHospitals.filter((hospital) => hospital.status === "active").length,
+    () =>
+      filteredHospitals.filter((hospital) => hospital.status === "active")
+        .length,
     [filteredHospitals],
   );
   const availableBeds = useMemo(
@@ -272,12 +292,12 @@ export default function Hospitals() {
         onClick: fetchHospitals,
         disabled: isLoading,
       },
-      {
-        label: "Add Hospital",
-        variant: "primary",
-        icon: "fa-solid fa-plus",
-        onClick: () => navigate("/add-hospital"),
-      },
+      // {
+      //   label: `Add ${type.charAt(0).toUpperCase() + type.slice(1)}`,
+      //   variant: "primary",
+      //   icon: "fa-solid fa-plus",
+      //   onClick: () => navigate(`/add-${type}`),
+      // },
     ],
     [navigate, isLoading, fetchHospitals],
   );
@@ -339,45 +359,95 @@ export default function Hospitals() {
   async function handleDeleteHospital(hospital) {
     const hospitalId = hospital?._id || hospital?.id;
     if (!hospitalId) {
-      toast.error("Unable to delete: missing hospital ID.");
+      toast.error(`Unable to delete: missing ${type} ID.`);
       return;
     }
 
-    const confirmed = window.confirm(`Delete ${hospital.name || "this hospital"}? This cannot be undone.`);
+    const confirmed = window.confirm(
+      `Delete ${hospital.name || `this ${type}`}? This cannot be undone.`,
+    );
     if (!confirmed) return;
 
     try {
       await api.delete(ApiConst.DELETE_SERVICE(hospitalId));
-      toast.success("Hospital deleted.");
+      toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted.`);
       await fetchHospitals();
     } catch (error) {
-      console.error("Failed to delete hospital:", error);
+      console.error(`Failed to delete ${type}:`, error);
       const errorMessage =
         error?.response?.data?.message ||
         error?.response?.data?.errors?.[0]?.message ||
         error?.message ||
-        "Failed to delete hospital.";
+        `Failed to delete ${type}.`;
       toast.error(errorMessage);
     }
   }
 
+  const onClickitem = (option) => {
+    setActiveOption(option.label);
+    navigate(option.path);
+  };
   return (
     <div className="hospitals-page">
-      <AdminSidebar logoText="CareAdmin" navItems={SIDEBAR_LINKS} activeItem="Hospitals" user={USER_PROFILE} />
-
+      {/* <AdminSidebar
+        logoText="CareAdmin"
+        navItems={SIDEBAR_LINKS}
+        activeItem="Hospitals"
+        user={USER_PROFILE}
+      /> */}
+      <aside className="left-sidebar desktop-only">
+        <section className="sidebar-group">
+          {settingsOptions.map((opt,index) => (
+            <SidebarOption
+              key={index}
+              label={opt.label}
+              icon={opt.icon}
+              active={activeOption === opt.label}
+              onClick={() => onClickitem(opt)}
+            />
+          ))}
+        </section>
+      </aside>
       <div className="hospitals-main-wrap">
-        <TopHeader breadcrumbStart="Admin Dashboard" currentPage="Hospitals" actions={headerActions} />
+        {/* <TopHeader
+          breadcrumbStart="Admin Dashboard"
+          currentPage="Hospitals"
+          actions={headerActions}
+        /> */}
 
         <main className="hospitals-content">
           <section className="hospitals-heading-row">
             <div>
-              <h1>Hospitals Directory</h1>
-              <p>Manage and monitor all registered hospital facilities.</p>
+              <h1>{type.charAt(0).toUpperCase() + type.slice(1)} Directory</h1>
+              <p>Manage and monitor all registered {type} facilities.</p>
             </div>
-
+            <div className="hospitals-header-actions">
+              {headerActions.map((action) => (
+                <button
+                  key={action.label}
+                  type="button"
+                  className={
+                    action.variant === "secondary"
+                      ? "hospitals-secondary-btn"
+                      : "hospitals-primary-btn"
+                  }
+                  onClick={action.onClick}
+                  disabled={action.disabled}
+                >
+                  {action.icon && <i className={action.icon} />} {action.label}
+                </button>
+              ))}
+            </div>
             <div className="hospitals-stats">
-              <StatCard label="Total Active" value={totalActive} />
-              <StatCard label="Available Beds" value={availableBeds.toLocaleString()} highlighted />
+              <StatCard
+                label="Total Active"
+                value={isLoading ? "..." : totalActive}
+              />
+              <StatCard
+                label="Available Beds"
+                value={isLoading ? "..." : availableBeds.toLocaleString()}
+                highlighted
+              />
             </div>
           </section>
 
@@ -394,11 +464,12 @@ export default function Hospitals() {
             onSpecialtyChange={setSpecialtyFilter}
             onRemoveTag={removeTag}
             onClearAll={clearAllFilters}
+            type={type}
           />
 
           {errorMessage ? <p>{errorMessage}</p> : null}
           {!isLoading && filteredHospitals.length === 0 ? (
-            <p>No hospitals match the current filters.</p>
+            <p>No {type}s match the current filters.</p>
           ) : null}
 
           <HospitalsTableCard
@@ -414,6 +485,7 @@ export default function Hospitals() {
             onPreviousPage={goToPreviousPage}
             onNextPage={goToNextPage}
             onSelectPage={selectPage}
+            type={type}
           />
         </main>
       </div>

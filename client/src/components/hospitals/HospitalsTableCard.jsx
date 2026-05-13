@@ -1,7 +1,6 @@
 import HospitalRow from "./HospitalRow";
 import PaginationControls from "./PaginationControls";
 
-const TABLE_COLUMNS = ["Hospital Name", "Location", "Contact", "Status", "Capacity"];
 
 export default function HospitalsTableCard({
   selectedCount,
@@ -16,14 +15,16 @@ export default function HospitalsTableCard({
   onPreviousPage,
   onNextPage,
   onSelectPage,
+  type,
 }) {
   const skeletonRows = Array.from({ length: 6 }, (_, index) => index);
+const TABLE_COLUMNS = [`${type.charAt(0).toUpperCase() + type.slice(1)} Name`, "Location", "Contact", "Status", "Capacity"];
 
   return (
     <section className="hospitals-table-card">
       {selectedCount > 0 && (
         <div className="hospitals-bulk-actions" id="bulk-actions">
-          <p>{selectedCount} hospitals selected</p>
+          <p>{selectedCount} {type}s selected</p>
           <div>
             <button type="button">Update Status</button>
             <button type="button" className="danger">
@@ -41,7 +42,7 @@ export default function HospitalsTableCard({
                 <button
                   type="button"
                   className={`hospitals-check ${allSelected ? "is-selected" : ""}`}
-                  aria-label="Select all hospitals"
+                  aria-label={`Select all ${type}s`}
                   onClick={onToggleAll}
                 >
                   <i className={`fa-solid ${allSelected ? "fa-check" : "fa-minus"}`} />
@@ -106,6 +107,7 @@ export default function HospitalsTableCard({
                   isSelected={selectedRows.has(hospital.id)}
                   onToggleSelection={onToggleRow}
                   onDelete={onDeleteRow}
+                  type={type}
                 />
               ))}
           </tbody>

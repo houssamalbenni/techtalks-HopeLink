@@ -5,7 +5,7 @@ import { formatNotificationTime } from "../../../utils/helper";
 import { getStoredUserId, getStoredUserRole } from "../../../utils/authStorage";
 import { getChatHistory } from "../../../services/chatingService";
 import { getUserById } from "../../../services/userService";
-import "../chatting/Chatting.css";
+import "./chatting.css";
 
 const RefugeeChat = () => {
   const {

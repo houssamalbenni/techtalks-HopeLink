@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
-import './ProfileSettings.css';
-import SidebarNav from './SidebarNav';
-import TopHeader from './TopHeader';
-import SettingsTabs from './SettingsTabs';
-import ProfileSummaryCard from './ProfileSummaryCard';
-import FieldGrid from './FieldGrid';
-import ReadonlyField from './ReadonlyField';
-import SelectField from './SelectField';
+import { useEffect, useMemo, useState } from "react";
+import "./ProfileSettings.css";
+import SidebarNav from "./SidebarNav";
+import TopHeader from "./TopHeader";
+import SettingsTabs from "./SettingsTabs";
+import ProfileSummaryCard from "./ProfileSummaryCard";
+import FieldGrid from "./FieldGrid";
+import ReadonlyField from "./ReadonlyField";
+import SelectField from "./SelectField";
 import {
   sidebarConfig,
   mainNavItems,
@@ -15,15 +15,19 @@ import {
   profileSummaryConfig,
   profileFieldSections,
   rolePreferenceConfig,
-} from './data/profileSettingsData';
-import { deleteCurrentUser, getUserById, updateCurrentUser } from '../../../services/userService';
-import { clearAuthSession, getStoredUserId } from '../../../utils/authStorage';
-import { getSupabaseClient } from '../../../utils/supabaseClient';
-
+} from "./data/profileSettingsData";
+import {
+  deleteCurrentUser,
+  getUserById,
+  updateCurrentUser,
+} from "../../../services/userService";
+import { clearAuthSession, getStoredUserId } from "../../../utils/authStorage";
+import { getSupabaseClient } from "../../../utils/supabaseClient";
+import { useNavBar } from "../../../context/NavBarContext";
 const AVATAR_BUCKET =
   import.meta.env.VITE_SUPABASE_AVATAR_BUCKET ||
   import.meta.env.VITE_SUPABASE_BUCKET ||
-  'avatars';
+  "avatars";
 
 const formatDate = (value) => {
   if (!value) {
@@ -35,10 +39,10 @@ const formatDate = (value) => {
     return null;
   }
 
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 };
 
@@ -51,7 +55,7 @@ const hasValue = (value) => {
     return value.length > 0;
   }
 
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     return value.trim().length > 0;
   }
 
@@ -60,35 +64,34 @@ const hasValue = (value) => {
 
 const formatRoleLabel = (role) => {
   if (!role) {
-    return '';
+    return "";
   }
 
   return role
     .split(/[_-]/)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
+    .join(" ");
 };
 
-const ALWAYS_VISIBLE_FIELDS = new Set(['password']);
+const ALWAYS_VISIBLE_FIELDS = new Set(["password"]);
 
 function ProfileSettings() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [actionMessage, setActionMessage] = useState('');
+  const [actionMessage, setActionMessage] = useState("");
   const [preferences, setPreferences] = useState({
-    activeRole: 'donor',
-    language: 'en',
+    activeRole: "donor",
+    language: "en",
   });
   const [isEditing, setIsEditing] = useState(false);
   const [formValues, setFormValues] = useState({});
   const [avatarUploading, setAvatarUploading] = useState(false);
-
+  const { setPhoto } = useNavBar();
   const handlePreferenceChange = (key, value) => {
     setPreferences((prev) => ({ ...prev, [key]: value }));
   };
-
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -99,7 +102,7 @@ function ProfileSettings() {
 
         if (!userId) {
           setUser(null);
-          setError('No active session found. Please log in again.');
+          setError("No active session found. Please log in again.");
           return;
         }
 
@@ -107,7 +110,7 @@ function ProfileSettings() {
         const resolvedUser = response?.data?.user || response?.user || response;
         setUser(resolvedUser || null);
       } catch (err) {
-        setError(err.message || 'Failed to load profile settings');
+        setError(err.message || "Failed to load profile settings");
       } finally {
         setLoading(false);
       }
@@ -122,8 +125,8 @@ function ProfileSettings() {
     }
 
     setPreferences({
-      activeRole: user.role || 'donor',
-      language: user.selected_language || 'en',
+      activeRole: user.role || "donor",
+      language: user.selected_language || "en",
     });
   }, [user]);
 
@@ -139,13 +142,13 @@ function ProfileSettings() {
   const fieldValueMap = useMemo(() => {
     return {
       username: user?.full_name,
-      'birth-date': user?.dob ? formatDate(user?.dob) : null,
+      "birth-date": user?.dob ? formatDate(user?.dob) : null,
       email: user?.email,
       phone: user?.phone,
       country: user?.location?.country,
-      'city-state': user?.location?.city,
+      "city-state": user?.location?.city,
       postal: user?.location?.postal_code,
-      'tax-id': user?.tax_id,
+      "tax-id": user?.tax_id,
     };
   }, [user]);
 
@@ -155,33 +158,44 @@ function ProfileSettings() {
     }
 
     setFormValues({
-      username: user?.full_name || '',
-      'birth-date': user?.dob ? formatDate(user?.dob) : '',
-      email: user?.email || '',
-      phone: user?.phone || '',
-      country: user?.location?.country || '',
-      'city-state': user?.location?.city || '',
-      postal: user?.location?.postal_code || '',
-      'tax-id': user?.tax_id || '',
-      password: '',
+      username: user?.full_name || "",
+      "birth-date": user?.dob ? formatDate(user?.dob) : "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+      country: user?.location?.country || "",
+      "city-state": user?.location?.city || "",
+      postal: user?.location?.postal_code || "",
+      "tax-id": user?.tax_id || "",
+      password: "",
     });
   }, [user]);
 
   const roleOptions = useMemo(() => {
-    const baseOptions = rolePreferenceConfig.fields.find((field) => field.stateKey === 'activeRole')?.options || [];
+    const baseOptions =
+      rolePreferenceConfig.fields.find(
+        (field) => field.stateKey === "activeRole",
+      )?.options || [];
     const activeRole = preferences.activeRole;
-    if (!activeRole || baseOptions.some((option) => option.value === activeRole)) {
+    if (
+      !activeRole ||
+      baseOptions.some((option) => option.value === activeRole)
+    ) {
       return baseOptions;
     }
 
-    return [{ value: activeRole, label: formatRoleLabel(activeRole) }, ...baseOptions];
+    return [
+      { value: activeRole, label: formatRoleLabel(activeRole) },
+      ...baseOptions,
+    ];
   }, [preferences.activeRole]);
 
   const visibleProfileSections = useMemo(() => {
     return profileFieldSections
       .map((section) => {
         const fields = section.fields.filter(
-          (field) => ALWAYS_VISIBLE_FIELDS.has(field.id) || hasValue(fieldValueMap[field.id]),
+          (field) =>
+            ALWAYS_VISIBLE_FIELDS.has(field.id) ||
+            hasValue(fieldValueMap[field.id]),
         );
         return { ...section, fields };
       })
@@ -194,45 +208,55 @@ function ProfileSettings() {
 
   const handleAvatarSelect = async (file) => {
     if (!user?._id) {
-      setError('Profile data is not ready yet.');
+      setError("Profile data is not ready yet.");
       return;
     }
 
     const supabase = getSupabaseClient();
     if (!supabase) {
-      setError('Supabase is not configured. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+      setError(
+        "Supabase is not configured. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.",
+      );
       return;
     }
 
     try {
       setAvatarUploading(true);
       setError(null);
-      const extension = file.name.split('.').pop();
-      const safeExtension = extension ? extension.toLowerCase() : 'jpg';
+      const extension = file.name.split(".").pop();
+      const safeExtension = extension ? extension.toLowerCase() : "jpg";
       const filePath = `profiles/${user._id}/${Date.now()}-${Math.random().toString(16).slice(2)}.${safeExtension}`;
-      const { error: uploadError } = await supabase.storage.from(AVATAR_BUCKET).upload(filePath, file, {
-        upsert: true,
-        contentType: file.type,
-      });
+      const { error: uploadError } = await supabase.storage
+        .from(AVATAR_BUCKET)
+        .upload(filePath, file, {
+          upsert: true,
+          contentType: file.type,
+        });
 
       if (uploadError) {
         throw uploadError;
       }
 
-      const { data: publicUrlData } = supabase.storage.from(AVATAR_BUCKET).getPublicUrl(filePath);
+      const { data: publicUrlData } = supabase.storage
+        .from(AVATAR_BUCKET)
+        .getPublicUrl(filePath);
       const publicUrl = publicUrlData?.publicUrl;
       if (!publicUrl) {
-        throw new Error('Failed to generate a public URL for the uploaded image.');
+        throw new Error(
+          "Failed to generate a public URL for the uploaded image.",
+        );
       }
 
       const response = await updateCurrentUser({ profile_url: publicUrl });
       const updatedUser = response?.data?.user || response?.user || response;
       if (updatedUser) {
         setUser(updatedUser);
+        localStorage.setItem("user_photo", updatedUser.profile_url || "");
+        setPhoto(updatedUser.profile_url || null);
       }
-      setActionMessage('Profile image updated successfully.');
+      setActionMessage("Profile image updated successfully.");
     } catch (err) {
-      setError(err.message || 'Failed to upload avatar');
+      setError(err.message || "Failed to upload avatar");
     } finally {
       setAvatarUploading(false);
     }
@@ -240,13 +264,15 @@ function ProfileSettings() {
 
   const toggleEditMode = () => {
     setIsEditing((prev) => !prev);
-    setActionMessage('');
-    setFormValues((prev) => ({ ...prev, password: '' }));
+    setActionMessage("");
+    setFormValues((prev) => ({ ...prev, password: "" }));
   };
 
   const handleProfileAction = async (action) => {
-    if (action.id === 'delete-profile') {
-      const confirmed = window.confirm('Delete your account and all profile data? This cannot be undone.');
+    if (action.id === "delete-profile") {
+      const confirmed = window.confirm(
+        "Delete your account and all profile data? This cannot be undone.",
+      );
       if (!confirmed) {
         return;
       }
@@ -255,30 +281,30 @@ function ProfileSettings() {
         setSaving(true);
         await deleteCurrentUser();
         clearAuthSession();
-        setActionMessage('Account deleted. Redirecting to login...');
-        window.location.assign('/login');
+        setActionMessage("Account deleted. Redirecting to login...");
+        window.location.assign("/login");
       } catch (err) {
-        setError(err.message || 'Failed to delete account');
+        setError(err.message || "Failed to delete account");
       } finally {
         setSaving(false);
       }
       return;
     }
 
-    if (action.id === 'update-profile') {
+    if (action.id === "update-profile") {
       try {
         setSaving(true);
-        setActionMessage('Saving changes...');
+        setActionMessage("Saving changes...");
         const payload = {
           role: preferences.activeRole,
           selected_language: preferences.language,
         };
         const fieldUpdates = {
-          username: 'full_name',
-          'birth-date': 'dob',
-          email: 'email',
-          phone: 'phone',
-          password: 'password',
+          username: "full_name",
+          "birth-date": "dob",
+          email: "email",
+          phone: "phone",
+          password: "password",
         };
 
         Object.entries(fieldUpdates).forEach(([fieldId, apiKey]) => {
@@ -293,28 +319,20 @@ function ProfileSettings() {
         if (updatedUser) {
           setUser(updatedUser);
         }
-        setActionMessage('Profile updated successfully.');
+        setActionMessage("Profile updated successfully.");
         setIsEditing(false);
-        setFormValues((prev) => ({ ...prev, password: '' }));
+        setFormValues((prev) => ({ ...prev, password: "" }));
       } catch (err) {
-        setError(err.message || 'Failed to update profile');
+        setError(err.message || "Failed to update profile");
       } finally {
         setSaving(false);
       }
     }
   };
 
-
   return (
     <div className="ps-page">
-      <SidebarNav
-        logo={sidebarConfig.logo}
-        searchPlaceholder={sidebarConfig.searchPlaceholder}
-        navItems={mainNavItems}
-        user={sidebarConfig.user}
-      />
-
-      <main className={`ps-main ${isEditing ? 'ps-editing' : ''}`.trim()}>
+      <main className={`ps-main ${isEditing ? "ps-editing" : ""}`.trim()}>
         <div className="ps-glow ps-glow-blue" />
         <div className="ps-glow ps-glow-violet" />
 
@@ -322,7 +340,7 @@ function ProfileSettings() {
 
         <div className="ps-content-scroll">
           <div className="ps-workspace">
-            <SettingsTabs tabs={settingsTabs} />
+            {/* <SettingsTabs tabs={settingsTabs} /> */}
 
             <section className="ps-sections">
               <section className="ps-card">
@@ -333,9 +351,13 @@ function ProfileSettings() {
                   avatarUploading={avatarUploading}
                 />
 
-                {actionMessage ? <p className="ps-inline-note">{actionMessage}</p> : null}
+                {actionMessage ? (
+                  <p className="ps-inline-note">{actionMessage}</p>
+                ) : null}
                 {error ? <p className="ps-inline-error">{error}</p> : null}
-                {avatarUploading ? <p className="ps-inline-note">Uploading avatar...</p> : null}
+                {avatarUploading ? (
+                  <p className="ps-inline-note">Uploading avatar...</p>
+                ) : null}
 
                 {visibleProfileSections.map((section) => (
                   <div key={section.id}>
@@ -344,8 +366,11 @@ function ProfileSettings() {
                       <div className="ps-section-head">
                         <h3>{section.title}</h3>
                         <button type="button" onClick={toggleEditMode}>
-                          {isEditing ? 'Cancel' : section.action.label}
-                          <i className={`fa-solid ${section.action.icon}`} aria-hidden="true" />
+                          {isEditing ? "Cancel" : section.action.label}
+                          <i
+                            className={`fa-solid ${section.action.icon}`}
+                            aria-hidden="true"
+                          />
                         </button>
                       </div>
                     ) : (
@@ -358,10 +383,16 @@ function ProfileSettings() {
                           key={field.id}
                           id={field.id}
                           label={field.label}
-                          value={isEditing ? formValues[field.id] : fieldValueMap[field.id]}
+                          value={
+                            isEditing
+                              ? formValues[field.id]
+                              : fieldValueMap[field.id]
+                          }
                           type={field.type}
                           readOnly={!isEditing}
-                          onChange={(event) => handleFieldChange(field.id, event.target.value)}
+                          onChange={(event) =>
+                            handleFieldChange(field.id, event.target.value)
+                          }
                         />
                       )}
                     />
@@ -377,18 +408,27 @@ function ProfileSettings() {
                       key={field.id}
                       id={field.id}
                       label={field.label}
-                      options={field.stateKey === 'activeRole' ? roleOptions : field.options}
+                      options={
+                        field.stateKey === "activeRole"
+                          ? roleOptions
+                          : field.options
+                      }
                       value={preferences[field.stateKey]}
                       hint={field.hint}
-                      onChange={(value) => handlePreferenceChange(field.stateKey, value)}
-                      disabled={field.stateKey === 'activeRole'}
+                      onChange={(value) =>
+                        handlePreferenceChange(field.stateKey, value)
+                      }
+                      disabled={field.stateKey === "activeRole"}
                     />
                   ))}
                 </div>
-                {loading ? <p className="ps-inline-note">Loading preferences...</p> : null}
-                {saving ? <p className="ps-inline-note">Saving changes...</p> : null}
+                {loading ? (
+                  <p className="ps-inline-note">Loading preferences...</p>
+                ) : null}
+                {saving ? (
+                  <p className="ps-inline-note">Saving changes...</p>
+                ) : null}
               </section>
-
             </section>
           </div>
         </div>

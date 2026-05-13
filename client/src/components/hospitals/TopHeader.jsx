@@ -35,7 +35,7 @@ export default function TopHeader({ breadcrumbStart, currentPage, actionLabel, b
         })}
       </div>
 
-      <div className="hospitals-header-actions">
+      {/* <div className="hospitals-header-actions">
         {resolvedActions.map((action) => (
           <button
             key={action.label}
@@ -47,7 +47,7 @@ export default function TopHeader({ breadcrumbStart, currentPage, actionLabel, b
             {action.icon && <i className={action.icon} />} {action.label}
           </button>
         ))}
-      </div>
+      </div> */}
     </header>
   );
 }
