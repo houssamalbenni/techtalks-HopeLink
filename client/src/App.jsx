@@ -20,6 +20,7 @@ import {
 } from "../../client/src/components/hospitals/hospitalsData";
 import AdminDashboard from "./components/admin-dashboard/AdminDashboard";
 import EditHospital from "./components/edit-hospital/EditHospital";
+import EditShelter from "./components/edit-shelter/EditShelter";
 import SupportHome from "./components/support-home/SupportHome";
 import StandingTogetherInCrisis from "./components/support-home/articles/StandingTogetherInCrisis";
 import SafeHavenConflictZones from "./components/support-home/articles/SafeHavenConflictZones";
@@ -130,6 +131,7 @@ function App() {
         <Route path="/shelter" element={<Hospitals type={"shelter"} />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/edit-hospital/:id" element={<EditHospital />} />
+        <Route path="/edit-shelter/:id" element={<EditShelter />} />
       </Routes>
     </>
   );
