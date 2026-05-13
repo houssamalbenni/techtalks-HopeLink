@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import "./Navbar.css";
+import "./NavBar.css";
 import { useNavigate,useLocation } from "react-router-dom";
 export const Navbar = ({ navItems = [], photo }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
