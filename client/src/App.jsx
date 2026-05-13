@@ -10,6 +10,7 @@ import LoginPage from "./components/login/LoginPage";
 import FamilyReunification from "./components/family-reunification/FamilyReunification";
 import ProfileSettings from "./components/profile-settings/ProfileSettings";
 import RefugeeDashboard from "./components/refugee-dashboard/RefugeeDashboard";
+import NgoDashboard from "./components/ngo-portal/NgoDashboard";
 import AddHospital from "./components/add-hospital/AddHospital";
 import Hospitals from "./components/hospitals/Hospitals";
 import { Navbar } from "./components/navBar/NavBar";
@@ -54,6 +55,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/create/:role" element={<SignupFlow />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/ngo/dashboard" element={<NgoDashboard />} />
         <Route path="/notification" element={<NotificationPage />} />
         <Route path="/test/doctor-chat" element={<DoctorChat />} />
         <Route path="/test/refugee-chat" element={<RefugeeChat />} />

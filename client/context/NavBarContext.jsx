@@ -18,6 +18,12 @@ const NavBarProvider = ({ children }) => {
     {label: "Services Management", path: "hospital"},
   ];
   const doctorNavItems = [];
+  const ngoNavItems = [
+    { label: "NGO Dashboard", path: "/ngo/dashboard" },
+    { label: "Aid Requests", path: "/ngo/dashboard" },
+    { label: "Shelter Capacity", path: "/hospital" },
+    { label: "Family Tracking", path: "/family-reunification" },
+  ];
 
   const [photo, setPhoto] = useState(null);
 
@@ -27,6 +33,7 @@ const NavBarProvider = ({ children }) => {
       if (role === "refugee") setNavItems(refugeNavItems);
       else if (role === "admin") setNavItems(adminNavItems);
       else if (role === "doctor") setNavItems(doctorNavItems);
+      else if (role === "ngo") setNavItems(ngoNavItems);
     }
     if (localStorage.getItem("user_photo")) {
       setPhoto(localStorage.getItem("user_photo"));
