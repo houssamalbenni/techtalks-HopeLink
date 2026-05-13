@@ -9,33 +9,57 @@ import RequestList from "./RequestList";
 import SupportHubLayout from "../support-hub/SupportHubLayout";
 import {
   acceptChatRequest,
-  return (
-    <SupportHubLayout
-      title="Counselor Portal"
-      subtitle="Live request queue and quick actions for counselors."
-    >
-      <div className="counselor-portal">
-        <Sidebar navItems={navItems} />
-        <div className="counselor-main">
-          <Topbar />
-          <main>
-            <SectionHeader totalCount={mappedRequests.length} />
-            <RequestFilters
-              filters={filters}
-              activeFilter={activeFilter}
-              onChange={setActiveFilter}
-            />
-            <RequestList
-              requests={filteredRequests}
-              isLoading={isLoading}
-              onAccept={handleAccept}
-              acceptingId={acceptingId}
-            />
-          </main>
-        </div>
-      </div>
-    </SupportHubLayout>
-  );
+  getChatRequestQueue,
+} from "../../../services/chatRequestService";
+import { formatNotificationTime } from "../../../utils/helper";
+
+const navItems = [
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    active: true,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-5v-6H10v6H5a1 1 0 01-1-1z" />
+      </svg>
+    ),
+  },
+  {
+    id: "queue",
+    label: "Queue",
+    badge: "5",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 6h14v10H7l-2 2z" />
+      </svg>
+    ),
+  },
+  {
+    id: "conversations",
+    label: "Conversations",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 7h14v9H7l-2 2z" />
+      </svg>
+    ),
+  },
+  {
+    id: "clients",
+    label: "Clients",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="8" cy="9" r="3" />
+        <circle cx="16" cy="9" r="3" />
+        <path d="M4 19c0-3 3-5 6-5" />
+        <path d="M14 14c3 0 6 2 6 5" />
+      </svg>
+    ),
+  },
+  {
+    id: "resources",
+    label: "Resources",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M6 4h12v16H6z" />
         <path d="M9 8h6" />
       </svg>
@@ -180,53 +204,30 @@ export default function CounselorPortal() {
   };
 
   return (
-    <div className="portal-page">
-      <div className="portal-shell">
+    <SupportHubLayout
+      title="Counselor Portal"
+      subtitle="Live request queue and quick actions for counselors."
+    >
+      <div className="counselor-portal">
         <Sidebar navItems={navItems} />
-        <main className="portal-main">
-          <Topbar
-            title="Welcome back, Counselor"
-            subtitle="You're here to make a difference. Take it one conversation at a time."
-          />
-          <section className="portal-card">
-            <SectionHeader
-              title="Incoming Chat Requests"
-              subtitle="Queue is prioritized by urgency"
-              action={
-                isLoading ? "Loading..." : `View All (${mappedRequests.length})`
-              }
+        <div className="counselor-main">
+          <Topbar />
+          <main>
+            <SectionHeader totalCount={mappedRequests.length} />
+            <RequestFilters
+              filters={filters}
+              activeFilter={activeFilter}
+              onChange={setActiveFilter}
             />
-            <RequestFilters filters={filters} onSelect={setActiveFilter} />
             <RequestList
               requests={filteredRequests}
+              isLoading={isLoading}
               onAccept={handleAccept}
               acceptingId={acceptingId}
             />
-          </section>
-        return (
-          <SupportHubLayout
-            title="Counselor Portal"
-            subtitle="Live request queue and quick actions for counselors."
-          >
-            <div className="counselor-portal">
-              <Sidebar navItems={navItems} />
-              <div className="counselor-main">
-                <Topbar />
-                <main>
-                  <SectionHeader totalCount={mappedRequests.length} />
-                  <RequestFilters
-                    filters={filters}
-                    activeFilter={activeFilter}
-                    onChange={setActiveFilter}
-                  />
-                  <RequestList
-                    requests={filteredRequests}
-                    isLoading={isLoading}
-                    onAccept={handleAccept}
-                    acceptingId={acceptingId}
-                  />
-                </main>
-              </div>
-            </div>
-          </SupportHubLayout>
-        );
+          </main>
+        </div>
+      </div>
+    </SupportHubLayout>
+  );
+}
