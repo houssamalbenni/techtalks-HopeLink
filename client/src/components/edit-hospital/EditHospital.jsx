@@ -314,7 +314,7 @@ export default function EditHospital() {
 
       await api.put(ApiConst.UPDATE_SERVICE(id), payload);
       toast.success("Hospital updated successfully.");
-      navigate("/hospitals");
+      navigate("/hospital");
     } catch (error) {
       console.error("Failed to update hospital:", error);
       const errorMessage =
@@ -723,7 +723,7 @@ export default function EditHospital() {
               </FormSection>
 
                 <footer className="ah-actions">
-                  <button type="button" className="hospitals-secondary-btn" onClick={() => navigate("/hospitals")}>
+                  <button type="button" className="hospitals-secondary-btn" onClick={() => navigate("/hospital")}>
                     Cancel
                   </button>
                   <button
