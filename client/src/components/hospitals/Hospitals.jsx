@@ -9,6 +9,8 @@ import StatCard from "./StatCard";
 import TopHeader from "./TopHeader";
 import { SIDEBAR_LINKS, USER_PROFILE } from "./hospitalsData";
 import { getAllServices } from "../../../services/serviceService";
+import { ApiConst } from "../../../utils/APIConst";
+import api from "../../../utils/axios";
 import "./Hospitals.css";
 import { settingsOptions } from "../add-hospital/addHospitalConfig";
 
