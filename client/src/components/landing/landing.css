@@ -586,9 +586,9 @@ button {
 }
 
 @media (max-width: 640px) {
-  body {
+  /* body {
     padding: 48px 12px;
-  }
+  } */
 
   .top-bar {
     padding: 16px;
