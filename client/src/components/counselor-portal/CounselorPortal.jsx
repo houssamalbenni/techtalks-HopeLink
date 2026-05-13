@@ -6,6 +6,7 @@ import Topbar from "./Topbar";
 import SectionHeader from "./SectionHeader";
 import RequestFilters from "./RequestFilters";
 import RequestList from "./RequestList";
+import SupportHubLayout from "../support-hub/SupportHubLayout";
 import {
   acceptChatRequest,
   getChatRequestQueue,
@@ -226,8 +227,30 @@ export default function CounselorPortal() {
               acceptingId={acceptingId}
             />
           </section>
-        </main>
-      </div>
-    </div>
-  );
-}
+        return (
+          <SupportHubLayout
+            title="Counselor Portal"
+            subtitle="Live request queue and quick actions for counselors."
+          >
+            <div className="counselor-portal">
+              <Sidebar navItems={navItems} />
+              <div className="counselor-main">
+                <Topbar />
+                <main>
+                  <SectionHeader totalCount={mappedRequests.length} />
+                  <RequestFilters
+                    filters={filters}
+                    activeFilter={activeFilter}
+                    onChange={setActiveFilter}
+                  />
+                  <RequestList
+                    requests={filteredRequests}
+                    isLoading={isLoading}
+                    onAccept={handleAccept}
+                    acceptingId={acceptingId}
+                  />
+                </main>
+              </div>
+            </div>
+          </SupportHubLayout>
+        );
