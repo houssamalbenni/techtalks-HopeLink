@@ -5,7 +5,7 @@ import EmergencyBanner from "./EmergencyBanner";
 import LibrarySection from "./LibrarySection";
 import SupportHeader from "./SupportHeader";
 import Sidebar from "../InteractiveExercises/Sidebar";
-import { supportNavItems } from "../support-nav/supportNavItems";
+import { supportNavItems } from "../support-nav/supportNavItems.jsx";
 import breathingImage1 from "./breathing/breathing-1.svg";
 import breathingImage2 from "./breathing/breathing-2.svg";
 import breathingImage3 from "./breathing/breathing-3.svg";

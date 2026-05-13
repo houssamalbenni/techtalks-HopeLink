@@ -5,7 +5,7 @@ import BreathTag from "./BreathTag";
 import PlayerBar from "./PlayerBar";
 import Sidebar from "./Sidebar";
 import SoundCard from "./SoundCard";
-import { supportNavItems } from "../support-nav/supportNavItems";
+import { supportNavItems } from "../support-nav/supportNavItems.jsx";
 
 const defaultNavItems = supportNavItems;
 
