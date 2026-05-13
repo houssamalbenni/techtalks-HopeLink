@@ -9,7 +9,7 @@ import { useNavBar } from "../../../context/NavBarContext";
 function resolveTargetByRole(role) {
   if (role === "refugee") return "/refugee-dashboard";
   if (role === "admin") return "/admin/dashboard";
-  if (role === "doctor") return "/doctor/dashboard";
+  if (role === "doctor") return "/counselor-portal";
   if (role === "ngo") return "/ngo/dashboard";
   return "/dashboard";
 }
