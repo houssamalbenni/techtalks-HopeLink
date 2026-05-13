@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import toast, { Toaster } from "react-hot-toast";
 import { useNotifications } from "../../../context/NotificationContext";
-const socket = io("http://localhost:5000"); // change backend url if needed
+const socket = io(
+  import.meta.env.VITE_BACKEND_API_URL || "http://localhost:5000",
+);
 
 const MeshAdmin2 = () => {
   // Change these to test users

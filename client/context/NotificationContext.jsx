@@ -9,7 +9,8 @@ export const NotificationProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [chating, setChating] = useState([]);
   const [endSessionSignal, setEndSessionSignal] = useState(null);
-  const SOCKET_URL = "http://localhost:5000";
+  const SOCKET_URL =
+    import.meta.env.VITE_BACKEND_API_URL || "http://localhost:5000";
   const socketRef = useRef(null);
 
   useEffect(() => {

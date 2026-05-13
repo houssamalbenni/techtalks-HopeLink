@@ -22,9 +22,21 @@ const app = express();
 
 app.use(express.json());
 
+const allowedOrigins = (process.env.CLIENT_ORIGINS ||
+  "http://localhost:5173,https://techtalks-hope-link-client.vercel.app")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }),
 );
@@ -51,7 +63,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
   },
 });
