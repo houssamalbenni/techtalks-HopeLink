@@ -4,7 +4,6 @@ import BreathTag from "./BreathTag";
 import PlayerBar from "./PlayerBar";
 import Sidebar from "./Sidebar";
 import SoundCard from "./SoundCard";
-import SupportHubLayout from "../support-hub/SupportHubLayout";
 
 const defaultNavItems = [
   {
@@ -362,129 +361,124 @@ export default function InteractiveExercises({
     : player;
 
   return (
-    <SupportHubLayout
-      title="Interactive Exercises"
-      subtitle="Breathing, soundscapes, and gentle resets."
-    >
-      <div className={styles.page}>
-        <audio
-          ref={audioRef}
-          className={styles.visuallyHidden}
-          loop
-          onTimeUpdate={(event) => setCurrentTime(event.target.currentTime)}
-          onLoadedMetadata={(event) => setDuration(event.target.duration)}
+    <div className={styles.page}>
+      <audio
+        ref={audioRef}
+        className={styles.visuallyHidden}
+        loop
+        onTimeUpdate={(event) => setCurrentTime(event.target.currentTime)}
+        onLoadedMetadata={(event) => setDuration(event.target.duration)}
+      />
+      <div className={styles.appShell}>
+        <Sidebar
+          logoText={logoText}
+          navItems={navItems}
+          activeNav={currentNav}
+          onNavSelect={handleNavSelect}
+          greeting={greeting}
+          userName={userName}
         />
-        <div className={styles.appShell}>
-          <Sidebar
-            logoText={logoText}
-            navItems={navItems}
-            activeNav={currentNav}
-            onNavSelect={handleNavSelect}
-            greeting={greeting}
-            userName={userName}
-          />
 
-          <main className={styles.main}>
-            <div className={styles.topbar}>
-              <div className={styles.pageTitle}>
-                <h1>{title}</h1>
-                <p>{subtitle}</p>
-              </div>
-              <div className={styles.streak}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="#9b7ee8" strokeWidth="2">
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                </svg>
-                <span className={styles.streakLabel}>Daily Streak</span>
-                <span className={styles.streakNum}>{streak}</span>
+        <main className={styles.main}>
+          <div className={styles.topbar}>
+            <div className={styles.pageTitle}>
+              <h1>{title}</h1>
+              <p>{subtitle}</p>
+            </div>
+            <div className={styles.streak}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="#9b7ee8" strokeWidth="2">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+              <span className={styles.streakLabel}>Daily Streak</span>
+              <span className={styles.streakNum}>{streak}</span>
+            </div>
+          </div>
+
+          <div className={styles.breathControls}>
+            {breathSteps.map((tag) => (
+              <BreathTag key={tag.id} tag={tag} />
+            ))}
+          </div>
+
+          <div className={styles.circleArea}>
+            <div className={styles.sideCol}>
+              <button type="button" className={styles.sideBtn} onClick={() => handleBreathAdjust(-1)}>
+                &#8249;
+              </button>
+              <div className={styles.sideLabel}>Reduce</div>
+            </div>
+
+            <div className={styles.breathCircleWrap}>
+              <div className={styles.breathCircle}>
+                <span className={styles.circleLabel}>{displayLabel}</span>
+                <span className={styles.circleTimer}>{displayTimer}</span>
               </div>
             </div>
 
-            <div className={styles.breathControls}>
-              {breathSteps.map((tag) => (
-                <BreathTag key={tag.id} tag={tag} />
+            <div className={styles.sideCol}>
+              <button type="button" className={styles.sideBtn} onClick={() => handleBreathAdjust(1)}>
+                &#8250;
+              </button>
+              <div className={styles.sideLabel}>Extend</div>
+            </div>
+          </div>
+
+          <div className={styles.pauseRow}>
+            <button type="button" className={styles.pauseBtn} onClick={toggleBreathPause}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3c3575" strokeWidth="2.5">
+                {breathPaused ? (
+                  <polygon points="6,4 20,12 6,20" fill="#3c3575" stroke="none" />
+                ) : (
+                  <>
+                    <rect x="6" y="4" width="4" height="16" rx="1" />
+                    <rect x="14" y="4" width="4" height="16" rx="1" />
+                  </>
+                )}
+              </svg>
+              {breathPaused ? "Resume" : "Pause"}
+            </button>
+          </div>
+
+          <section className={styles.soundsSection}>
+            <div className={styles.soundsTabs}>
+              {tabs.map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  className={`${styles.soundsTab} ${tab === currentTab ? styles.soundsTabActive : ""}`}
+                  onClick={() => handleTabSelect(tab)}
+                >
+                  {tab}
+                </button>
               ))}
             </div>
 
-            <div className={styles.circleArea}>
-              <div className={styles.sideCol}>
-                <button type="button" className={styles.sideBtn} onClick={() => handleBreathAdjust(-1)}>
-                  &#8249;
-                </button>
-                <div className={styles.sideLabel}>Reduce</div>
-              </div>
-
-              <div className={styles.breathCircleWrap}>
-                <div className={styles.breathCircle}>
-                  <span className={styles.circleLabel}>{displayLabel}</span>
-                  <span className={styles.circleTimer}>{displayTimer}</span>
-                </div>
-              </div>
-
-              <div className={styles.sideCol}>
-                <button type="button" className={styles.sideBtn} onClick={() => handleBreathAdjust(1)}>
-                  &#8250;
-                </button>
-                <div className={styles.sideLabel}>Extend</div>
-              </div>
+            <div className={styles.soundsGrid}>
+              {visibleSounds.map((sound) => (
+                <SoundCard key={sound.id} sound={sound} onSelect={handleSoundSelect} />
+              ))}
             </div>
+          </section>
+          <PlayerBar
+            player={playerInfo}
+            thumb={selectedSound?.thumb}
+            isPlaying={isPlaying}
+            onPlayPause={handlePlayPause}
+            onPrevious={handlePrevious}
+            onNext={handleNext}
+            volume={volume}
+            onVolumeChange={handleVolumeChange}
+            progress={currentTime}
+            duration={duration || WAVE_DURATION}
+            onSeek={handleSeek}
+          />
 
-            <div className={styles.pauseRow}>
-              <button type="button" className={styles.pauseBtn} onClick={toggleBreathPause}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3c3575" strokeWidth="2.5">
-                  {breathPaused ? (
-                    <polygon points="6,4 20,12 6,20" fill="#3c3575" stroke="none" />
-                  ) : (
-                    <>
-                      <rect x="6" y="4" width="4" height="16" rx="1" />
-                      <rect x="14" y="4" width="4" height="16" rx="1" />
-                    </>
-                  )}
-                </svg>
-                {breathPaused ? "Resume" : "Pause"}
-              </button>
-            </div>
-
-            <section className={styles.soundsSection}>
-              <div className={styles.soundsTabs}>
-                {tabs.map((tab) => (
-                  <button
-                    key={tab}
-                    type="button"
-                    className={`${styles.soundsTab} ${tab === currentTab ? styles.soundsTabActive : ""}`}
-                    onClick={() => handleTabSelect(tab)}
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
-
-              <div className={styles.soundsGrid}>
-                {visibleSounds.map((sound) => (
-                  <SoundCard key={sound.id} sound={sound} onSelect={handleSoundSelect} />
-                ))}
-              </div>
-            </section>
-            <PlayerBar
-              player={playerInfo}
-              thumb={selectedSound?.thumb}
-              isPlaying={isPlaying}
-              onPlayPause={handlePlayPause}
-              onPrevious={handlePrevious}
-              onNext={handleNext}
-              volume={volume}
-              onVolumeChange={handleVolumeChange}
-              progress={currentTime}
-              duration={duration || WAVE_DURATION}
-              onSeek={handleSeek}
-            />
-
-            <div className={styles.footerNote}>
-              <span className={styles.heartSm}>♥</span>
-              {footerText}
-            </div>
-          </main>
-        </div>
+          <div className={styles.footerNote}>
+            <span className={styles.heartSm}>♥</span>
+            {footerText}
+          </div>
+        </main>
       </div>
-    </SupportHubLayout>
+    </div>
   );
 }

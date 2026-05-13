@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import EmergencyBanner from "./EmergencyBanner";
 import LibrarySection from "./LibrarySection";
 import SupportHeader from "./SupportHeader";
-import SupportHubLayout from "../support-hub/SupportHubLayout";
 import breathingImage1 from "./breathing/breathing-1.svg";
 import breathingImage2 from "./breathing/breathing-2.svg";
 import breathingImage3 from "./breathing/breathing-3.svg";
@@ -224,57 +223,52 @@ export default function SupportHome() {
   };
 
   return (
-    <SupportHubLayout
-      title="Support Home"
-      subtitle="Immediate support without the pressure of direct interaction."
-    >
-      <div className="support-home-page">
-        <div className="support-layout">
-          <main className="support-main">
-            <SupportHeader />
-            <EmergencyBanner
-              onChat={handleRequestChat}
-              disabled={isSubmitting || request?.status === "pending"}
-              label={request?.status === "pending" ? "Request Sent" : "Chat Now"}
-            />
-            {request && (
-              <div className={`support-request-card ${request.status}`}>
-                <div className="support-request-title">
-                  {request.status === "accepted"
-                    ? "Doctor accepted your request"
-                    : "Waiting for a doctor to accept"}
-                </div>
-                <div className="support-request-note">
-                  {request.status === "accepted"
-                    ? "Opening your chat now."
-                    : "Please stay on this page. You will be connected shortly."}
-                </div>
+    <div className="support-home-page">
+      <div className="support-layout">
+        <main className="support-main">
+          <SupportHeader />
+          <EmergencyBanner
+            onChat={handleRequestChat}
+            disabled={isSubmitting || request?.status === "pending"}
+            label={request?.status === "pending" ? "Request Sent" : "Chat Now"}
+          />
+          {request && (
+            <div className={`support-request-card ${request.status}`}>
+              <div className="support-request-title">
+                {request.status === "accepted"
+                  ? "Doctor accepted your request"
+                  : "Waiting for a doctor to accept"}
               </div>
-            )}
-            {errorMessage && (
-              <div className="support-request-error">{errorMessage}</div>
-            )}
-            <div className="library-stack">
-              {librarySections.map((section) => (
-                <LibrarySection
-                  key={section.id}
-                  title={section.title}
-                  items={section.items}
-                />
-              ))}
+              <div className="support-request-note">
+                {request.status === "accepted"
+                  ? "Opening your chat now."
+                  : "Please stay on this page. You will be connected shortly."}
+              </div>
             </div>
-          </main>
-        </div>
-
-        <button
-          className="floating-action"
-          type="button"
-          onClick={handleRequestChat}
-          disabled={isSubmitting || request?.status === "pending"}
-        >
-          {request?.status === "pending" ? "Request Sent" : "Chat Now"}
-        </button>
+          )}
+          {errorMessage && (
+            <div className="support-request-error">{errorMessage}</div>
+          )}
+          <div className="library-stack">
+            {librarySections.map((section) => (
+              <LibrarySection
+                key={section.id}
+                title={section.title}
+                items={section.items}
+              />
+            ))}
+          </div>
+        </main>
       </div>
-    </SupportHubLayout>
+
+      <button
+        className="floating-action"
+        type="button"
+        onClick={handleRequestChat}
+        disabled={isSubmitting || request?.status === "pending"}
+      >
+        {request?.status === "pending" ? "Request Sent" : "Chat Now"}
+      </button>
+    </div>
   );
 }

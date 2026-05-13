@@ -6,7 +6,6 @@ import Topbar from "./Topbar";
 import SectionHeader from "./SectionHeader";
 import RequestFilters from "./RequestFilters";
 import RequestList from "./RequestList";
-import SupportHubLayout from "../support-hub/SupportHubLayout";
 import {
   acceptChatRequest,
   getChatRequestQueue,
@@ -204,30 +203,29 @@ export default function CounselorPortal() {
   };
 
   return (
-    <SupportHubLayout
-      title="Counselor Portal"
-      subtitle="Live request queue and quick actions for counselors."
-    >
-      <div className="counselor-portal">
+    <div className="portal-page">
+      <div className="portal-shell">
         <Sidebar navItems={navItems} />
-        <div className="counselor-main">
-          <Topbar />
-          <main>
-            <SectionHeader totalCount={mappedRequests.length} />
-            <RequestFilters
-              filters={filters}
-              activeFilter={activeFilter}
-              onChange={setActiveFilter}
+        <main className="portal-main">
+          <Topbar
+            title="Doctor Dashboard"
+            subtitle="Triage requests and connect patients to care."
+          />
+          <section className="portal-card">
+            <SectionHeader
+              title="Incoming Chat Requests"
+              subtitle="Queue is prioritized by urgency"
+              action={isLoading ? "Loading..." : `View All (${mappedRequests.length})`}
             />
+            <RequestFilters filters={filters} onSelect={setActiveFilter} />
             <RequestList
               requests={filteredRequests}
-              isLoading={isLoading}
               onAccept={handleAccept}
               acceptingId={acceptingId}
             />
-          </main>
-        </div>
+          </section>
+        </main>
       </div>
-    </SupportHubLayout>
+    </div>
   );
 }
