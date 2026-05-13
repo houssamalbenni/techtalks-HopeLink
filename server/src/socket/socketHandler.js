@@ -1,6 +1,6 @@
 const SocketEvents = require("./socketEvents");
 const NotificationService = require("../service/notificationService");
-const User = require("../models/User").User;
+const User = require("../models/user").User;
 const ChatingServices = require("../service/chatingService");
 let users = {};
 

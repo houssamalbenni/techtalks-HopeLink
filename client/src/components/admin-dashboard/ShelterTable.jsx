@@ -62,7 +62,7 @@ export default function ShelterTable({ loading, shelterData, onViewShelter, onEd
         </table>
       </div>
       <div className="ad-table-footer">
-        <a href="#" className="ad-view-all">View All Shelters -></a>
+        <a href="#" className="ad-view-all">View All Shelters -&gt;</a>
       </div>
     </div>
   );
