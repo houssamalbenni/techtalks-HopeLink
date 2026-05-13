@@ -1,0 +1,22 @@
+<svg width="1200" height="520" viewBox="0 0 1200 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rebuilding in a warm landscape">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ffe5ef" />
+      <stop offset="55%" stop-color="#e7f0ff" />
+      <stop offset="100%" stop-color="#fef3e3" />
+    </linearGradient>
+    <linearGradient id="land" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#d7b2f0" />
+      <stop offset="100%" stop-color="#f5c38b" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="520" fill="url(#sky)" />
+  <path d="M0 360 C 220 320, 420 430, 640 390 C 860 350, 1020 430, 1200 380 L1200 520 L0 520 Z" fill="url(#land)" opacity="0.9" />
+  <g transform="translate(380 185)">
+    <rect x="0" y="80" width="300" height="160" rx="20" fill="#ffffff" opacity="0.93" />
+    <path d="M-15 105 L150 20 L315 105 Z" fill="#d88bb5" />
+    <rect x="40" y="125" width="80" height="55" rx="10" fill="#f2efff" />
+    <rect x="180" y="125" width="80" height="55" rx="10" fill="#f2efff" />
+    <rect x="130" y="160" width="40" height="80" rx="10" fill="#e7e2ff" />
+  </g>
+</svg>

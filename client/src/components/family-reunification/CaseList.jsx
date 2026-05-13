@@ -3,6 +3,7 @@ import { formatNotificationTime } from "../../../utils/helper";
 import { createMissingPerson } from "../../../services/MissingPerson";
 import toast from "react-hot-toast";
 import { useFamilyReunification } from "../../../context/FamilyReunificationContext";
+import { uploadLogo } from "../../../utils/supabaseClient";
 import Skeleton from "./Skeleton";
 
 const CaseList = () => {
@@ -12,6 +13,7 @@ const CaseList = () => {
   const [relationFilter, setRelationFilter] = useState("all");
   const [isNewCaseOpen, setIsNewCaseOpen] = useState(false);
   const [isNewCaseClosing, setIsNewCaseClosing] = useState(false);
+  const [generatingPhoto,SetGeneratingPhoto] = useState(false);
   const closeTimeoutRef = useRef(null);
 
   const [formData, setFormData] = useState({
@@ -49,7 +51,7 @@ const CaseList = () => {
   const create = async (data) => {
     try {
       console.log("New case form:", formData);
-      const image=localStorage.getItem("user_photo");
+      const image = localStorage.getItem("user_photo");
       const fullData = { ...data, image: image || null };
       console.log("Submitting case with data:", fullData);
       const res = await createMissingPerson(fullData);
@@ -61,20 +63,34 @@ const CaseList = () => {
       toast.error(error.message);
     }
   };
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    create(formData);
+    await create(formData);
+    setFormData({
+      name: "",
+      relation: "",
+      last_known_location: "",
+      last_known_date: "",
+      photo: null,
+      note: "",
+    });
     closeNewCase();
   };
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value, files } = e.target;
 
-    // if (name === "photo") {
-    //       setFormData((prev) => ({
-    //         ...prev,
-    //         photo: files[0],
-    //       }));
-    //     }
+    if (name === "photo") {
+      console.log(files);
+      SetGeneratingPhoto(true);
+      const publicPhotoUrl = await uploadLogo(files[0]);
+      SetGeneratingPhoto(false)
+      console.log(publicPhotoUrl);
+      setFormData((prev) => ({
+        ...prev,
+        photo: publicPhotoUrl,
+      }));
+      return;
+    }
 
     if (name === "last_known_date") {
       setFormData((prev) => ({
@@ -255,7 +271,7 @@ const CaseList = () => {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="fr-new-case-submit">
+                <button type="submit" className="fr-new-case-submit" disabled={generatingPhoto} style={generatingPhoto ? { cursor: "not-allowed" } : {}}>
                   Create case
                 </button>
               </div>

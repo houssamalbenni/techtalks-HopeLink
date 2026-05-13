@@ -1,0 +1,12 @@
+<svg width="1200" height="520" viewBox="0 0 1200 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Triangle breath focus">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fff0df" />
+      <stop offset="55%" stop-color="#e7f0ff" />
+      <stop offset="100%" stop-color="#f6e7ff" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="520" fill="url(#bg)" />
+  <polygon points="600,120 920,400 280,400" fill="#ffd9b0" opacity="0.9" />
+  <polygon points="600,170 840,390 360,390" fill="#ffe9cf" opacity="0.9" />
+</svg>

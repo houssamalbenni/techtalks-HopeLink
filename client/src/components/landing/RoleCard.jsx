@@ -14,7 +14,7 @@ function RoleCard({ role }) {
       <p>{description}</p>
 
       <div className="card-buttons">
-        <button type="button" className={`primary-btn ${primaryClass}`} onClick={()=>navigate('/create')}>
+        <button type="button" className={`primary-btn ${primaryClass}`} onClick={()=>navigate(`/create/${role.role}`)}>
           {primaryAction}
         </button>
         <button type="button" className="secondary-btn" onClick={()=>navigate("/login")}>

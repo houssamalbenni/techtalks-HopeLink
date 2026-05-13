@@ -1,0 +1,22 @@
+<svg width="1200" height="520" viewBox="0 0 1200 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Path from fear to safety">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ffe9d8" />
+      <stop offset="55%" stop-color="#e7f3ff" />
+      <stop offset="100%" stop-color="#f2e6ff" />
+    </linearGradient>
+    <linearGradient id="path" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#f0b46a" />
+      <stop offset="100%" stop-color="#c99be8" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="520" fill="url(#sky)" />
+  <path d="M0 360 C 240 330, 420 430, 640 400 C 860 370, 1020 450, 1200 400 L1200 520 L0 520 Z" fill="url(#path)" opacity="0.9" />
+  <g transform="translate(420 180)">
+    <rect x="0" y="80" width="260" height="150" rx="18" fill="#ffffff" opacity="0.95" />
+    <path d="M-12 105 L130 25 L272 105 Z" fill="#c985d9" />
+    <rect x="35" y="125" width="70" height="50" rx="10" fill="#f3f5ff" />
+    <rect x="155" y="125" width="70" height="50" rx="10" fill="#f3f5ff" />
+    <rect x="112" y="155" width="36" height="75" rx="9" fill="#e5e7ff" />
+  </g>
+</svg>

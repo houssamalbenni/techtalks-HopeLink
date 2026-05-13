@@ -1,0 +1,22 @@
+<svg width="1200" height="520" viewBox="0 0 1200 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Safe shelter in a calm landscape">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e6f5ff" />
+      <stop offset="55%" stop-color="#f0e6ff" />
+      <stop offset="100%" stop-color="#ffe9d8" />
+    </linearGradient>
+    <linearGradient id="ground" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#98d4c0" />
+      <stop offset="100%" stop-color="#b3c4ff" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="520" fill="url(#sky)" />
+  <path d="M0 360 C 220 330, 420 430, 650 400 C 880 370, 1020 430, 1200 390 L1200 520 L0 520 Z" fill="url(#ground)" opacity="0.9" />
+  <g transform="translate(360 190)">
+    <rect x="0" y="70" width="300" height="160" rx="20" fill="#ffffff" opacity="0.92" />
+    <path d="M-20 95 L150 10 L320 95 Z" fill="#7ac4b6" />
+    <rect x="40" y="115" width="80" height="60" rx="10" fill="#eef6ff" />
+    <rect x="180" y="115" width="80" height="60" rx="10" fill="#eef6ff" />
+    <rect x="130" y="150" width="40" height="80" rx="10" fill="#dde6ff" />
+  </g>
+</svg>

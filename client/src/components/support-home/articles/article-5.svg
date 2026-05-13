@@ -1,0 +1,22 @@
+<svg width="1200" height="520" viewBox="0 0 1200 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Warm shelter and community">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fff0d8" />
+      <stop offset="55%" stop-color="#e8ebff" />
+      <stop offset="100%" stop-color="#dff6ff" />
+    </linearGradient>
+    <linearGradient id="ground" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#f2c37d" />
+      <stop offset="100%" stop-color="#9dc3ff" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="520" fill="url(#sky)" />
+  <path d="M0 355 C 220 320, 420 430, 640 395 C 860 360, 1020 440, 1200 385 L1200 520 L0 520 Z" fill="url(#ground)" opacity="0.9" />
+  <g transform="translate(400 185)">
+    <rect x="0" y="80" width="280" height="150" rx="20" fill="#ffffff" opacity="0.94" />
+    <path d="M-10 105 L140 25 L290 105 Z" fill="#f1a45f" />
+    <rect x="35" y="125" width="70" height="50" rx="10" fill="#f3f5ff" />
+    <rect x="175" y="125" width="70" height="50" rx="10" fill="#f3f5ff" />
+    <rect x="120" y="155" width="40" height="75" rx="10" fill="#e6e9ff" />
+  </g>
+</svg>

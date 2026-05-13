@@ -25,9 +25,7 @@ export const NotificationProvider = ({ children }) => {
       })
       .then(() => setLoading(false))
       .catch((err) => {
-        toast.error(err.message || "Error fetching notifications", {
-          style: { background: "#e44f4f86", color: "#fff" },
-        });
+       console.log(err.message);
         setLoading(false);
       });
 

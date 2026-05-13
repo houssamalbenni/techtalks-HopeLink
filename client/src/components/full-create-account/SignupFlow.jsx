@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CreateAccountForm from "../create-account/CreateAccountForm";
 import CompleteProfile from "../complete-profile/CompleteProfile";
-
+import { useParams } from "react-router-dom";
 // Define the animation variants
 const variants = {
   enter: (direction) => ({
@@ -31,7 +31,8 @@ export default function SignupFlow() {
     selected_language: "en",
     consent: false,
   });
-  const [selectedRole, setSelectedRole] = useState("refugee");
+  const { role } = useParams();
+  const [selectedRole, setSelectedRole] = useState(role || "refugee");
   const [needs, setNeeds] = useState({
     shelter: true,
     food: true,

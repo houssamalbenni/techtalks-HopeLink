@@ -12,5 +12,8 @@ export const getNearbyServices = (lng, lat, distance = 5000) =>
   safeApiCall(
     api.get(ApiConst.GET_NEARBY_DISTRIBUTIONS, {
       params: { lng, lat, distance },
-    })
+    }),
   );
+
+export const createService = (serviceData) =>
+  safeApiCall(api.post(ApiConst.CREATE_SERVICE, serviceData));

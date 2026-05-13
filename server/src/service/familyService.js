@@ -3,7 +3,7 @@ const MissingPerson = require("../models/missingPersone").MissingPerson;
 class MissingPersonService {
   static async createMissingPerson(owner, body) {
     try {
-      const { note,image, ...other } = body;
+      const { note, image, ...other } = body;
       const data = {
         owner,
         ...other,
@@ -61,6 +61,7 @@ class MissingPersonService {
     if (updateData.$push) {
       finalUpdate.$push = updateData.$push;
     }
+    if (body.photo) finalUpdate.photo = body.photo;
 
     const updatedMissingPerson = await MissingPerson.findByIdAndUpdate(
       id,

@@ -8,7 +8,7 @@ import TestimonialCard from "../create-account/TestimonialCard";
 import { useNavBar } from "../../../context/NavBarContext";
 function resolveTargetByRole(role) {
   if (role === "refugee") return "/refugee-dashboard";
-  if (role === "admin") return "/admin/announcement";
+  if (role === "admin") return "/admin/dashboard";
   if (role === "doctor") return "/doctor/dashboard";
   if (role === "ngo") return "/ngo/dashboard";
   return "/dashboard";

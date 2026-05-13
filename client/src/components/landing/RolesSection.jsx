@@ -10,6 +10,7 @@ const roles = [
       'Find verified shelters, access digital ID, request aid, and reconnect with family members securely.',
     primaryAction: 'Create Account',
     primaryClass: 'blue-btn',
+    role: 'refugee',
   },
   {
     cardClass: 'ngo-card',
@@ -20,6 +21,7 @@ const roles = [
       'Manage shelter capacity, coordinate aid logistics, verify identities, and track distribution metrics.',
     primaryAction: 'Register Organization',
     primaryClass: 'accent-btn',
+    role: 'ngo',
   },
   {
     cardClass: 'donor-card',
@@ -30,6 +32,7 @@ const roles = [
       'Fund specific aid packages, track donation impact transparently, and support critical logistics.',
     primaryAction: 'Start Giving',
     primaryClass: 'green-btn',
+    role: 'donor',
   },
 ];
 

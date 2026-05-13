@@ -15,6 +15,7 @@ const NavBarProvider = ({ children }) => {
   const adminNavItems = [
     { label: "Dashboard", path: "/admin/dashboard" },
     { label: "Announcement", path: "/admin/announcement" },
+    {label: "Services Management", path: "hospital"},
   ];
   const doctorNavItems = [{ label: "Dashboard", path: "/doctor-dashboard" }];
 

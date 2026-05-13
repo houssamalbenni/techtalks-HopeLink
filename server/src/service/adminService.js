@@ -1,12 +1,13 @@
-const  Service  = require("../models/services").Service;
-
+const Service = require("../models/services").Service;
 
 class AdminService {
-
- static async findServiceById(serviceId){
-  try { return await Service.findById(serviceId);}
-  catch (error) { throw error;}
- }
+  static async findServiceById(serviceId) {
+    try {
+      return await Service.findById(serviceId);
+    } catch (error) {
+      throw error;
+    }
+  }
 
   static async getAllServices() {
     try {
@@ -21,7 +22,7 @@ class AdminService {
       const service = await Service.create({
         title: body.title, // MUST match enum ResourceTitles
         location: {
-          type: body.location.type || 'Point',
+          type: body.location.type || "Point",
           coordinates: body.location.coordinates, // [lng, lat]
         },
         capacity: body.capacity,
@@ -30,6 +31,8 @@ class AdminService {
         phone_number: body.phone_number,
         address: body.address,
         requirements: body.requirements,
+        email: body.email,
+        website: body.website,
         intake_hours: body.intake_hours,
         facilities: body.facilities || [],
         owner_ngo: body.owner_ngo,
@@ -70,18 +73,40 @@ class AdminService {
 
   static async updateService(serviceId, updateData) {
     try {
-      const service = await Service.findByIdAndUpdate(serviceId, updateData, { new: true });
+      const flattenObject = (obj, prefix = "", result = {}) => {
+        for (let key in obj) {
+          if (
+            obj[key] !== null &&
+            typeof obj[key] === "object" &&
+            !Array.isArray(obj[key])
+          ) {
+            flattenObject(obj[key], `${prefix}${key}.`, result);
+          } else {
+            result[`${prefix}${key}`] = obj[key];
+          }
+        }
+        return result;
+      };
+
+      const flattenedUpdate = flattenObject(updateData);
+
+      const service = await Service.findByIdAndUpdate(
+        serviceId,
+        { $set: flattenedUpdate },
+        { new: true },
+      );
+
       if (!service) {
         const err = new Error("Service not found");
         err.statusCode = 404;
         throw err;
       }
+
       return service;
     } catch (error) {
       throw error;
     }
   }
-
 }
 
 module.exports = AdminService;
