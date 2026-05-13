@@ -1,7 +1,6 @@
 import "./CounselorPortal.css";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import SectionHeader from "./SectionHeader";
 import RequestFilters from "./RequestFilters";
@@ -205,7 +204,6 @@ export default function CounselorPortal() {
   return (
     <div className="portal-page">
       <div className="portal-shell">
-        <Sidebar navItems={navItems} />
         <main className="portal-main">
           <Topbar
             title="Doctor Dashboard"

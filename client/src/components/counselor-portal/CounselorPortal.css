@@ -34,12 +34,10 @@ body {
 
 .portal-shell {
   width:100%;
-    
   background: var(--portal-shell);
 
   box-shadow: var(--portal-shadow);
-  display: grid;
-  grid-template-columns: 230px 1fr;
+  display: block;
   overflow: hidden;
   border: 1px solid var(--portal-line);
 }

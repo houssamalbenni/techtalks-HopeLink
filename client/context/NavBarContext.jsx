@@ -17,7 +17,7 @@ const NavBarProvider = ({ children }) => {
     { label: "Announcement", path: "/admin/announcement" },
     {label: "Services Management", path: "hospital"},
   ];
-  const doctorNavItems = [{ label: "Dashboard", path: "/doctor-dashboard" }];
+  const doctorNavItems = [];
 
   const [photo, setPhoto] = useState(null);
 
