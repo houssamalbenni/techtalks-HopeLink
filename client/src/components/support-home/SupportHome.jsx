@@ -1,11 +1,10 @@
 import "./SupportHome.css";
-import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import EmergencyBanner from "./EmergencyBanner";
 import LibrarySection from "./LibrarySection";
 import SupportHeader from "./SupportHeader";
-import Sidebar from "../InteractiveExercises/Sidebar";
-import { supportNavItems } from "../support-nav/supportNavItems.jsx";
+import SupportNavbar from "../support-nav/SupportNavbar";
 import breathingImage1 from "./breathing/breathing-1.svg";
 import breathingImage2 from "./breathing/breathing-2.svg";
 import breathingImage3 from "./breathing/breathing-3.svg";
@@ -147,20 +146,6 @@ export default function SupportHome() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const activeNav = useMemo(() => {
-    return location.pathname.startsWith("/interactive-exercises")
-      ? "interactive-exercises"
-      : "support-home";
-  }, [location.pathname]);
-
-  const handleNavSelect = (id) => {
-    const target = supportNavItems.find((item) => item.id === id);
-    if (target) {
-      navigate(target.path);
-    }
-  };
 
   useEffect(() => {
     let isMounted = true;
@@ -239,64 +224,53 @@ export default function SupportHome() {
   };
 
   return (
-    <div className="support-shell">
-      <Sidebar
-        logoText="HopeLink"
-        navItems={supportNavItems}
-        activeNav={activeNav}
-        onNavSelect={handleNavSelect}
-        greeting="Welcome"
-        userName="Support"
-      />
-      <div className="support-shell__main">
-        <div className="support-home-page">
-          <div className="support-layout">
-            <main className="support-main">
-              <SupportHeader />
-              <EmergencyBanner
-                onChat={handleRequestChat}
-                disabled={isSubmitting || request?.status === "pending"}
-                label={request?.status === "pending" ? "Request Sent" : "Chat Now"}
-              />
-              {request && (
-                <div className={`support-request-card ${request.status}`}>
-                  <div className="support-request-title">
-                    {request.status === "accepted"
-                      ? "Doctor accepted your request"
-                      : "Waiting for a doctor to accept"}
-                  </div>
-                  <div className="support-request-note">
-                    {request.status === "accepted"
-                      ? "Opening your chat now."
-                      : "Please stay on this page. You will be connected shortly."}
-                  </div>
-                </div>
-              )}
-              {errorMessage && (
-                <div className="support-request-error">{errorMessage}</div>
-              )}
-              <div className="library-stack">
-                {librarySections.map((section) => (
-                  <LibrarySection
-                    key={section.id}
-                    title={section.title}
-                    items={section.items}
-                  />
-                ))}
-              </div>
-            </main>
-          </div>
-
-          <button
-            className="floating-action"
-            type="button"
-            onClick={handleRequestChat}
+    <div className="support-home-page">
+      <SupportNavbar />
+      <div className="support-layout">
+        <main className="support-main">
+          <SupportHeader />
+          <EmergencyBanner
+            onChat={handleRequestChat}
             disabled={isSubmitting || request?.status === "pending"}
-          >
-            {request?.status === "pending" ? "Request Sent" : "Chat Now"}
-          </button>
-        </div>
+            label={request?.status === "pending" ? "Request Sent" : "Chat Now"}
+          />
+          {request && (
+            <div className={`support-request-card ${request.status}`}>
+              <div className="support-request-title">
+                {request.status === "accepted"
+                  ? "Doctor accepted your request"
+                  : "Waiting for a doctor to accept"}
+              </div>
+              <div className="support-request-note">
+                {request.status === "accepted"
+                  ? "Opening your chat now."
+                  : "Please stay on this page. You will be connected shortly."}
+              </div>
+            </div>
+          )}
+          {errorMessage && (
+            <div className="support-request-error">{errorMessage}</div>
+          )}
+          <div className="library-stack">
+            {librarySections.map((section) => (
+              <LibrarySection
+                key={section.id}
+                title={section.title}
+                items={section.items}
+              />
+            ))}
+          </div>
+        </main>
       </div>
+
+      <button
+        className="floating-action"
+        type="button"
+        onClick={handleRequestChat}
+        disabled={isSubmitting || request?.status === "pending"}
+      >
+        {request?.status === "pending" ? "Request Sent" : "Chat Now"}
+      </button>
     </div>
   );
 }

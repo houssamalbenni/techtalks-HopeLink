@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./MetalHeath.module.css";
 import BreathTag from "./BreathTag";
 import PlayerBar from "./PlayerBar";
-import Sidebar from "./Sidebar";
 import SoundCard from "./SoundCard";
-import { supportNavItems } from "../support-nav/supportNavItems.jsx";
+import SupportNavbar from "../support-nav/SupportNavbar";
 
-const defaultNavItems = supportNavItems;
+const defaultNavItems = [];
 
 const defaultTabs = ["All Sounds", "White Noise", "Nature", "Ambient", "Music", "Guided"];
 
@@ -111,8 +109,6 @@ export default function InteractiveExercises({
   onNext,
   onPause,
 }) {
-  const navigate = useNavigate();
-  const location = useLocation();
   const audioRef = useRef(null);
   const [currentNav, setCurrentNav] = useState(activeNav);
   const [currentTab, setCurrentTab] = useState(activeTab);
@@ -159,23 +155,9 @@ export default function InteractiveExercises({
   }, [sounds, currentTab, selectedSound, isPlaying]);
 
   const handleNavSelect = (id) => {
-    const target = supportNavItems.find((item) => item.id === id);
-    if (target) {
-      navigate(target.path);
-    }
     setCurrentNav(id);
     onNavSelect?.(id);
   };
-
-  useEffect(() => {
-    if (location.pathname.startsWith("/support-home")) {
-      setCurrentNav("support-home");
-      return;
-    }
-    if (location.pathname.startsWith("/interactive-exercises")) {
-      setCurrentNav("interactive-exercises");
-    }
-  }, [location.pathname]);
 
   const handleTabSelect = (tab) => {
     setCurrentTab(tab);
@@ -318,6 +300,7 @@ export default function InteractiveExercises({
 
   return (
     <div className={styles.page}>
+      <SupportNavbar />
       <audio
         ref={audioRef}
         className={styles.visuallyHidden}
@@ -326,15 +309,6 @@ export default function InteractiveExercises({
         onLoadedMetadata={(event) => setDuration(event.target.duration)}
       />
       <div className={styles.appShell}>
-        <Sidebar
-          logoText={logoText}
-          navItems={navItems}
-          activeNav={currentNav}
-          onNavSelect={handleNavSelect}
-          greeting={greeting}
-          userName={userName}
-        />
-
         <main className={styles.main}>
           <div className={styles.topbar}>
             <div className={styles.pageTitle}>
