@@ -60,7 +60,7 @@ body {
 .logo-group {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 13px;
 }
 
 .logo-box {
