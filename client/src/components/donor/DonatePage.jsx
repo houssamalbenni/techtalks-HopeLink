@@ -48,7 +48,7 @@ export default function DonatePage() {
   return (
     <div style={{ maxWidth: 720, margin: "40px auto", padding: 24 }}>
       <h2 style={{ marginBottom: 8 }}>Make a Donation</h2>
-      <p style={{ color: "#6b7280", marginBottom: 16 }}>
+      <p style={{ color: "#000000", marginBottom: 16 }}>
         Enter donation amount and payment details. This uses the existing backend
         donation endpoint—no backend changes.
       </p>
