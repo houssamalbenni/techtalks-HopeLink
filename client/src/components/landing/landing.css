@@ -18,7 +18,6 @@
 
 * {
   box-sizing: border-box;
-  background-color: #1e293b;
 }
 
 body {
@@ -50,6 +49,7 @@ button {
 .landing-page {
   width: 100%;
   position: relative;
+  background-color: #1e293b;
 }
 
 .container {
