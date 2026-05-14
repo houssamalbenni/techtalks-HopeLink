@@ -38,6 +38,7 @@ import MorningResetBreath from "./components/support-home/breathing/MorningReset
 import CounselorPortal from "./components/counselor-portal/CounselorPortal";
 import InteractiveExercises from "./components/InteractiveExercises/InteractiveExercises";
 import MentalHealth from "./components/mental-health/MentalHealth";
+import DonatePage from "./components/donor/DonatePage";
 function App() {
   const { navitems, photo } = useNavBar();
   const navigation = useLocation();
@@ -123,6 +124,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/profile" element={<ProfileSettings />} />
         <Route path="/refugee-dashboard" element={<RefugeeDashboard />} />
+        <Route path="/donor/donate" element={<DonatePage />} />
         <Route path="/family-reunification" element={<FamilyReunification />} />
         <Route
           path="/add-hospital"

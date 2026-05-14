@@ -11,6 +11,7 @@ function resolveTargetByRole(role) {
   if (role === "admin") return "/admin/dashboard";
   if (role === "doctor") return "/counselor-portal";
   if (role === "ngo") return "/ngo/dashboard";
+  if (role === "donor") return "/donor/donate";
   return "/dashboard";
 }
 export default function LoginPage() {
