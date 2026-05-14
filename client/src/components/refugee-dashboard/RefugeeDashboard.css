@@ -909,16 +909,19 @@ html[dir="rtl"] .map-results-header,
   .map-page {
     height: 100dvh;
     overflow: hidden;
+    background: #0b1220;
   }
 
   .map-content {
     flex-direction: column;
     overflow: hidden;
+    position: relative;
   }
 
   .map-left-panel {
     width: 100%;
-    height: 48vh;
+    height: auto;
+    max-height: 42vh;
     border-right: none;
     border-bottom: 1px solid #1e2a3a;
   }
@@ -939,13 +942,24 @@ html[dir="rtl"] .map-results-header,
     padding: 8px 12px;
   }
 
+  .map-left-panel-list {
+    max-height: 26vh;
+  }
+
   .location-card {
     padding: 12px;
   }
 
   .map-area {
     width: 100%;
-    min-height: 40vh;
+    height: 58vh;
+    min-height: 58vh;
+    flex: 1;
+  }
+
+  .leaflet-container {
+    height: 100% !important;
+    min-height: 58vh;
   }
 
   .map-legend {
@@ -959,7 +973,7 @@ html[dir="rtl"] .map-results-header,
     right: 0;
     top: auto;
     bottom: 0;
-    max-height: 54vh;
+    max-height: 62vh;
     border-left: none;
     border-top: 1px solid #1f2937;
     box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.45);
@@ -970,7 +984,7 @@ html[dir="rtl"] .map-results-header,
   }
 
   .detail-image-wrap {
-    height: 150px;
+    height: 132px;
   }
 
   .detail-body {
@@ -985,5 +999,54 @@ html[dir="rtl"] .map-results-header,
     top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  .map-topbar {
+    left: 0;
+    right: 0;
+    height: auto;
+    min-height: 52px;
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .map-topbar-left {
+    gap: 8px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .map-topbar-title {
+    font-size: 14px;
+  }
+
+  .map-location-badge {
+    display: none;
+  }
+
+  .map-topbar-right {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .map-report-btn,
+  .map-language-toggle,
+  .map-icon-btn {
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 10px;
+  }
+
+  .map-report-btn {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    display: none;
   }
 }
