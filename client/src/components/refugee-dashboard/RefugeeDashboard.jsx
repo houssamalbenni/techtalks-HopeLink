@@ -22,7 +22,9 @@ const RefugeeDashboardContent = () => {
   const navItems = [
     { label: "Dashboard", path: "/refugee-dashboard" },
     { label: "Family Reunification", path: "/family-reunification" },
-    { label: "Mental Health", path: "/Health" },
+    { label: "Mental Health", path: "/mental-health" },
+    { label: "Support Home", path: "/support-home" },
+    { label: "Interactive Exercises", path: "/interactive-exercises" },
   ];
   const handleSelect = (id) => {
     setSelectedId(id);

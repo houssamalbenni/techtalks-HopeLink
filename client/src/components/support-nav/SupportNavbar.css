@@ -55,6 +55,21 @@
   font-weight: 500;
 }
 
+.support-nav__link .support-nav__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  color: #e2e8f0;
+  flex-shrink: 0;
+}
+
+.support-nav__label { display: inline-block; }
+
 .support-nav__link:hover {
   border-color: #22c55e;
   color: #ffffff;

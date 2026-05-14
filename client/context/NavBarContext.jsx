@@ -10,7 +10,9 @@ const NavBarProvider = ({ children }) => {
   const refugeNavItems = [
     { label: "Dashboard", path: "/refugee-dashboard" },
     { label: "Family Reunification", path: "/family-reunification" },
-    { label: "Mentel Health", path: "/support-home" },
+    { label: "Mental Health", path: "/mental-health" },
+    { label: "Support Home", path: "/support-home" },
+    { label: "Interactive Exercises", path: "/interactive-exercises" },
   ];
   const adminNavItems = [
     { label: "Dashboard", path: "/admin/dashboard" },
