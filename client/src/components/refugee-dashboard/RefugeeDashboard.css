@@ -904,3 +904,86 @@ html[dir="rtl"] .map-results-header,
     transform: scaleY(1);
   }
 }
+
+@media (max-width: 768px) {
+  .map-page {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .map-content {
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .map-left-panel {
+    width: 100%;
+    height: 48vh;
+    border-right: none;
+    border-bottom: 1px solid #1e2a3a;
+  }
+
+  .map-left-panel-list {
+    min-height: 0;
+  }
+
+  .map-search-wrap {
+    padding: 12px;
+  }
+
+  .map-filter-tabs {
+    padding: 10px 12px;
+  }
+
+  .map-results-header {
+    padding: 8px 12px;
+  }
+
+  .location-card {
+    padding: 12px;
+  }
+
+  .map-area {
+    width: 100%;
+    min-height: 40vh;
+  }
+
+  .map-legend {
+    left: 12px;
+    bottom: 12px;
+  }
+
+  .map-detail-panel {
+    width: 100%;
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    max-height: 54vh;
+    border-left: none;
+    border-top: 1px solid #1f2937;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.45);
+  }
+
+  .map-detail-panel.closed {
+    transform: translateY(100%);
+  }
+
+  .detail-image-wrap {
+    height: 150px;
+  }
+
+  .detail-body {
+    padding: 10px;
+  }
+
+  .detail-action-btns {
+    grid-template-columns: 1fr;
+  }
+
+  .loading-container {
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
