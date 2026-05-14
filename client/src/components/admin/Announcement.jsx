@@ -295,7 +295,7 @@ export const Announcement = ({ selectedUserId, setSelectedUserId }) => {
               }}
             >
               <img
-                src="https://api.iconify.design/lucide:send.svg?color=%23ffffff"
+                src="https://api.iconify.design/lucide:send.svg?color=%23dbe4f0"
                 alt="Send icon"
                 style={{ width: 18, height: 18 }}
                 referrerPolicy="no-referrer"
