@@ -91,10 +91,7 @@ export const NotificationProvider = ({ children }) => {
   };
 
   const sendChats = (data) => {
-    const createdAt = new Date().toISOString();
     socketRef.current.emit("chating", data);
-
-    setChating((prev) => [...prev, { ...data, createdAt }]);
   };
 
   const sendEndSession = (data) => {

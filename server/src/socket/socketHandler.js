@@ -97,6 +97,7 @@ module.exports = (io) => {
           createdAt: messageEntry.createdAt,
         };
 
+        socket.emit(SocketEvents.RESPONSE, payload);
         if (receiverSocketId && receiverSocketId !== socket.id) {
           io.to(receiverSocketId).emit(SocketEvents.RESPONSE, payload);
         } else {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useNotifications } from "../../../context/NotificationContext";
 import { formatNotificationTime } from "../../../utils/helper";
@@ -56,9 +56,11 @@ const RefugeeChat = () => {
     };
 
     loadHistory();
+    const intervalId = setInterval(loadHistory, 3000);
 
     return () => {
       isMounted = false;
+      clearInterval(intervalId);
     };
   }, [refugeeId, doctorId]);
 
@@ -125,11 +127,25 @@ const RefugeeChat = () => {
     return isRefugeeSender || isDoctorSender;
   });
 
-  const mergedMessages = [...history, ...filteredMessages].sort((a, b) => {
-    const timeA = new Date(a.createdAt).getTime();
-    const timeB = new Date(b.createdAt).getTime();
-    return timeA - timeB;
-  });
+  const mergedMessages = useMemo(() => {
+    const unique = new Map();
+
+    [...history, ...filteredMessages].forEach((msg) => {
+      const key = [
+        msg.senderId,
+        msg.receivedId,
+        msg.message,
+        msg.createdAt,
+      ].join("|");
+      unique.set(key, msg);
+    });
+
+    return [...unique.values()].sort((a, b) => {
+      const timeA = new Date(a.createdAt).getTime();
+      const timeB = new Date(b.createdAt).getTime();
+      return timeA - timeB;
+    });
+  }, [history, filteredMessages]);
 
   useEffect(() => {
     if (!messagesRef.current) {
@@ -185,12 +201,12 @@ const RefugeeChat = () => {
           </div>
 
           <section className="chatting-messages" ref={messagesRef}>
-            {mergedMessages.map((msg, i) => {
+            {mergedMessages.map((msg) => {
               const side = msg.senderId === refugeeId ? "user" : "counselor";
               const avatarUrl = side === "counselor" ? avatars.doctor : avatars.refugee;
 
               return (
-                <div key={i} className={`message-row ${side}`}>
+                <div key={[msg.senderId, msg.receivedId, msg.message, msg.createdAt].join("|")} className={`message-row ${side}`}>
                   {side === "counselor" && (
                     <div className="message-avatar">
                       {avatarUrl ? <img src={avatarUrl} alt="User avatar" /> : null}
