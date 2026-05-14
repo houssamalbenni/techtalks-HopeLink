@@ -22,7 +22,7 @@
 
 body {
   font-family: "Inter", sans-serif;
-  background-color: #050a12;
+  background-color: var(--brand-darker);
   color: var(--brand-light);
   margin: 0;
   padding: 0;
@@ -61,9 +61,9 @@ button {
   position: fixed;
   inset: 0;
   z-index: 0;
-  opacity: 1;
+  opacity: 0.2;
   pointer-events: none;
-  background: linear-gradient(180deg, #0a1527 0%, #050a12 50%, #030711 100%);
+  background-image: url("https://storage.googleapis.com/uxpilot-auth.appspot.com/default-placeholder.png");
   background-size: cover;
   background-position: center;
 }
@@ -192,14 +192,9 @@ button {
 }
 
 .hero-section {
-  max-width: 100%;
+  max-width: 768px;
   margin: 0 auto;
   text-align: center;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: center;
-  padding: 0 32px;
 }
 
 .hero-badge {
@@ -248,119 +243,6 @@ button {
   margin: 24px auto 0;
 }
 
-.hero-copy {
-  margin-bottom: 48px;
-  text-align: left;
-}
-
-.hero-pills {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 32px;
-}
-
-.hero-pills span {
-  padding: 8px 16px;
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  border-radius: 999px;
-  font-size: 14px;
-  color: var(--brand-light);
-}
-
-.hero-visual {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 32px;
-}
-
-.hero-frame {
-  position: relative;
-  width: 100%;
-  max-width: 500px;
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hero-photo {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 20px 40px rgba(59, 130, 246, 0.2));
-  animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-.hero-floating-card {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(30, 41, 59, 0.95);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  border-radius: 16px;
-  padding: 16px;
-  z-index: 10;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
-
-.hero-floating-card strong {
-  display: block;
-  color: var(--white);
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.hero-floating-card span {
-  display: block;
-  color: var(--gray-400);
-  font-size: 13px;
-}
-
-.hero-metrics {
-  display: flex;
-  gap: 32px;
-  width: 100%;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.hero-metric {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.metric-value {
-  font-size: 32px;
-  font-weight: 700;
-  background: linear-gradient(to right, var(--brand-blue), var(--brand-accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.metric-label {
-  font-size: 14px;
-  color: var(--gray-400);
-}
-
 .roles-section {
   width: 100%;
 }
@@ -399,14 +281,10 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(135deg, #3d4a5e 0%, #2d3a50 100%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .role-card:hover {
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(59, 130, 246, 0.15);
-  transform: translateY(-4px);
+  box-shadow: 0 10px 30px -5px rgb(0 0 0 / 30%);
 }
 
 .card-top-line {
@@ -474,12 +352,12 @@ button {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: #0f1a2a;
+  background: var(--brand-dark);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 24px;
-  box-shadow: 0 0 24px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(59, 130, 246, 0.2);
+  box-shadow: inset 0 0 0 1px var(--gray-800);
   transition: 0.3s;
 }
 
@@ -497,18 +375,15 @@ button {
 }
 
 .refugee-card:hover .icon-circle {
-  background: rgba(59, 130, 246, 0.15);
-  box-shadow: 0 0 32px rgba(59, 130, 246, 0.3), inset 0 0 0 1px rgba(59, 130, 246, 0.4);
+  background: rgb(59 130 246 / 10%);
 }
 
 .ngo-card:hover .icon-circle {
-  background: rgba(139, 92, 246, 0.15);
-  box-shadow: 0 0 32px rgba(139, 92, 246, 0.3), inset 0 0 0 1px rgba(139, 92, 246, 0.4);
+  background: rgb(139 92 246 / 10%);
 }
 
 .donor-card:hover .icon-circle {
-  background: rgba(16, 185, 129, 0.15);
-  box-shadow: 0 0 32px rgba(16, 185, 129, 0.3), inset 0 0 0 1px rgba(16, 185, 129, 0.4);
+  background: rgb(16 185 129 / 10%);
 }
 
 .role-card h3 {
@@ -696,19 +571,6 @@ button {
 }
 
 @media (max-width: 991px) {
-  .hero-section {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-
-  .hero-copy {
-    text-align: center;
-  }
-
-  .hero-frame {
-    max-width: 400px;
-  }
-
   .roles-grid {
     grid-template-columns: 1fr;
   }
@@ -746,12 +608,6 @@ button {
 
   .main-content {
     margin-top: 80px;
-    padding: 0 16px;
-  }
-
-  .hero-section {
-    grid-template-columns: 1fr;
-    padding: 0 16px;
   }
 
   .hero-section h1 {
@@ -762,40 +618,7 @@ button {
     font-size: 16px;
   }
 
-  .hero-frame {
-    max-width: 300px;
-  }
-
-  .hero-pills {
-    gap: 8px;
-  }
-
-  .hero-pills span {
-    font-size: 12px;
-    padding: 6px 12px;
-  }
-
-  .hero-metrics {
-    gap: 16px;
-  }
-
-  .metric-value {
-    font-size: 24px;
-  }
-
-  .metric-label {
-    font-size: 12px;
-  }
-
   .section-header h2 {
     font-size: 26px;
-  }
-
-  .roles-grid {
-    gap: 16px;
-  }
-
-  .role-card {
-    padding: 24px;
   }
 }
