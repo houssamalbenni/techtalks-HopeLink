@@ -3,14 +3,14 @@
   --bg-card: #1b2540;
   --text-main: #e8edf8;
   --text-muted: #a9b6d3;
-  --border-color: rgba(79, 142, 247, 0.18);
+  --border-color: rgba(79, 142, 247, 0.16);
   --primary-color: #4f8ef7;
   --primary-hover: #5a5fe0;
   --error-color: #ef4444;
   --success-color: #10b981;
   --font-sans: "Sora", "DM Sans", sans-serif;
-  --panel-bg: linear-gradient(135deg, #1a243d 0%, #202d4a 100%);
-  --field-bg: linear-gradient(135deg, rgba(33, 45, 73, 0.96) 0%, rgba(48, 62, 95, 0.94) 100%);
+  --panel-bg: linear-gradient(180deg, #1f2943 0%, #23304d 100%);
+  --field-bg: linear-gradient(180deg, #344265 0%, #3b486d 100%);
 
   /* Priority Colors */
   --priority-critical: rgba(239, 68, 68, 0.14);
@@ -337,7 +337,7 @@ body {
   width: 100%;
   padding: 12px 14px;
   border-radius: 8px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(79, 142, 247, 0.12);
   background: var(--field-bg);
   color: #edf3ff;
   font-size: 15px;
@@ -365,7 +365,7 @@ body {
   box-shadow:
     0 0 0 3px rgba(79, 142, 247, 0.12),
     0 8px 24px rgba(79, 142, 247, 0.12);
-  background: linear-gradient(135deg, rgba(38, 52, 84, 0.98) 0%, rgba(53, 69, 106, 0.96) 100%);
+  background: linear-gradient(180deg, #3a4a72 0%, #42517a 100%);
 }
 
 .textarea-field {
