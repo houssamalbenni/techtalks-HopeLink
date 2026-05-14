@@ -18,6 +18,7 @@ const RefugeeDashboardContent = () => {
   const [error, setError] = useState(null);
   const [aleardyRequested, setAleardyRequested] = useState([]);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [isListOpen, setIsListOpen] = useState(false);
   const { setNavItems,setPhoto } = useNavBar();
   const navItems = [
     { label: "Dashboard", path: "/refugee-dashboard" },
@@ -29,6 +30,7 @@ const RefugeeDashboardContent = () => {
   const handleSelect = (id) => {
     setSelectedId(id);
     setIsPanelOpen(true);
+    setIsListOpen(false);
   };
   const fetchDashboardData = async () => {
     try {
@@ -123,10 +125,23 @@ const RefugeeDashboardContent = () => {
       >
         {/* <MapTopBar /> */}
         <div className="map-content">
+          <button
+            type="button"
+            className="map-mobile-menu-btn"
+            aria-label="Toggle location list"
+            aria-expanded={isListOpen}
+            onClick={() => setIsListOpen((prev) => !prev)}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
           <LocationList
             selectedId={selectedId}
             onSelect={handleSelect}
             requests={services}
+            isMobileOpen={isListOpen}
+            onMobileClose={() => setIsListOpen(false)}
           />
           <MapView
             selectedId={selectedId}

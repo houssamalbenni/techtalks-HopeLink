@@ -6,13 +6,18 @@ import {
   formatServiceAddress,
 } from "../../../utils/helper";
 import ServiceFilterTabs from "./ServiceFilterTabs";
-const LocationList = ({ selectedId, onSelect, requests = [] }) => {
+const LocationList = ({
+  selectedId,
+  onSelect,
+  requests = [],
+  isMobileOpen = false,
+  onMobileClose,
+}) => {
   const { language } = useLanguage();
   const [sortOpen, setSortOpen] = useState(false);
   const [sortBy, setSortBy] = useState("distance");
   const [activeFilter, setActiveFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [isExpanded, setIsExpanded] = useState(true);
   const locations = requests.map((entry) => {
     const service = entry;
     const serviceStatus = buildServiceStatus(service);
@@ -58,7 +63,7 @@ const LocationList = ({ selectedId, onSelect, requests = [] }) => {
         });
 
   return (
-    <div className={`map-left-panel ${isExpanded ? "expanded" : "collapsed"}`}>
+    <div className={`map-left-panel ${isMobileOpen ? "map-left-open" : ""}`}>
       <div className="map-left-panel-header">
         <div className="map-search-wrap">
           <div className="map-search-box">
@@ -81,15 +86,6 @@ const LocationList = ({ selectedId, onSelect, requests = [] }) => {
         </div>
         <div className="map-results-header">
           <span>Showing {filteredLocations.length} services</span>
-          <button
-            type="button"
-            className="map-mobile-toggle"
-            onClick={() => setIsExpanded((prev) => !prev)}
-            aria-expanded={isExpanded}
-            aria-controls="map-left-panel-list"
-          >
-            {isExpanded ? "Hide list" : "Show list"}
-          </button>
           <div className="map-sort-dropdown">
             {sortOpen && (
               <div className="map-sort-menu">
@@ -127,7 +123,12 @@ const LocationList = ({ selectedId, onSelect, requests = [] }) => {
             <div
               key={loc.id}
               className={`location-card ${selectedId === loc.id ? "selected" : ""}`}
-              onClick={() => onSelect(loc.id)}
+              onClick={() => {
+                onSelect(loc.id);
+                if (onMobileClose) {
+                  onMobileClose();
+                }
+              }}
             >
               <div className="location-card-header">
                 <div className="location-card-title-row">
