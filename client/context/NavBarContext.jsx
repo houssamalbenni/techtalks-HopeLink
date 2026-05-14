@@ -45,7 +45,7 @@ const NavBarProvider = ({ children }) => {
     if (localStorage.getItem("user_photo")) {
       setPhoto(localStorage.getItem("user_photo"));
     }
-  }, []);
+  }, [localStorage.getItem("token"), localStorage.getItem("user_photo")]);
 
   return (
     <NavBarContext.Provider value={{ navitems, setNavItems, photo, setPhoto }}>
