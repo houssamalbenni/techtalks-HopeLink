@@ -39,11 +39,6 @@ const roles = [
 function RolesSection() {
   return (
     <section id="role_selection_grid" className="roles-section">
-      <div className="section-header">
-        <h2>Select your role to begin</h2>
-        <p>Choose how you want to interact with the platform</p>
-      </div>
-
       <div className="roles-grid">
         {roles.map((role) => (
           <RoleCard key={role.title} role={role} />
