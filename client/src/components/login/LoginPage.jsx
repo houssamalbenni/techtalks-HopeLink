@@ -116,7 +116,7 @@ export default function LoginPage() {
                 type="text"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                placeholder="e.g. 81303398 or sami@example.com"
+                placeholder="e.g. 81123456 {Nb Phone Only} "
                 autoComplete="username"
               />
             </div>
