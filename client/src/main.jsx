@@ -8,12 +8,12 @@ import { BrowserRouter } from "react-router-dom";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <NotificationProvider>
         <NavBarProvider>
+      <NotificationProvider>
           <App />
           <Toaster />
-        </NavBarProvider>
       </NotificationProvider>
+        </NavBarProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );
