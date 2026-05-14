@@ -277,13 +277,13 @@ body {
 }
 
 .card {
-  background: linear-gradient(135deg, #1a243d 0%, #202b46 100%);
+  background: var(--panel-bg);
   border-radius: 18px;
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.45),
-    0 0 40px rgba(79, 142, 247, 0.08);
   border: 1px solid var(--border-color);
-  padding: 18px 32px 24px;
+  box-shadow: 0 14px 26px rgba(7, 14, 28, 0.28);
+  display: grid;
+  gap: 10px;
+  padding: 16px;
   backdrop-filter: blur(12px);
 }
 
