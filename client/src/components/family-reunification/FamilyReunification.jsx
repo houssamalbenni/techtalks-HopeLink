@@ -2,7 +2,10 @@ import "./FamilyReunification.css";
 import CaseList from "./CaseList";
 import CaseDetail from "./CaseDetail";
 import { FamilyReunificationProvider } from "../../../context/FamilyReunificationContext";
+import { useState } from "react";
 const FamilyReunification = () => {
+  
+  const [isCaseListOpen, setIsCaseListOpen] = useState(false);
   return (
     <FamilyReunificationProvider>
       <div className="fr-page">

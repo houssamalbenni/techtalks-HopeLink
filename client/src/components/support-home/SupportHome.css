@@ -253,6 +253,7 @@ body {
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 20px 40px rgba(79, 142, 247, 0.35);
+  z-index: 10;
 }
 
 .floating-action:disabled {
