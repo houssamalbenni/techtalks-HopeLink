@@ -1,7 +1,11 @@
 .mental-page {
   font-family: var(--font-body, system-ui, sans-serif);
-  background: var(--bg, #f6f6fb);
+  background:
+    radial-gradient(circle at top left, rgba(126, 211, 197, 0.25), transparent 32%),
+    radial-gradient(circle at top right, rgba(96, 165, 250, 0.18), transparent 28%),
+    linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
   min-height: 100vh;
+  color: #0f172a;
 }
 
 .mental-container {
@@ -21,11 +25,12 @@
 .mental-title h1 {
   font-size: 28px;
   margin: 0;
+  color: #0f172a;
 }
 
 .mental-title p {
   margin: 4px 0 0;
-  color: #6b6b7a;
+  color: #475569;
 }
 
 .mental-actions {
@@ -35,14 +40,16 @@
 
 .mh-btn {
   padding: 8px 12px;
-  background: transparent;
-  border: 1px solid #cfcfe6;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 12px;
   cursor: pointer;
+  color: #0f172a;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
 }
 
 .mh-primary {
-  background: linear-gradient(90deg,#6f4ef6,#7bb7ff);
+  background: linear-gradient(90deg, #22c55e, #38bdf8);
   color: white;
   border: none;
 }
@@ -55,13 +62,14 @@
 }
 
 .mh-card {
-  background: white;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(148, 163, 184, 0.16);
   padding: 18px;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(80,70,120,0.06);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
 }
 
-.mh-card h3 { margin: 0 0 8px 0; }
-.mh-card p { color: #666; font-size: 13px; }
+.mh-card h3 { margin: 0 0 8px 0; color: #0f172a; }
+.mh-card p { color: #475569; font-size: 13px; }
 .mh-card-actions { margin-top: 12px; }
-.mh-card-actions button { padding: 8px 10px; border-radius: 8px; border: none; background: #e9e7ff; cursor: pointer; }
+.mh-card-actions button { padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(148, 163, 184, 0.24); background: #ffffff; cursor: pointer; color: #0f172a; }

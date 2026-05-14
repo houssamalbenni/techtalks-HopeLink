@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import "./SupportNavbar.css";
 
-const navItems = [
+const defaultNavItems = [
   {
     label: "Support Home",
     path: "/support-home",
@@ -33,7 +33,7 @@ const navItems = [
   },
 ];
 
-export default function SupportNavbar() {
+export default function SupportNavbar({ navItems = defaultNavItems }) {
   return (
     <header className="support-nav">
       <div className="support-nav__brand">

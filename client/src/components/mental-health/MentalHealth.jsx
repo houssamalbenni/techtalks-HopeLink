@@ -3,12 +3,25 @@ import SupportNavbar from "../support-nav/SupportNavbar";
 import "./MentalHealth.css";
 import { useNavigate } from "react-router-dom";
 
+const mentalHealthNavItems = [
+  {
+    label: "Mental Health",
+    path: "/mental-health",
+    icon: (
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M12 2C8 2 4 5 4 9c0 5 8 11 8 11s8-6 8-11c0-4-4-7-8-7z" />
+        <circle cx="12" cy="9" r="2" />
+      </svg>
+    ),
+  },
+];
+
 export default function MentalHealth() {
   const navigate = useNavigate();
 
   return (
     <div className="mental-page">
-      <SupportNavbar />
+      <SupportNavbar navItems={mentalHealthNavItems} />
       <div className="mental-container">
         <main className="mental-main">
           <div className="mental-topbar">
