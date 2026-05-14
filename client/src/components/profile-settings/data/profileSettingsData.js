@@ -40,6 +40,7 @@ export const profileSummaryConfig = {
   profileActions: [
     { id: 'delete-profile', label: 'Delete', className: 'danger-lite' },
     { id: 'update-profile', label: 'Update', className: 'success-primary' },
+    { id: "logout", label: "Logout", className: "logout" },
   ],
 };
 
