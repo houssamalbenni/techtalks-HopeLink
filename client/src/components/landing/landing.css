@@ -21,9 +21,9 @@
 }
 
 body {
-  font-family: "Inter", sans-serif;
-  background-color: var(--brand-darker);
-  color: var(--brand-light);
+  font-family: "Sora", "DM Sans", sans-serif;
+  background: linear-gradient(135deg, #0f1423 0%, #1a2a4a 50%, #0f1423 100%);
+  color: #e8edf8;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -49,7 +49,35 @@ button {
 .landing-page {
   width: 100%;
   position: relative;
-  background-color: #1e293b;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: 2rem;
+}
+
+.landing-page::before {
+  content: "";
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(79, 142, 247, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  top: -100px;
+  left: -100px;
+  animation: glow 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.landing-page::after {
+  content: "";
+  position: fixed;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(124, 92, 191, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  bottom: -50px;
+  right: -50px;
+  animation: glow 10s ease-in-out infinite reverse;
+  pointer-events: none;
 }
 
 .container {
@@ -59,34 +87,18 @@ button {
 }
 
 .background-map {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  opacity: 0.2;
-  pointer-events: none;
-  background-image: url("https://storage.googleapis.com/uxpilot-auth.appspot.com/default-placeholder.png");
-  background-size: cover;
-  background-position: center;
+  display: none;
 }
 
 .grid-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.1;
-  background-image:
-    linear-gradient(to right, #1e293b 1px, transparent 1px),
-    linear-gradient(to bottom, #1e293b 1px, transparent 1px);
-  background-size: 40px 40px;
+  display: none;
 }
 
 .top-bar {
   position: relative;
-  top: 0;
-  left: 0;
-  right: 0;
   z-index: 50;
+  max-width: 1160px;
+  margin: 0 auto 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -102,11 +114,12 @@ button {
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: var(--brand-blue);
+  background: linear-gradient(135deg, rgba(79, 142, 247, 0.15) 0%, rgba(124, 92, 191, 0.1) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px rgb(59 130 246 / 50%);
+  border: 1px solid rgba(79, 142, 247, 0.3);
+  box-shadow: 0 4px 12px rgba(79, 142, 247, 0.2);
 }
 
 .logo-box i {
@@ -130,10 +143,10 @@ button {
 .lang-btn,
 .role-card,
 .privacy-card {
-  background: rgb(30 41 59 / 70%);
+  background: linear-gradient(135deg, #141928 0%, #1a2639 100%);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  border: 1px solid rgb(255 255 255 / 5%);
+  border: 1px solid rgba(79, 142, 247, 0.2);
 }
 
 .lang-btn {
@@ -142,14 +155,15 @@ button {
   gap: 8px;
   padding: 10px 16px;
   border-radius: 999px;
-  color: var(--brand-light);
+  color: #c5cee0;
   font-size: 14px;
   font-weight: 500;
   transition: 0.3s;
 }
 
 .lang-btn:hover {
-  background: var(--brand-surface);
+  border-color: rgba(79, 142, 247, 0.45);
+  box-shadow: 0 4px 16px rgba(79, 142, 247, 0.12);
 }
 
 .lang-btn .fa-globe {
@@ -167,16 +181,16 @@ button {
   gap: 8px;
   padding: 10px 20px;
   border-radius: 999px;
-  background: var(--alert-red);
-  color: var(--white);
+  background: linear-gradient(90deg, #4f8ef7, #7c5cbf);
+  color: #ffffff;
   font-size: 14px;
   font-weight: 700;
-  box-shadow: 0 0 15px rgb(220 38 38 / 50%);
+  box-shadow: 0 0 20px rgba(79, 142, 247, 0.35);
   transition: 0.3s;
 }
 
 .emergency-btn:hover {
-  background: #b91c1c;
+  filter: brightness(1.05);
 }
 
 .mobile-only {
@@ -189,13 +203,23 @@ button {
   display: flex;
   flex-direction: column;
   gap: 48px;
-  margin-top: 64px;
+  margin-top: 0;
+  max-width: 1160px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero-section {
-  max-width: 768px;
+  max-width: 100%;
   margin: 0 auto;
-  text-align: center;
+  text-align: left;
+  padding: 2rem 2.2rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #141928 0%, #1a2639 100%);
+  border: 1px solid rgba(79, 142, 247, 0.2);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.8),
+    0 0 40px rgba(79, 142, 247, 0.12);
 }
 
 .hero-badge {
@@ -204,9 +228,9 @@ button {
   gap: 8px;
   padding: 8px 16px;
   border-radius: 999px;
-  background: rgb(30 41 59 / 70%);
-  border: 1px solid rgb(59 130 246 / 30%);
-  color: var(--brand-blue);
+  background: linear-gradient(135deg, rgba(79, 142, 247, 0.15) 0%, rgba(124, 92, 191, 0.1) 100%);
+  border: 1px solid rgba(79, 142, 247, 0.3);
+  color: #4f8ef7;
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 16px;
@@ -221,15 +245,15 @@ button {
 
 .hero-section h1 {
   margin: 0;
-  font-size: 60px;
+  font-size: 56px;
   line-height: 1.1;
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: var(--white);
+  color: #e8edf8;
 }
 
 .gradient-text {
-  background: linear-gradient(to right, var(--brand-blue), var(--brand-accent));
+  background: linear-gradient(135deg, #4f8ef7 0%, #7c5cbf 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -238,10 +262,10 @@ button {
 
 .hero-section p {
   font-size: 18px;
-  color: var(--gray-400);
+  color: #8892aa;
   line-height: 1.7;
   max-width: 720px;
-  margin: 24px auto 0;
+  margin: 24px 0 0;
 }
 
 .roles-section {
@@ -255,14 +279,14 @@ button {
 
 .section-header h2 {
   font-size: 32px;
-  color: var(--white);
+  color: #e8edf8;
   margin: 0;
   font-weight: 600;
 }
 
 .section-header p {
   font-size: 14px;
-  color: var(--gray-500);
+  color: #5a6484;
   margin-top: 8px;
 }
 
@@ -282,10 +306,16 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: linear-gradient(135deg, #141928 0%, #1a2639 100%) !important;
+  border: 1px solid rgba(79, 142, 247, 0.2);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.55),
+    0 0 20px rgba(79, 142, 247, 0.08);
 }
 
 .role-card:hover {
-  box-shadow: 0 10px 30px -5px rgb(0 0 0 / 30%);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 40px rgba(79, 142, 247, 0.18);
+  transform: translateY(-4px);
 }
 
 .card-top-line {
@@ -299,7 +329,7 @@ button {
 }
 
 .refugee-card:hover {
-  border-color: rgb(59 130 246 / 50%);
+  border-color: rgba(79, 142, 247, 0.5);
 }
 
 .refugee-card .card-top-line {
@@ -316,7 +346,7 @@ button {
 }
 
 .ngo-card:hover {
-  border-color: rgb(139 92 246 / 50%);
+  border-color: rgba(124, 92, 191, 0.5);
 }
 
 .ngo-card .card-top-line {
@@ -333,7 +363,7 @@ button {
 }
 
 .donor-card:hover {
-  border-color: rgb(16 185 129 / 50%);
+  border-color: rgba(79, 142, 247, 0.35);
 }
 
 .donor-card .card-top-line {
@@ -353,50 +383,53 @@ button {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: var(--brand-dark);
+  background: linear-gradient(135deg, rgba(79, 142, 247, 0.15) 0%, rgba(124, 92, 191, 0.1) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 24px;
-  box-shadow: inset 0 0 0 1px var(--gray-800);
+  box-shadow: 0 4px 12px rgba(79, 142, 247, 0.2), inset 0 0 0 1px rgba(79, 142, 247, 0.2);
   transition: 0.3s;
 }
 
 .icon-circle i {
   font-size: 30px;
-  color: var(--brand-blue);
+  color: #4f8ef7;
 }
 
 .accent-circle i {
-  color: var(--brand-accent);
+  color: #7c5cbf;
 }
 
 .green-circle i {
-  color: var(--emerald);
+  color: #4f8ef7;
 }
 
 .refugee-card:hover .icon-circle {
-  background: rgb(59 130 246 / 10%);
+  background: rgba(79, 142, 247, 0.15);
+  box-shadow: 0 0 32px rgba(79, 142, 247, 0.25), inset 0 0 0 1px rgba(79, 142, 247, 0.4);
 }
 
 .ngo-card:hover .icon-circle {
-  background: rgb(139 92 246 / 10%);
+  background: rgba(124, 92, 191, 0.15);
+  box-shadow: 0 0 32px rgba(124, 92, 191, 0.25), inset 0 0 0 1px rgba(124, 92, 191, 0.4);
 }
 
 .donor-card:hover .icon-circle {
-  background: rgb(16 185 129 / 10%);
+  background: rgba(79, 142, 247, 0.15);
+  box-shadow: 0 0 32px rgba(79, 142, 247, 0.2), inset 0 0 0 1px rgba(79, 142, 247, 0.35);
 }
 
 .role-card h3 {
   font-size: 24px;
   font-weight: 700;
-  color: var(--white);
+  color: #e8edf8;
   margin: 0 0 12px;
 }
 
 .role-card p {
   font-size: 14px;
-  color: var(--gray-400);
+  color: #5a6484;
   margin: 0 0 32px;
   line-height: 1.7;
   flex-grow: 1;
@@ -424,41 +457,41 @@ button {
 }
 
 .blue-btn {
-  background: var(--brand-blue);
-  box-shadow: 0 0 20px rgb(59 130 246 / 50%);
+  background: linear-gradient(90deg, #4f8ef7, #7c5cbf);
+  box-shadow: 0 0 20px rgba(79, 142, 247, 0.35);
 }
 
 .blue-btn:hover {
-  background: #2563eb;
+  filter: brightness(1.05);
 }
 
 .accent-btn {
-  background: var(--brand-accent);
-  box-shadow: 0 0 15px rgb(139 92 246 / 40%);
+  background: linear-gradient(90deg, #7c5cbf, #4f8ef7);
+  box-shadow: 0 0 15px rgba(124, 92, 191, 0.35);
 }
 
 .accent-btn:hover {
-  background: #7c3aed;
+  filter: brightness(1.05);
 }
 
 .green-btn {
-  background: #059669;
-  box-shadow: 0 0 15px rgb(16 185 129 / 40%);
+  background: linear-gradient(90deg, #4f8ef7, #4f8ef7);
+  box-shadow: 0 0 15px rgba(79, 142, 247, 0.3);
 }
 
 .green-btn:hover {
-  background: #10b981;
+  filter: brightness(1.05);
 }
 
 .secondary-btn {
   background: transparent;
-  border: 1px solid var(--gray-700);
-  color: var(--gray-300);
+  border: 1px solid #2a3352;
+  color: #8b93ad;
   font-weight: 500;
 }
 
 .secondary-btn:hover {
-  border-color: var(--gray-500);
+  border-color: rgba(79, 142, 247, 0.4);
 }
 
 .privacy-section {
@@ -473,15 +506,16 @@ button {
   display: flex;
   align-items: center;
   gap: 24px;
-  border-left: 4px solid var(--brand-blue);
+  border-left: 4px solid #4f8ef7;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
 }
 
 .privacy-icon {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: var(--brand-dark);
-  border: 1px solid var(--gray-700);
+  background: linear-gradient(135deg, rgba(79, 142, 247, 0.15) 0%, rgba(124, 92, 191, 0.1) 100%);
+  border: 1px solid rgba(79, 142, 247, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -490,7 +524,7 @@ button {
 
 .privacy-icon i {
   font-size: 24px;
-  color: var(--gray-300);
+  color: #4f8ef7;
 }
 
 .privacy-text {
@@ -501,13 +535,13 @@ button {
   margin: 0 0 8px;
   font-size: 20px;
   font-weight: 600;
-  color: var(--white);
+  color: #e8edf8;
 }
 
 .privacy-text p {
   margin: 0;
   font-size: 14px;
-  color: var(--gray-400);
+  color: #5a6484;
   line-height: 1.7;
 }
 
@@ -516,13 +550,13 @@ button {
 }
 
 .privacy-link-wrap a {
-  color: var(--brand-blue);
+  color: #4f8ef7;
   font-size: 14px;
   font-weight: 500;
 }
 
 .privacy-link-wrap a:hover {
-  color: #60a5fa;
+  color: #7c5cbf;
 }
 
 .footer-section {
@@ -540,17 +574,17 @@ button {
 }
 
 .footer-links a {
-  color: var(--gray-500);
+  color: #5a6484;
   transition: 0.3s;
 }
 
 .footer-links a:hover {
-  color: var(--white);
+  color: #e8edf8;
 }
 
 .copyright {
   font-size: 12px;
-  color: var(--gray-600);
+  color: #4a5578;
   margin-top: 24px;
 }
 

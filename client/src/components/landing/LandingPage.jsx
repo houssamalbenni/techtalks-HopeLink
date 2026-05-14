@@ -6,7 +6,7 @@ import HeroSection from './HeroSection';
 import RolesSection from './RolesSection';
 import PrivacySection from './PrivacySection';
 import FooterSection from './FooterSection';
-import './Landing.css';
+import './landing.css';
 function LandingPage() {
   const navigate = useNavigate();
 
