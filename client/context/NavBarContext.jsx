@@ -14,6 +14,10 @@ const NavBarProvider = ({ children }) => {
     { label: "Support Home", path: "/support-home" },
     { label: "Interactive Exercises", path: "/interactive-exercises" },
   ];
+  const donorNavItems = [
+    { label: "donor", path: "/donor/donate" },
+    { label: "Family Reunification", path: "/family-reunification" },
+  ];
   const adminNavItems = [
     { label: "Dashboard", path: "/admin/dashboard" },
     { label: "Announcement", path: "/admin/announcement" },
@@ -33,6 +37,7 @@ const NavBarProvider = ({ children }) => {
     if (localStorage.getItem("role")) {
       const role = localStorage.getItem("role");
       if (role === "refugee") setNavItems(refugeNavItems);
+      else if (role === "donor") setNavItems(donorNavItems);
       else if (role === "admin") setNavItems(adminNavItems);
       else if (role === "doctor") setNavItems(doctorNavItems);
       else if (role === "ngo") setNavItems(ngoNavItems);
