@@ -34,7 +34,7 @@ export const Navbar = ({ navItems = [], photo }) => {
 
           <div className="navbar-logo-group">
             <img
-              src="../../../assets/logo.jpeg"
+              src="/assets/logo-hero.png"
               alt="HopeLink Logo"
               className="navbar-logo"
               referrerPolicy="no-referrer"

@@ -196,13 +196,13 @@ const CaseDetail = () => {
                 style={{ borderRadius: "10px" }}
               />
             ) : (
-              <img
-                src="../../assets/logo.jpeg"
-                alt="logo"
-                width={80}
-                height={80}
-                style={{ borderRadius: "10px" }}
-              />
+                      <img
+                        src="/assets/logo-hero.png"
+                        alt="logo"
+                        width={80}
+                        height={80}
+                        style={{ borderRadius: "10px" }}
+                      />
             )}
           </div>
         </div>
