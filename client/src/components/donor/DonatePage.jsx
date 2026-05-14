@@ -1,6 +1,6 @@
 import { useState } from "react";
-import api from "../../utils/axios";
-import { ApiConst } from "../../utils/APIConst";
+import api from "../../../utils/axios";
+import { ApiConst } from "../../../utils/APIConst";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
