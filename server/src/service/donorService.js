@@ -75,6 +75,88 @@ class DonorService {
       throw error;
     }
   }
+
+  static async getDonationSummary() {
+    try {
+      const [totals, donors, monthlyBreakdown] = await Promise.all([
+        Donation.aggregate([
+          {
+            $group: {
+              _id: null,
+              totalAmount: { $sum: "$amount" },
+              totalDonations: { $sum: 1 },
+            },
+          },
+        ]),
+        User.aggregate([
+          {
+            $match: {
+              role: "donor",
+              donations: { $exists: true, $ne: [] },
+            },
+          },
+          {
+            $lookup: {
+              from: "donations",
+              localField: "donations",
+              foreignField: "_id",
+              as: "donationDocs",
+            },
+          },
+          {
+            $addFields: {
+              donatedAmount: { $sum: "$donationDocs.amount" },
+              donationCount: { $size: "$donationDocs" },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              full_name: 1,
+              donatedAmount: 1,
+              donationCount: 1,
+            },
+          },
+          {
+            $sort: {
+              donatedAmount: -1,
+              full_name: 1,
+            },
+          },
+        ]),
+        Donation.aggregate([
+          {
+            $group: {
+              _id: {
+                year: { $year: "$createdAt" },
+                month: { $month: "$createdAt" },
+              },
+              totalAmount: { $sum: "$amount" },
+            },
+          },
+          {
+            $sort: {
+              "_id.year": 1,
+              "_id.month": 1,
+            },
+          },
+        ]),
+      ]);
+
+      return {
+        totalAmount: totals[0]?.totalAmount || 0,
+        totalDonations: totals[0]?.totalDonations || 0,
+        totalDonors: donors.length,
+        donors,
+        monthlyBreakdown: monthlyBreakdown.map((entry) => ({
+          label: `${entry._id.year}-${String(entry._id.month).padStart(2, "0")}`,
+          totalAmount: entry.totalAmount,
+        })),
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = DonorService;

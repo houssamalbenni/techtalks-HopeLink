@@ -26,4 +26,12 @@ exports.getTotalDonationsAmmount = asyncHandler(async (req, res) => {
     });
 });
 
+exports.getDonationSummary = asyncHandler(async (req, res) => {
+    const summary = await DonorService.getDonationSummary();
+    return res.status(200).json({
+        success: true,
+        summary,
+    });
+});
+
 

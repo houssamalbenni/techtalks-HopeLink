@@ -9,6 +9,10 @@ router.get(
   "/total",
   DonorController.getTotalDonationsAmmount,
 );
+router.get(
+  "/summary",
+  DonorController.getDonationSummary,
+);
 router.use(roleVerification(["donor"])); // Apply role verification middleware to all routes, ensure only donors can access these routes
 router.post("/", DonorController.createDonation);
 router.get("/", DonorController.getAllUserDonations);

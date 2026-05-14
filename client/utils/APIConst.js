@@ -25,6 +25,7 @@ export const ApiConst = {
   DONATE: "/donor",
   GET_DONATIONS: (id) => `/donor/${id}`,
   GET_TOTAL_DONATIONS: "/donor/total",
+  GET_DONATION_SUMMARY: "/donor/summary",
 
   CREATE_REQUEST: "/requests",
 
