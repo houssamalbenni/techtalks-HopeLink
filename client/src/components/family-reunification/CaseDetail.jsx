@@ -197,7 +197,7 @@ const CaseDetail = () => {
               />
             ) : (
                       <img
-                        src="/assets/logo-hero.png"
+                        src="/assets/logo.jpeg"
                         alt="logo"
                         width={80}
                         height={80}
