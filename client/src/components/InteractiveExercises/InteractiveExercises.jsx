@@ -3,7 +3,6 @@ import styles from "./MetalHeath.module.css";
 import BreathTag from "./BreathTag";
 import PlayerBar from "./PlayerBar";
 import SoundCard from "./SoundCard";
-import SupportNavbar from "../support-nav/SupportNavbar";
 
 const defaultNavItems = [];
 
@@ -300,7 +299,6 @@ export default function InteractiveExercises({
 
   return (
     <div className={styles.page}>
-      <SupportNavbar />
       <audio
         ref={audioRef}
         className={styles.visuallyHidden}
