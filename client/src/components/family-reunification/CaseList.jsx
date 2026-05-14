@@ -6,7 +6,7 @@ import { useFamilyReunification } from "../../../context/FamilyReunificationCont
 import { uploadLogo } from "../../../utils/supabaseClient";
 import Skeleton from "./Skeleton";
 
-const CaseList = () => {
+const CaseList = ({isMobileOpen=false,onMobileClose}) => {
   const { cases, selectedId, setSelectedId, fetchCases, loading } =
     useFamilyReunification();
   const [activeTab, setActiveTab] = useState("inProgress");
@@ -123,7 +123,7 @@ const CaseList = () => {
   });
 
   return (
-    <div className="fr-left-panel">
+    <div className={`fr-left-panel ${isMobileOpen ? "fr-left-open" : ""}`}>
       <div className="case">
         <p className="fr-panel-title">Privacy-First Search</p>
         <button className="fr-new-case-btn" type="button" onClick={openNewCase}>
@@ -288,7 +288,12 @@ const CaseList = () => {
             <div
               key={c._id}
               className={`fr-case-card ${selectedId === c._id ? "selected" : ""}`}
-              onClick={() => setSelectedId(c._id)}
+              onClick={() => {
+                setSelectedId(c._id);
+                if (onMobileClose) {
+                  onMobileClose();
+                }
+              }}
             >
               <div className="fr-case-card-header">
                 <p className="fr-case-id">

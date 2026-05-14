@@ -12,6 +12,7 @@ const LocationList = ({ selectedId, onSelect, requests = [] }) => {
   const [sortBy, setSortBy] = useState("distance");
   const [activeFilter, setActiveFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [isExpanded, setIsExpanded] = useState(true);
   const locations = requests.map((entry) => {
     const service = entry;
     const serviceStatus = buildServiceStatus(service);
@@ -57,7 +58,7 @@ const LocationList = ({ selectedId, onSelect, requests = [] }) => {
         });
 
   return (
-    <div className="map-left-panel">
+    <div className={`map-left-panel ${isExpanded ? "expanded" : "collapsed"}`}>
       <div className="map-left-panel-header">
         <div className="map-search-wrap">
           <div className="map-search-box">
@@ -80,6 +81,15 @@ const LocationList = ({ selectedId, onSelect, requests = [] }) => {
         </div>
         <div className="map-results-header">
           <span>Showing {filteredLocations.length} services</span>
+          <button
+            type="button"
+            className="map-mobile-toggle"
+            onClick={() => setIsExpanded((prev) => !prev)}
+            aria-expanded={isExpanded}
+            aria-controls="map-left-panel-list"
+          >
+            {isExpanded ? "Hide list" : "Show list"}
+          </button>
           <div className="map-sort-dropdown">
             {sortOpen && (
               <div className="map-sort-menu">
@@ -107,7 +117,7 @@ const LocationList = ({ selectedId, onSelect, requests = [] }) => {
         </div>
       </div>
 
-      <div className="map-left-panel-list">
+      <div className="map-left-panel-list" id="map-left-panel-list">
         {filteredLocations.length === 0 ? (
           <div style={{ padding: "20px", textAlign: "center", color: "#666" }}>
             <p>No matching services found</p>

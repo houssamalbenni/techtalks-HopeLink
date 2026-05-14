@@ -429,6 +429,19 @@
   color: #6b7db3;
 }
 
+.map-mobile-toggle {
+  display: none;
+  background: #1e2538;
+  border: 1px solid #2a3050;
+  color: #a0aec0;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: "Inter", sans-serif;
+}
+
 .map-sort-dropdown {
   position: relative;
 }
@@ -856,9 +869,7 @@ html[dir="rtl"] .map-results-header,
   flex-direction: row-reverse;
 }
 
-
-
-.loading-container{
+.loading-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -870,37 +881,72 @@ html[dir="rtl"] .map-results-header,
   gap: 6px;
 }
 
-.loading-container span{
+.loading-container span {
   width: 3px;
   height: 30px;
   background-color: #1d4ed8;
   animation: scaling 0.9s infinite;
 }
 
-.loading-container span:nth-child(2){
+.loading-container span:nth-child(2) {
   animation-delay: -0.8s;
 }
 
-.loading-container span:nth-child(3){
+.loading-container span:nth-child(3) {
   animation-delay: -0.7s;
 }
 
-.loading-container span:nth-child(4){
+.loading-container span:nth-child(4) {
   animation-delay: -0.6s;
 }
 
-.loading-container span:nth-child(5){
+.loading-container span:nth-child(5) {
   animation-delay: -0.5s;
 }
-.loading-container span:nth-child(6){
+.loading-container span:nth-child(6) {
   animation-delay: -0.4s;
 }
 
 @keyframes scaling {
-  0% ,40%,100% {
+  0%,
+  40%,
+  100% {
     transform: scaleY(0.05);
   }
   20% {
     transform: scaleY(1);
+  }
+}
+
+@media (max-width: 900px) {
+  .map-content {
+    flex-direction: column;
+  }
+
+  .map-left-panel {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #1e2a3a;
+  }
+
+  .map-mobile-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .map-left-panel-list {
+    max-height: 45vh;
+    overflow-y: auto;
+    transition: max-height 0.25s ease;
+  }
+
+  .map-left-panel.collapsed .map-left-panel-list {
+    max-height: 210px;
+    overflow: hidden;
+  }
+
+  .map-area {
+    min-height: 45vh;
   }
 }

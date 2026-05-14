@@ -64,4 +64,5 @@ export const clearAuthSession = () => {
   }
 
   Object.values(AUTH_KEYS).forEach((key) => window.localStorage.removeItem(key));
+  localStorage.clear();
 };

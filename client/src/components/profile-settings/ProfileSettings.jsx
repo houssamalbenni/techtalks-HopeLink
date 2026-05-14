@@ -7,6 +7,7 @@ import ProfileSummaryCard from "./ProfileSummaryCard";
 import FieldGrid from "./FieldGrid";
 import ReadonlyField from "./ReadonlyField";
 import SelectField from "./SelectField";
+import ProfileSettingsSkeleton from "./ProfileSettingsSkeleton";
 import {
   sidebarConfig,
   mainNavItems,
@@ -21,6 +22,7 @@ import {
   getUserById,
   updateCurrentUser,
 } from "../../../services/userService";
+import { useNavigate } from "react-router-dom";
 import { clearAuthSession, getStoredUserId } from "../../../utils/authStorage";
 import { getSupabaseClient } from "../../../utils/supabaseClient";
 import { useNavBar } from "../../../context/NavBarContext";
@@ -76,6 +78,7 @@ const formatRoleLabel = (role) => {
 const ALWAYS_VISIBLE_FIELDS = new Set(["password"]);
 
 function ProfileSettings() {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -328,6 +331,10 @@ function ProfileSettings() {
         setSaving(false);
       }
     }
+    if (action.id === "logout") {
+      clearAuthSession();
+      navigate("/");
+    }
   };
 
   return (
@@ -344,84 +351,97 @@ function ProfileSettings() {
 
             <section className="ps-sections">
               <section className="ps-card">
-                <ProfileSummaryCard
-                  profile={profileSummary}
-                  onAction={handleProfileAction}
-                  onAvatarSelect={handleAvatarSelect}
-                  avatarUploading={avatarUploading}
-                />
-
-                {actionMessage ? (
-                  <p className="ps-inline-note">{actionMessage}</p>
-                ) : null}
-                {error ? <p className="ps-inline-error">{error}</p> : null}
-                {avatarUploading ? (
-                  <p className="ps-inline-note">Uploading avatar...</p>
-                ) : null}
-
-                {visibleProfileSections.map((section) => (
-                  <div key={section.id}>
-                    <div className="ps-divider" />
-                    {section.action ? (
-                      <div className="ps-section-head">
-                        <h3>{section.title}</h3>
-                        <button type="button" onClick={toggleEditMode}>
-                          {isEditing ? "Cancel" : section.action.label}
-                          <i
-                            className={`fa-solid ${section.action.icon}`}
-                            aria-hidden="true"
-                          />
-                        </button>
-                      </div>
-                    ) : (
-                      <h3 className="ps-block-title">{section.title}</h3>
-                    )}
-                    <FieldGrid
-                      fields={section.fields}
-                      renderField={(field) => (
-                        <ReadonlyField
-                          key={field.id}
-                          id={field.id}
-                          label={field.label}
-                          value={
-                            isEditing
-                              ? formValues[field.id]
-                              : fieldValueMap[field.id]
-                          }
-                          type={field.type}
-                          readOnly={!isEditing}
-                          onChange={(event) =>
-                            handleFieldChange(field.id, event.target.value)
-                          }
-                        />
-                      )}
+                {loading ? (
+                  <ProfileSettingsSkeleton />
+                ) : (
+                  <>
+                    <ProfileSummaryCard
+                      profile={profileSummary}
+                      onAction={handleProfileAction}
+                      onAvatarSelect={handleAvatarSelect}
+                      avatarUploading={avatarUploading}
                     />
-                  </div>
-                ))}
+
+                    {actionMessage ? (
+                      <p className="ps-inline-note">{actionMessage}</p>
+                    ) : null}
+                    {error ? <p className="ps-inline-error">{error}</p> : null}
+                    {avatarUploading ? (
+                      <p className="ps-inline-note">Uploading avatar...</p>
+                    ) : null}
+
+                    {visibleProfileSections.map((section) => (
+                      <div key={section.id}>
+                        <div className="ps-divider" />
+                        {section.action ? (
+                          <div className="ps-section-head">
+                            <h3>{section.title}</h3>
+                            <button type="button" onClick={toggleEditMode}>
+                              {isEditing ? "Cancel" : section.action.label}
+                              <i
+                                className={`fa-solid ${section.action.icon}`}
+                                aria-hidden="true"
+                              />
+                            </button>
+                          </div>
+                        ) : (
+                          <h3 className="ps-block-title">{section.title}</h3>
+                        )}
+                        <FieldGrid
+                          fields={section.fields}
+                          renderField={(field) => (
+                            <ReadonlyField
+                              key={field.id}
+                              id={field.id}
+                              label={field.label}
+                              value={
+                                isEditing
+                                  ? formValues[field.id]
+                                  : fieldValueMap[field.id]
+                              }
+                              type={field.type}
+                              readOnly={!isEditing}
+                              onChange={(event) =>
+                                handleFieldChange(field.id, event.target.value)
+                              }
+                            />
+                          )}
+                        />
+                      </div>
+                    ))}
+                  </>
+                )}
               </section>
 
               <section className="ps-card">
                 <h3 className="ps-block-title">{rolePreferenceConfig.title}</h3>
-                <div className="ps-split-grid">
-                  {rolePreferenceConfig.fields.map((field) => (
-                    <SelectField
-                      key={field.id}
-                      id={field.id}
-                      label={field.label}
-                      options={
-                        field.stateKey === "activeRole"
-                          ? roleOptions
-                          : field.options
-                      }
-                      value={preferences[field.stateKey]}
-                      hint={field.hint}
-                      onChange={(value) =>
-                        handlePreferenceChange(field.stateKey, value)
-                      }
-                      disabled={field.stateKey === "activeRole"}
-                    />
-                  ))}
-                </div>
+                {loading ? (
+                  <div className="ps-skeleton-grid">
+                    <div className="ps-skeleton-block" />
+                    <div className="ps-skeleton-block" />
+                  </div>
+                ) : (
+                  <div className="ps-split-grid">
+                    {rolePreferenceConfig.fields.map((field) => (
+                      <SelectField
+                        key={field.id}
+                        id={field.id}
+                        label={field.label}
+                        options={
+                          field.stateKey === "activeRole"
+                            ? roleOptions
+                            : field.options
+                        }
+                        value={preferences[field.stateKey]}
+                        hint={field.hint}
+                        onChange={(value) =>
+                          handlePreferenceChange(field.stateKey, value)
+                        }
+                        disabled={field.stateKey === "activeRole"}
+                      />
+                    ))}
+                  </div>
+                )}
                 {loading ? (
                   <p className="ps-inline-note">Loading preferences...</p>
                 ) : null}
