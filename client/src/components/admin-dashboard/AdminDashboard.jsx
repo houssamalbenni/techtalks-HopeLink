@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import ActivityList from "./ActivityList";
 import AdminHeader from "./AdminHeader";
-import AdminSidebar from "./AdminSidebar";
 import ChartsSection from "./ChartsSection";
 import EditModal from "./EditModal";
 import ErrorBanner from "./ErrorBanner";
@@ -136,53 +135,8 @@ export default function AdminDashboard() {
     setError(null);
     fetchServices();
   };
-  const settingsOptions = [
-    {
-      label: "All Inbox",
-      src: "../../assets/inbox.png",
-    },
-    {
-      label: "Shelter Updates",
-      src: "../../assets/shelters.png",
-    },
-    {
-      label: "Medicine Updates",
-      src: "../../assets/hospital.png",
-    },
-    {
-      label: "Emergency Alerts",
-      src: "../../assets/critical.png",
-    },
-    {
-      label: "System",
-      src: "../../assets/system.png",
-    },
-    {
-      label: "Request Updates",
-      src: "../../assets/request.png",
-    },
-  ];
-
-  const [activeOption, setActiveOption] = useState("All Inbox");
   return (
     <div className="ad-root">
-      {/* <AdminSidebar sidebarOpen={sidebarOpen} /> */}
-      <aside className="left-sidebar desktop-only">
-        <section className="sidebar-group">
-          <h4 className="sidebar-title">NOTIFICATION SETTINGS</h4>
-          {settingsOptions.map((opt) => (
-            <AdminSidebar
-              key={opt.label}
-              label={opt.label}
-              src={opt.src}
-              count={opt.count}
-              active={activeOption === opt.label}
-              onClick={() => setActiveOption(opt.label)}
-            />
-          ))}
-        </section>
-      </aside>
-
       <div className="ad-content">
         <AdminHeader
           sidebarOpen={sidebarOpen}
