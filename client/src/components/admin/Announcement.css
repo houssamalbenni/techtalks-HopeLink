@@ -1,18 +1,16 @@
 :root {
   --bg-main: #0f1423;
-  --bg-card: rgba(20, 25, 40, 0.92);
+  --bg-card: #1b2540;
   --text-main: #e8edf8;
-  --text-muted: #8892aa;
+  --text-muted: #a9b6d3;
   --border-color: rgba(79, 142, 247, 0.18);
   --primary-color: #4f8ef7;
   --primary-hover: #5a5fe0;
   --error-color: #ef4444;
   --success-color: #10b981;
   --font-sans: "Sora", "DM Sans", sans-serif;
-  --panel-bg:
-    linear-gradient(135deg, rgba(20, 25, 40, 0.96) 0%, rgba(26, 38, 57, 0.94) 100%);
-  --field-bg:
-    linear-gradient(135deg, rgba(28, 36, 56, 0.6) 0%, rgba(42, 51, 82, 0.4) 100%);
+  --panel-bg: linear-gradient(135deg, #1a243d 0%, #202d4a 100%);
+  --field-bg: linear-gradient(135deg, rgba(33, 45, 73, 0.96) 0%, rgba(48, 62, 95, 0.94) 100%);
 
   /* Priority Colors */
   --priority-critical: rgba(239, 68, 68, 0.14);
@@ -329,7 +327,7 @@ body {
   display: block;
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-muted);
+  color: #b8c4df;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 8px;
@@ -341,7 +339,7 @@ body {
   border-radius: 8px;
   border: 1px solid var(--border-color);
   background: var(--field-bg);
-  color: #c5cee0;
+  color: #edf3ff;
   font-size: 15px;
   box-sizing: border-box;
   transition:
@@ -353,7 +351,12 @@ body {
 }
 
 .input-base::placeholder {
-  color: #52607f;
+  color: #b4c0da;
+}
+
+.input-base option {
+  color: #edf3ff;
+  background: #24304c;
 }
 
 .input-base:focus {
@@ -362,7 +365,7 @@ body {
   box-shadow:
     0 0 0 3px rgba(79, 142, 247, 0.12),
     0 8px 24px rgba(79, 142, 247, 0.12);
-  background: linear-gradient(135deg, rgba(28, 36, 56, 0.8) 0%, rgba(42, 51, 82, 0.6) 100%);
+  background: linear-gradient(135deg, rgba(38, 52, 84, 0.98) 0%, rgba(53, 69, 106, 0.96) 100%);
 }
 
 .textarea-field {
