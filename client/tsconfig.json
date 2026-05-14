@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "context/FamilyReunificationContext.jsx"],
+  "include": ["src", "context/FamilyReunificationContext.jsx", "aaa/components/refugee-dashboard"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
