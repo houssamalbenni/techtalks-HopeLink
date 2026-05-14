@@ -14,12 +14,6 @@ function PrivacySection() {
             never shared publicly.
           </p>
         </div>
-
-        <div className="privacy-link-wrap">
-          <a href="#">
-            Read Policy <i className="fa-solid fa-arrow-right" aria-hidden="true" />
-          </a>
-        </div>
       </div>
     </section>
   );
