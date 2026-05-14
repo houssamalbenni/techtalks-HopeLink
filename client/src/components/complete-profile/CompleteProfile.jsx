@@ -59,7 +59,7 @@ const CompleteProfile = ({
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("userId", res.data.user._id);
         localStorage.setItem("role", res.data.user.role);
-        setPhoto(res.data.user.profile_url || null);
+        localStorage.setItem("user_photo", res.data.user.profile_url || "");
         console.log(
           "Token stored in localStorage:",
           localStorage.getItem("token"),
