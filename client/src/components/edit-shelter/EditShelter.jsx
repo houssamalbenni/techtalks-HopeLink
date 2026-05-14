@@ -15,6 +15,10 @@ import { getSupabaseClient } from "../../../utils/supabaseClient";
 import "../hospitals/Hospitals.css";
 import "../edit-hospital/EditHospital.css";
 
+const EDIT_SHELTER_SIDEBAR_LINKS = SIDEBAR_LINKS.filter(
+  ({ label }) => label !== "Add Shelter"
+);
+
 const EDIT_BREADCRUMBS = [
   { label: "Admin Dashboard", href: "/dashboard" },
   { label: "Shelters", href: "/shelter" },
@@ -516,8 +520,8 @@ export default function EditShelter() {
     <div className="hospitals-page">
       <AdminSidebar
         logoText="CareAdmin"
-        navItems={SIDEBAR_LINKS}
-        activeItem="Add Shelter"
+        navItems={EDIT_SHELTER_SIDEBAR_LINKS}
+        activeItem="Edit Shelter"
         user={USER_PROFILE}
       />
 

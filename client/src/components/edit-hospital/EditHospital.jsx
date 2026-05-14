@@ -20,6 +20,10 @@ import { getSupabaseClient } from "../../../utils/supabaseClient";
 import "../hospitals/Hospitals.css";
 import "./EditHospital.css";
 
+const EDIT_HOSPITAL_SIDEBAR_LINKS = SIDEBAR_LINKS.filter(
+  ({ label }) => label !== "Add Shelter"
+);
+
 const BASIC_FIELDS = [
   {
     field: "hospitalName",
@@ -469,7 +473,12 @@ export default function EditHospital() {
 
   return (
     <div className="hospitals-page">
-      <AdminSidebar logoText="CareAdmin" navItems={SIDEBAR_LINKS} activeItem="Edit Hospital" user={USER_PROFILE} />
+      <AdminSidebar
+        logoText="CareAdmin"
+        navItems={EDIT_HOSPITAL_SIDEBAR_LINKS}
+        activeItem="Edit Hospital"
+        user={USER_PROFILE}
+      />
 
       <div className="hospitals-main-wrap">
         <TopHeader breadcrumbs={breadcrumbs} actions={headerActions} />
