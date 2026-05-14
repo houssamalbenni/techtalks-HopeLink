@@ -20,9 +20,13 @@
   box-sizing: border-box;
 }
 
+html, #root {
+  height: 100%;
+}
+
 body {
   font-family: "Sora", "DM Sans", sans-serif;
-  background: linear-gradient(135deg, #0f1423 0%, #1a2a4a 50%, #0f1423 100%);
+  background: linear-gradient(135deg, #0f1423 0%, #1a2a4a 50%, #0f1423 100%) !important;
   color: #e8edf8;
   margin: 0;
   padding: 0;
@@ -84,6 +88,7 @@ button {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  background: transparent !important;
 }
 
 .background-map {
