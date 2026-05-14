@@ -2,9 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import AdminSidebar from "../hospitals/AdminSidebar";
 import TopHeader from "../hospitals/TopHeader";
-import { SIDEBAR_LINKS, USER_PROFILE } from "../hospitals/hospitalsData";
 import FieldGroup from "../add-hospital/FieldGroup";
 import FormSection from "../add-hospital/FormSection";
 import MapComponent from "../add-hospital/MapComponent";
@@ -19,10 +17,6 @@ import { ApiConst } from "../../../utils/APIConst";
 import { getSupabaseClient } from "../../../utils/supabaseClient";
 import "../hospitals/Hospitals.css";
 import "./EditHospital.css";
-
-const EDIT_HOSPITAL_SIDEBAR_LINKS = SIDEBAR_LINKS.filter(
-  ({ label }) => label !== "Add Shelter"
-);
 
 const BASIC_FIELDS = [
   {
@@ -473,13 +467,6 @@ export default function EditHospital() {
 
   return (
     <div className="hospitals-page">
-      <AdminSidebar
-        logoText="CareAdmin"
-        navItems={EDIT_HOSPITAL_SIDEBAR_LINKS}
-        activeItem="Edit Hospital"
-        user={USER_PROFILE}
-      />
-
       <div className="hospitals-main-wrap">
         <TopHeader breadcrumbs={breadcrumbs} actions={headerActions} />
 
