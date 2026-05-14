@@ -5,7 +5,7 @@ import "./Announcement.css";
 export default function AnnouncementPage() {
   const [selectedUserId, setSelectedUserId] = useState("");
   return (
-    <div className="dashboard-container">
+    <div className="announcement-page dashboard-container">
       <div className="dashboard-layouts">
         <Announcement
           selectedUserId={selectedUserId}
