@@ -49,39 +49,6 @@ button {
 .landing-page {
   width: 100%;
   position: relative;
-  min-height: 100vh;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at top, rgb(59 130 246 / 20%), transparent 34%),
-    radial-gradient(circle at 75% 18%, rgb(139 92 246 / 18%), transparent 24%),
-    linear-gradient(180deg, #0b1020 0%, #111827 42%, #0f172a 100%);
-}
-
-.landing-page::before,
-.landing-page::after {
-  content: "";
-  position: fixed;
-  inset: auto;
-  pointer-events: none;
-  z-index: 0;
-  border-radius: 999px;
-  filter: blur(18px);
-}
-
-.landing-page::before {
-  width: 320px;
-  height: 320px;
-  left: -120px;
-  top: 160px;
-  background: rgb(59 130 246 / 18%);
-}
-
-.landing-page::after {
-  width: 420px;
-  height: 420px;
-  right: -140px;
-  bottom: -120px;
-  background: rgb(139 92 246 / 16%);
 }
 
 .container {
@@ -153,12 +120,66 @@ button {
   letter-spacing: -0.02em;
 }
 
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.lang-btn,
 .role-card,
 .privacy-card {
   background: rgb(30 41 59 / 70%);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border: 1px solid rgb(255 255 255 / 5%);
+}
+
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  color: var(--brand-light);
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.lang-btn:hover {
+  background: var(--brand-surface);
+}
+
+.lang-btn .fa-globe {
+  color: var(--brand-blue);
+}
+
+.chevron {
+  color: var(--gray-400);
+  font-size: 12px;
+}
+
+.emergency-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--alert-red);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 0 15px rgb(220 38 38 / 50%);
+  transition: 0.3s;
+}
+
+.emergency-btn:hover {
+  background: #b91c1c;
+}
+
+.mobile-only {
+  display: none;
 }
 
 .main-content {
@@ -168,10 +189,6 @@ button {
   flex-direction: column;
   gap: 48px;
   margin-top: 64px;
-}
-
-.footer-section {
-  display: none;
 }
 
 .hero-section {
