@@ -1,4 +1,3 @@
-import BackgroundLayers from './BackgroundLayers';
 import TopBar from './TopBar';
 import HeroSection from './HeroSection';
 import RolesSection from './RolesSection';
@@ -8,7 +7,6 @@ import './landing.css'
 function LandingPage() {
   return (
     <div className="landing-page">
-      <BackgroundLayers />
       <TopBar />
 
       <main className="main-content container">
