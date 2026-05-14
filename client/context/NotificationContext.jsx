@@ -2,12 +2,14 @@ import { createContext, useContext, useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import toast from "react-hot-toast";
 import { getUserNotifications } from "./../services/notificationsService";
+import { useNavBar } from "./NavBarContext";
 const NotificationContext = createContext();
 
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [chating, setChating] = useState([]);
+  const { role } = useNavBar();
   const [endSessionSignal, setEndSessionSignal] = useState(null);
   const SOCKET_URL =
     import.meta.env.VITE_BACKEND_API_URL || "http://localhost:5000";
@@ -73,7 +75,7 @@ export const NotificationProvider = ({ children }) => {
       socket.off("response", handleChating);
       socket.off("end_session", handleEndSession);
     };
-  }, []);
+  }, [role]);
 
   const registerToSocket = (userId, role) => {
     if (socketRef.current) {
