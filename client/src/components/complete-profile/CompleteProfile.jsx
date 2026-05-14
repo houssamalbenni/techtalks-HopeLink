@@ -11,6 +11,7 @@ import { registerUser } from "../../../services/userService";
 import toast from "react-hot-toast";
 import { useNotifications } from "../../../context/NotificationContext";
 import { useState } from "react";
+import { useNavBar } from "../../../context/NavBarContext";
 const CompleteProfile = ({
   onBack,
   selectedRole,
@@ -26,6 +27,7 @@ const CompleteProfile = ({
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { registerToSocket } = useNotifications();
+  const {setRole}= useNavBar();
   const handleSubmit = async () => {
     if (isSubmitting) return;
 
@@ -60,6 +62,7 @@ const CompleteProfile = ({
         localStorage.setItem("userId", res.data.user._id);
         localStorage.setItem("role", res.data.user.role);
         localStorage.setItem("user_photo", res.data.user.profile_url || "");
+        setRole(localStorage.getItem("role"));
         console.log(
           "Token stored in localStorage:",
           localStorage.getItem("token"),

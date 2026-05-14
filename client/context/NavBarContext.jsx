@@ -7,6 +7,9 @@ const NavBarProvider = ({ children }) => {
     { label: "Dashboard", path: "/refugee-dashboard" },
     { label: "Family Reunification", path: "/family-reunification" },
   ]);
+
+  const [role,setRole] = useState(localStorage.getItem("role") || null);
+
   const refugeNavItems = [
     { label: "Dashboard", path: "/refugee-dashboard" },
     { label: "Family Reunification", path: "/family-reunification" },
@@ -45,10 +48,10 @@ const NavBarProvider = ({ children }) => {
     if (localStorage.getItem("user_photo")) {
       setPhoto(localStorage.getItem("user_photo"));
     }
-  }, [localStorage.getItem("token"), localStorage.getItem("user_photo")]);
+  }, [role]);
 
   return (
-    <NavBarContext.Provider value={{ navitems, setNavItems, photo, setPhoto }}>
+    <NavBarContext.Provider value={{ navitems, setNavItems, photo, setPhoto, role, setRole }}>
       {children}
     </NavBarContext.Provider>
   );

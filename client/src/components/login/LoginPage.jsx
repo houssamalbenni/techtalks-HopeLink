@@ -16,7 +16,7 @@ function resolveTargetByRole(role) {
 }
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { setPhoto } = useNavBar();
+  const { setPhoto , setRole } = useNavBar();
 
   const location = useLocation();
   const [identifier, setIdentifier] = useState("");
@@ -55,8 +55,7 @@ export default function LoginPage() {
       localStorage.setItem("role", user.role);
       localStorage.setItem("user_photo", user.profile_url || "");
       console.log("user photo",user.profile_url);
-      // localStorage.setItem("user", JSON.stringify(user));
-
+      setRole(localStorage.getItem("role"));
       toast.success("Login successful.");
       const returnPath =
         location.state?.from || localStorage.getItem("returnTo");

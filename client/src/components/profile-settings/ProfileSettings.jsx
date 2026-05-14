@@ -91,7 +91,7 @@ function ProfileSettings() {
   const [isEditing, setIsEditing] = useState(false);
   const [formValues, setFormValues] = useState({});
   const [avatarUploading, setAvatarUploading] = useState(false);
-  const { setPhoto } = useNavBar();
+  const { setPhoto, setRole } = useNavBar();
   const handlePreferenceChange = (key, value) => {
     setPreferences((prev) => ({ ...prev, [key]: value }));
   };
@@ -333,6 +333,7 @@ function ProfileSettings() {
     }
     if (action.id === "logout") {
       clearAuthSession();
+      setRole(null);
       navigate("/");
     }
   };
