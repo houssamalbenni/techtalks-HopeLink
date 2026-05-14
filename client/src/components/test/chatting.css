@@ -155,6 +155,7 @@ body {
 	padding: 12px 14px;
 	box-shadow: 0 8px 20px rgba(30, 60, 70, 0.08);
 	border: 1px solid #e2ecea;
+	color: rgb(41, 39, 39);
 }
 
 .message-row.user .message-bubble {
