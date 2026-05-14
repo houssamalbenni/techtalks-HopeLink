@@ -37,6 +37,7 @@ import ExtendedExhale from "./components/support-home/breathing/ExtendedExhale";
 import MorningResetBreath from "./components/support-home/breathing/MorningResetBreath";
 import CounselorPortal from "./components/counselor-portal/CounselorPortal";
 import InteractiveExercises from "./components/InteractiveExercises/InteractiveExercises";
+import MentalHealth from "./components/mental-health/MentalHealth";
 function App() {
   const { navitems, photo } = useNavBar();
   const navigation = useLocation();
@@ -66,6 +67,7 @@ function App() {
           path="/interactive-exercises"
           element={<InteractiveExercises />}
         />
+        <Route path="/mental-health" element={<MentalHealth />} />
         <Route
           path="/support-home/articles/standing-together-in-crisis"
           element={<StandingTogetherInCrisis />}
