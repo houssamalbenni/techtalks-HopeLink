@@ -123,7 +123,7 @@ export const Announcement = ({ selectedUserId, setSelectedUserId }) => {
     (formData.audience !== "private" || formData.targetUserId);
 
   return (
-    <div className="card">
+    <div className="announcement-card">
       <div className="header">
         <h1>
           <img

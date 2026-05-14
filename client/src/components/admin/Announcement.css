@@ -276,7 +276,7 @@ body {
   pointer-events: none;
 }
 
-.card {
+.announcement-card {
   background: var(--panel-bg);
   border-radius: 18px;
   border: 1px solid var(--border-color);
@@ -448,7 +448,7 @@ body {
     padding: 0 8px;
   }
 
-  .card,
+  .announcement-card,
   .user-list-card {
     padding: 20px;
     border-radius: 16px;
