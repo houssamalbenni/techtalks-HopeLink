@@ -8,7 +8,7 @@ const NavBarProvider = ({ children }) => {
     { label: "Family Reunification", path: "/family-reunification" },
   ]);
 
-  const [role,setRole] = useState(localStorage.getItem("role") || null);
+  const [role, setRole] = useState(localStorage.getItem("role") || null);
 
   const refugeNavItems = [
     { label: "Dashboard", path: "/refugee-dashboard" },
@@ -24,7 +24,18 @@ const NavBarProvider = ({ children }) => {
   const adminNavItems = [
     { label: "Dashboard", path: "/admin/dashboard" },
     { label: "Announcement", path: "/admin/announcement" },
-    {label: "Services Management", path: "hospital"},
+    { label: "Refugee Requests", path: "/request-view" },
+    {
+      label: "Services Management",
+      path: "/hospital",
+      alt: [
+        "/shelter",
+        "/add-shelter",
+        "/add-hospital",
+        "/edit-shelter",
+        "/edit-hospital",
+      ],
+    },
   ];
   const doctorNavItems = [];
   const ngoNavItems = [
@@ -51,7 +62,9 @@ const NavBarProvider = ({ children }) => {
   }, [role]);
 
   return (
-    <NavBarContext.Provider value={{ navitems, setNavItems, photo, setPhoto, role, setRole }}>
+    <NavBarContext.Provider
+      value={{ navitems, setNavItems, photo, setPhoto, role, setRole }}
+    >
       {children}
     </NavBarContext.Provider>
   );

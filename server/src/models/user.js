@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema(
       },
     ],
 
-    profile_url: { type: String },
+    profile_url: { type: String, default: "../../assets/default_profile.jpg" }, // URL to profile picture
     dob: { type: Date }, // NGO founding date or Person DOB
     selected_language: { type: String, enum: LanguageCodes, default: "en" },
     device_id: { type: String }, // For socket/push notifications

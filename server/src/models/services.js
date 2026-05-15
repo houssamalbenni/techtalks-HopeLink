@@ -11,7 +11,7 @@ const ServiceSchema = new mongoose.Schema({
   },
   capacity: { type: Number, required: true }, // Total capacity
   availability: { type: Number, required: true }, // Current available
-  images: [String],
+  images: { type: [String] ,default: ["../../assets/default_service.jpg"]}, // URLs of service images
   phone_number: { type: String },
   address: AddressSchema,
   email: { type: String },

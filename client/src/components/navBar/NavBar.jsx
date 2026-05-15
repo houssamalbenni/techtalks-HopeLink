@@ -47,7 +47,7 @@ export const Navbar = ({ navItems = [], photo }) => {
           {navItems.map((item, index) => (
             <li key={index}>
               <button
-                className={`nav-link-item ${location.pathname === item.path ? "active" : ""}`}
+                className={`nav-link-item ${location.pathname === item.path || item.alt?.some((path) => location.pathname.startsWith(path)) ? "active" : ""}`}
                 onClick={() => handleNavClick(item.path)}
               >
                 {item.label}
@@ -64,7 +64,7 @@ export const Navbar = ({ navItems = [], photo }) => {
 
           <div className="profile-wrapper" onClick={()=>navigate("/profile")}>
             <img
-              src={photo || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"}
+              src={photo || "../../assets/default_profile.jpg"}
               alt="Profile"
               className="profile-image"
               referrerPolicy="no-referrer"

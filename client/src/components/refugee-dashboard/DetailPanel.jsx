@@ -34,7 +34,7 @@ const DetailPanel = ({
       }
       const data = {
         service: id,
-        description: `Requesting service: ${service.title} at ${serviceAddress}`,
+        description: `Requesting service: ${service.address.building} at ${serviceAddress}`,
       };
       await requestService(data);
       toast.success("Request sent successfully!");

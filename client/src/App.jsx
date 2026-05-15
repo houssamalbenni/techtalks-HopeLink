@@ -39,6 +39,7 @@ import CounselorPortal from "./components/counselor-portal/CounselorPortal";
 import InteractiveExercises from "./components/InteractiveExercises/InteractiveExercises";
 import MentalHealth from "./components/mental-health/MentalHealth";
 import DonatePage from "./components/donor/DonatePage";
+import RequestView from "./components/request-view/RequestView";
 function App() {
   const { navitems, photo } = useNavBar();
   const navigation = useLocation();
@@ -125,6 +126,7 @@ function App() {
         <Route path="/profile" element={<ProfileSettings />} />
         <Route path="/refugee-dashboard" element={<RefugeeDashboard />} />
         <Route path="/donor/donate" element={<DonatePage />} />
+        <Route path="/request-view" element={<RequestView />} />
         <Route path="/family-reunification" element={<FamilyReunification />} />
         <Route
           path="/add-hospital"

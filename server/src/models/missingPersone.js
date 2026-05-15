@@ -8,7 +8,7 @@ const MissingPersonSchema = new mongoose.Schema({
   relation: { type: String, enum: FamilyRelations },
   last_known_location: { type: String },
   last_known_date: { type: Date },
-  photo: { type: String }, // Main photo of the person
+  photo: { type: String ,default: "../../assets/default_profile.jpeg"}, // Main photo of the person
   status: { type: String, enum: MissingStatus, default: 'inProgress' },
   notes: [NoteMessageSchema] // Messages for conversation
 }, { timestamps: true });

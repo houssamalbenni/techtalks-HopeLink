@@ -77,7 +77,18 @@ export default function AdminDashboard() {
     setNavItems([
       { label: "Dashboard", path: "/admin/dashboard" },
       { label: "Announcements", path: "/admin/announcement" },
-      { label: "Services Management", path: "hospital" },
+      { label: "Refugee Requests", path: "/request-view" },
+      {
+        label: "Services Management",
+        path: "/hospital",
+        alt: [
+          "/shelter",
+          "/add-shelter",
+          "/add-hospital",
+          "/edit-shelter",
+          "/edit-hospital",
+        ],
+      },
     ]);
     const photo = localStorage.getItem("user_photo");
     setPhoto(photo);

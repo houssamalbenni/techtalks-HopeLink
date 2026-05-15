@@ -1,8 +1,9 @@
 const Request = require("../models/aidRequests").AidRequest;
-const  Service  = require("../models/services").Service;
+const Service = require("../models/services").Service;
 
 class RefugeeService {
-  static async requestService(userId,body) { // userId from the token
+  static async requestService(userId, body) {
+    // userId from the token
     try {
       const request = await Request.create({ ...body, user: userId });
       return request;
@@ -11,9 +12,13 @@ class RefugeeService {
     }
   }
 
-  static async getMyRequests(userId) { // userId from the token
+  static async getMyRequests(userId) {
+    // userId from the token
     try {
-      return await Request.find({ user: userId,status:"pending" }).populate("service","_id");
+      return await Request.find({ user: userId, status: "pending" }).populate(
+        "service",
+        "_id",
+      );
     } catch (error) {
       throw error;
     }
@@ -29,16 +34,26 @@ class RefugeeService {
 
   static async updateRequest(requestId, updateData) {
     try {
-      const {status,...data} = updateData;
-      const servece=await Request.findById(requestId).populate("service").populate("user");
-      if(status && status==="approved"){
+      const { status, ...data } = updateData;
+      const servece = await Request.findById(requestId)
+        .populate("service")
+        .populate("user");
+      if (status && status === "approved") {
         await Service.findByIdAndUpdate(servece.service._id, {
-          $inc: { availability: -servece.user.family_number ||-1 },
+          $inc: {
+            availability: -(servece.user.family_number != 0
+              ? servece.user.family_number
+              : 1),
+          },
         });
       }
-      const request = await Request.findByIdAndUpdate(requestId, {status, ...data}, {
-        new: true,
-      });
+      const request = await Request.findByIdAndUpdate(
+        requestId,
+        { status, ...data },
+        {
+          new: true,
+        },
+      );
       if (!request) {
         const err = new Error("Request not found");
         err.statusCode = 404;
@@ -54,7 +69,8 @@ class RefugeeService {
     try {
       return await Request.find()
         .populate("service")
-        .populate("user", "full_name");
+        .populate("user", "full_name family_number")
+        .sort({ createdAt: -1 });
     } catch (error) {
       throw error;
     }

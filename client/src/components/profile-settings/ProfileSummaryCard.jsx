@@ -23,7 +23,7 @@ function ProfileSummaryCard({ profile, onAction, onAvatarSelect, avatarUploading
     <div className="ps-profile-top">
       <div className="ps-profile-identity">
         <div className="ps-avatar-wrap">
-          <img src={profile.avatar} alt="Profile" />
+          <img src={profile.avatar || "../../assets/default_profile.jpg"} alt="Profile" />
           <button type="button" aria-label="Change avatar" onClick={handlePickAvatar} disabled={avatarUploading}>
             <i className="fa-solid fa-camera" aria-hidden="true" />
           </button>
