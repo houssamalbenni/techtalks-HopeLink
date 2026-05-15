@@ -10,6 +10,7 @@ import { getMyRequests } from "../../../services/refugeeService";
 import { getAllServices } from "../../../services/serviceService";
 import { getStoredUserNeed } from "../../../utils/authStorage";
 import { useNavBar } from "../../../context/NavBarContext";
+import { useNotifications } from "../../../context/NotificationContext";
 const RefugeeDashboardContent = () => {
   const { language } = useLanguage();
   const [selectedId, setSelectedId] = useState(1);
@@ -18,8 +19,11 @@ const RefugeeDashboardContent = () => {
   const [error, setError] = useState(null);
   const [aleardyRequested, setAleardyRequested] = useState([]);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [userId] = useState(() => localStorage.getItem("userId") || "");
+  const [role] = useState(() => localStorage.getItem("role") || "");
   const [isListOpen, setIsListOpen] = useState(false);
-  const { setNavItems,setPhoto } = useNavBar();
+  const { setNavItems, setPhoto } = useNavBar();
+  const { registerToSocket } = useNotifications();
   const navItems = [
     { label: "Dashboard", path: "/refugee-dashboard" },
     { label: "Family Reunification", path: "/family-reunification" },
@@ -32,6 +36,12 @@ const RefugeeDashboardContent = () => {
     setIsPanelOpen(true);
     setIsListOpen(false);
   };
+  useEffect(() => {
+    if (!userId || !role) {
+      return;
+    }
+    registerToSocket(userId, role);
+  }, [registerToSocket, role, userId]);
   const fetchDashboardData = async () => {
     try {
       const [serviceResponse, myRequestsResponse] = await Promise.all([

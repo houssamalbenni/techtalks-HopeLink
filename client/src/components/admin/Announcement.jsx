@@ -14,7 +14,7 @@ const TYPES = [
 const AUDIENCES = ["all", "refugee", "doctor", "ngo", "private","donor"];
 
 export const Announcement = ({ selectedUserId, setSelectedUserId }) => {
-  const { registerToSocket, sendAnnouncement, sendPrivateMessage } =
+  const { sendAnnouncement, sendPrivateMessage } =
     useNotifications();
   const [userId] = useState(() => localStorage.getItem("userId") || "");
   const [role] = useState(() => localStorage.getItem("role") || "");
@@ -37,12 +37,7 @@ export const Announcement = ({ selectedUserId, setSelectedUserId }) => {
     }
   }, [selectedUserId]);
 
-  useEffect(() => {
-    if (!userId || !role) {
-      return;
-    }
-    registerToSocket(userId, role);
-  }, [registerToSocket, role, userId]);
+
 
   const [isSending, setIsSending] = useState(false);
   const [status, setStatus] = useState("idle");

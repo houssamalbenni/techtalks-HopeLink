@@ -9,7 +9,6 @@ import "./chatting.css";
 
 const RefugeeChat = () => {
   const {
-    registerToSocket,
     chating,
     sendChats,
     clearChatting,
@@ -25,14 +24,6 @@ const RefugeeChat = () => {
   const refugeeId = getStoredUserId();
   const refugeeRole = getStoredUserRole() || "refugee";
   const doctorId = doctorIdParam;
-
-  useEffect(() => {
-    if (!refugeeId) {
-      return;
-    }
-
-    registerToSocket(refugeeId, refugeeRole);
-  }, [refugeeId, refugeeRole, registerToSocket]);
 
   useEffect(() => {
     if (!refugeeId || !doctorId) {
@@ -78,7 +69,8 @@ const RefugeeChat = () => {
           getUserById(refugeeId),
         ]);
         const doctor = doctorRes?.data?.user || doctorRes?.user || doctorRes;
-        const refugee = refugeeRes?.data?.user || refugeeRes?.user || refugeeRes;
+        const refugee =
+          refugeeRes?.data?.user || refugeeRes?.user || refugeeRes;
 
         if (isMounted) {
           setAvatars({
@@ -188,8 +180,6 @@ const RefugeeChat = () => {
     <div className="chatting-page">
       <div className="chatting-shell">
         <main className="chatting-main">
-    
-
           <div className="security-banner">
             <div className="shield">OK</div>
             <div>
@@ -203,13 +193,24 @@ const RefugeeChat = () => {
           <section className="chatting-messages" ref={messagesRef}>
             {mergedMessages.map((msg) => {
               const side = msg.senderId === refugeeId ? "user" : "counselor";
-              const avatarUrl = side === "counselor" ? avatars.doctor : avatars.refugee;
+              const avatarUrl =
+                side === "counselor" ? avatars.doctor : avatars.refugee;
 
               return (
-                <div key={[msg.senderId, msg.receivedId, msg.message, msg.createdAt].join("|")} className={`message-row ${side}`}>
+                <div
+                  key={[
+                    msg.senderId,
+                    msg.receivedId,
+                    msg.message,
+                    msg.createdAt,
+                  ].join("|")}
+                  className={`message-row ${side}`}
+                >
                   {side === "counselor" && (
                     <div className="message-avatar">
-                      {avatarUrl ? <img src={avatarUrl} alt="User avatar" /> : null}
+                      {avatarUrl ? (
+                        <img src={avatarUrl} alt="User avatar" />
+                      ) : null}
                     </div>
                   )}
                   <div className="message-bubble">

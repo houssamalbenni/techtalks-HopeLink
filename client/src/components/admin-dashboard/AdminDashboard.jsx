@@ -10,7 +10,7 @@ import ViewModal from "./ViewModal";
 import { useNavBar } from "../../../context/NavBarContext";
 
 import "./AdminDashboard.css";
-
+import { useNotifications } from "../../../context/NotificationContext";
 import { getAllServices } from "../../../services/serviceService";
 import {
   getAllRequests,
@@ -71,8 +71,11 @@ export default function AdminDashboard() {
   const [totalDonation, setTotalDonation] = useState(0);
   const [error, setError] = useState(null);
   const [viewShelter, setViewShelter] = useState(null);
+  const { registerToSocket } = useNotifications();
   const [editShelter, setEditShelter] = useState(null);
   const { setNavItems, setPhoto } = useNavBar();
+  const [userId] = useState(() => localStorage.getItem("userId") || "");
+  const [role] = useState(() => localStorage.getItem("role") || "");
   useState(() => {
     setNavItems([
       { label: "Dashboard", path: "/admin/dashboard" },
@@ -93,6 +96,12 @@ export default function AdminDashboard() {
     const photo = localStorage.getItem("user_photo");
     setPhoto(photo);
   }, []);
+  useEffect(() => {
+    if (!userId || !role) {
+      return;
+    }
+    registerToSocket(userId, role);
+  }, [registerToSocket, role, userId]);
   const fetchServices = async () => {
     try {
       setLoading(true);

@@ -1,10 +1,18 @@
 import { useEffect, useState } from "react";
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import api from "../../../utils/axios";
 import { ApiConst } from "../../../utils/APIConst";
 import toast from "react-hot-toast";
 import "./donate.css";
-
+import { useNotifications } from "../../../context/NotificationContext";
 const formatCurrency = (value) =>
   new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -19,6 +27,9 @@ export default function DonatePage() {
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
   const [loading, setLoading] = useState(false);
+  const { registerToSocket } = useNotifications();
+  const [userId] = useState(() => localStorage.getItem("userId") || "");
+  const [role] = useState(() => localStorage.getItem("role") || "");
   const [statsLoading, setStatsLoading] = useState(true);
   const [summary, setSummary] = useState({
     totalAmount: 0,
@@ -29,6 +40,12 @@ export default function DonatePage() {
   });
   const [myDonations, setMyDonations] = useState([]);
 
+  useEffect(() => {
+    if (!userId || !role) {
+      return;
+    }
+    registerToSocket(userId, role);
+  }, [registerToSocket, role, userId]);
   const fetchDonationData = async () => {
     setStatsLoading(true);
     try {
@@ -127,7 +144,9 @@ export default function DonatePage() {
           <strong className="donor-stat-value">
             {statsLoading ? "..." : formatCurrency(summary.totalAmount)}
           </strong>
-          <span className="donor-stat-footnote">across all recorded donations</span>
+          <span className="donor-stat-footnote">
+            across all recorded donations
+          </span>
         </article>
 
         <article className="donor-stat-card">
@@ -135,7 +154,9 @@ export default function DonatePage() {
           <strong className="donor-stat-value">
             {statsLoading ? "..." : summary.totalDonations || 0}
           </strong>
-          <span className="donor-stat-footnote">successful transactions logged</span>
+          <span className="donor-stat-footnote">
+            successful transactions logged
+          </span>
         </article>
       </section>
 
@@ -201,7 +222,11 @@ export default function DonatePage() {
               </label>
             </div>
 
-            <button type="submit" disabled={loading} className="donor-submit-button">
+            <button
+              type="submit"
+              disabled={loading}
+              className="donor-submit-button"
+            >
               {loading ? "Processing..." : `Donate ${formatCurrency(amount)}`}
             </button>
           </form>
@@ -225,7 +250,12 @@ export default function DonatePage() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid stroke="#253357" vertical={false} />
-                <XAxis dataKey="label" stroke="#7f93c9" tickLine={false} axisLine={false} />
+                <XAxis
+                  dataKey="label"
+                  stroke="#7f93c9"
+                  tickLine={false}
+                  axisLine={false}
+                />
                 <YAxis stroke="#7f93c9" tickLine={false} axisLine={false} />
                 <Tooltip
                   contentStyle={{
@@ -254,7 +284,9 @@ export default function DonatePage() {
           <div className="donor-panel-heading">
             <div>
               <h2>Top contributors</h2>
-              <p>Every donor name with the total amount they have contributed.</p>
+              <p>
+                Every donor name with the total amount they have contributed.
+              </p>
             </div>
           </div>
 
@@ -276,7 +308,9 @@ export default function DonatePage() {
                 </div>
               ))
             ) : (
-              <div className="donor-empty-state">No donations recorded yet.</div>
+              <div className="donor-empty-state">
+                No donations recorded yet.
+              </div>
             )}
           </div>
         </article>
@@ -291,7 +325,9 @@ export default function DonatePage() {
 
           <div className="donor-personal-list">
             {statsLoading ? (
-              <div className="donor-empty-state">Loading your donation history...</div>
+              <div className="donor-empty-state">
+                Loading your donation history...
+              </div>
             ) : myDonations.length ? (
               myDonations
                 .slice()
@@ -302,7 +338,9 @@ export default function DonatePage() {
                     <div>
                       <strong>{formatCurrency(donation.amount)}</strong>
                       <span>
-                        {new Date(donation.createdAt).toLocaleDateString("en-GB")}
+                        {new Date(donation.createdAt).toLocaleDateString(
+                          "en-GB",
+                        )}
                       </span>
                     </div>
                     <small>Recorded</small>

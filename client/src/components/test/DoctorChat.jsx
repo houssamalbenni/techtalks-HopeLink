@@ -8,13 +8,8 @@ import { getUserById } from "../../../services/userService";
 import "./chatting.css";
 
 const DoctorChat = () => {
-  const {
-    registerToSocket,
-    chating,
-    sendChats,
-    clearChatting,
-    sendEndSession,
-  } = useNotifications();
+  const { chating, sendChats, clearChatting, sendEndSession } =
+    useNotifications();
   const [message, setMessage] = useState("");
   const [history, setHistory] = useState([]);
   const [avatars, setAvatars] = useState({ doctor: "", refugee: "" });
@@ -24,14 +19,6 @@ const DoctorChat = () => {
   const doctorId = getStoredUserId();
   const doctorRole = getStoredUserRole() || "doctor";
   const refugeeId = refugeeIdParam;
-
-  useEffect(() => {
-    if (!doctorId) {
-      return;
-    }
-
-    registerToSocket(doctorId, doctorRole);
-  }, [doctorId, doctorRole, registerToSocket]);
 
   useEffect(() => {
     if (!doctorId || !refugeeId) {
@@ -77,7 +64,8 @@ const DoctorChat = () => {
           getUserById(refugeeId),
         ]);
         const doctor = doctorRes?.data?.user || doctorRes?.user || doctorRes;
-        const refugee = refugeeRes?.data?.user || refugeeRes?.user || refugeeRes;
+        const refugee =
+          refugeeRes?.data?.user || refugeeRes?.user || refugeeRes;
 
         if (isMounted) {
           setAvatars({
@@ -171,8 +159,6 @@ const DoctorChat = () => {
     <div className="chatting-page">
       <div className="chatting-shell">
         <main className="chatting-main">
-
-
           <div className="security-banner">
             <div className="shield">OK</div>
             <div>
@@ -186,13 +172,24 @@ const DoctorChat = () => {
           <section className="chatting-messages" ref={messagesRef}>
             {mergedMessages.map((msg) => {
               const side = msg.senderId === doctorId ? "user" : "counselor";
-              const avatarUrl = side === "counselor" ? avatars.refugee : avatars.doctor;
+              const avatarUrl =
+                side === "counselor" ? avatars.refugee : avatars.doctor;
 
               return (
-                <div key={[msg.senderId, msg.receivedId, msg.message, msg.createdAt].join("|")} className={`message-row ${side}`}>
+                <div
+                  key={[
+                    msg.senderId,
+                    msg.receivedId,
+                    msg.message,
+                    msg.createdAt,
+                  ].join("|")}
+                  className={`message-row ${side}`}
+                >
                   {side === "counselor" && (
                     <div className="message-avatar">
-                      {avatarUrl ? <img src={avatarUrl} alt="User avatar" /> : null}
+                      {avatarUrl ? (
+                        <img src={avatarUrl} alt="User avatar" />
+                      ) : null}
                     </div>
                   )}
                   <div className="message-bubble">

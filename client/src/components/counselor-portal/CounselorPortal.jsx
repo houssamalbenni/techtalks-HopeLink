@@ -5,6 +5,7 @@ import Topbar from "./Topbar";
 import SectionHeader from "./SectionHeader";
 import RequestFilters from "./RequestFilters";
 import RequestList from "./RequestList";
+import { useNotifications } from "../../../context/NotificationContext";
 import {
   acceptChatRequest,
   getChatRequestQueue,
@@ -103,7 +104,16 @@ export default function CounselorPortal() {
   const [isLoading, setIsLoading] = useState(false);
   const [acceptingId, setAcceptingId] = useState(null);
   const navigate = useNavigate();
+  const [userId] = useState(() => localStorage.getItem("userId") || "");
+  const [role] = useState(() => localStorage.getItem("role") || "");
+  const { registerToSocket } = useNotifications();
 
+  useEffect(() => {
+    if (!userId || !role) {
+      return;
+    }
+    registerToSocket(userId, role);
+  }, [registerToSocket, role, userId]);
   useEffect(() => {
     let isMounted = true;
     const loadQueue = async () => {
@@ -213,7 +223,9 @@ export default function CounselorPortal() {
             <SectionHeader
               title="Incoming Chat Requests"
               subtitle="Queue is prioritized by urgency"
-              action={isLoading ? "Loading..." : `View All (${mappedRequests.length})`}
+              action={
+                isLoading ? "Loading..." : `View All (${mappedRequests.length})`
+              }
             />
             <RequestFilters filters={filters} onSelect={setActiveFilter} />
             <RequestList
